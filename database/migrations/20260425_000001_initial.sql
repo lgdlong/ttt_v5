@@ -37,3 +37,12 @@ CREATE INDEX idx_video_tags_youtube_id ON video_tags(youtube_id);
 CREATE INDEX idx_video_tags_tag_id ON video_tags(tag_id);
 
 -- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+
+DROP TABLE IF EXISTS video_tags;
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS youtube_videos;
+
+-- +goose StatementEnd
