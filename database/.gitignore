@@ -1,0 +1,2 @@
+# Ignore generated SQL migration files
+*.sql
