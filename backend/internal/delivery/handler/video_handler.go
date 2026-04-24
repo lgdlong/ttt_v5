@@ -1,0 +1,211 @@
+package handler
+
+import (
+	"strconv"
+
+	"ttt-project/ttt_v5/backend/internal/application/service"
+	"ttt-project/ttt_v5/backend/internal/domain/dto"
+	"ttt-project/ttt_v5/backend/internal/domain/entity"
+
+	"github.com/gin-gonic/gin"
+)
+
+// VideoHandler handles HTTP requests for videos
+type VideoHandler struct {
+	svc *service.VideoService
+}
+
+// NewVideoHandler creates a new video handler
+func NewVideoHandler(svc *service.VideoService) *VideoHandler {
+	return &VideoHandler{svc: svc}
+}
+
+// List handles GET /api/v1/videos
+func (h *VideoHandler) List(c *gin.Context) {
+	var filter dto.VideoFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		BadRequest(c, "Invalid query parameters")
+		return
+	}
+	filter.Normalize()
+
+	videos, total, err := h.svc.List(c.Request.Context(), filter)
+	if err != nil {
+		InternalError(c, "Failed to list videos")
+		return
+	}
+
+	response := make([]dto.VideoResponse, len(videos))
+	for i, v := range videos {
+		response[i] = toVideoResponse(&v)
+	}
+
+	Success(c, gin.H{
+		"videos": response,
+		"total":  total,
+		"limit":  filter.Limit,
+		"offset": filter.Offset,
+	})
+}
+
+// GetByID handles GET /api/v1/videos/:youtubeId
+func (h *VideoHandler) GetByID(c *gin.Context) {
+	youtubeID := c.Param("youtubeId")
+	if youtubeID == "" {
+		BadRequest(c, "youtubeId is required")
+		return
+	}
+
+	video, err := h.svc.GetByID(c.Request.Context(), youtubeID)
+	if err != nil {
+		NotFound(c, "Video not found")
+		return
+	}
+
+	tags, _ := h.svc.GetTagsByVideoID(c.Request.Context(), youtubeID)
+	videoResp := toVideoResponse(video)
+	videoResp.Tags = toTagResponses(tags)
+
+	Success(c, videoResp)
+}
+
+// GetByTagID handles GET /api/v1/tags/:tagId/videos
+func (h *VideoHandler) GetByTagID(c *gin.Context) {
+	tagIDStr := c.Param("tagId")
+	tagID, err := strconv.ParseUint(tagIDStr, 10, 64)
+	if err != nil {
+		BadRequest(c, "Invalid tag ID")
+		return
+	}
+
+	var filter dto.VideoFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		BadRequest(c, "Invalid query parameters")
+		return
+	}
+	filter.Normalize()
+
+	videos, total, err := h.svc.GetByTagID(c.Request.Context(), uint(tagID), filter)
+	if err != nil {
+		InternalError(c, "Failed to list videos by tag")
+		return
+	}
+
+	response := make([]dto.VideoResponse, len(videos))
+	for i, v := range videos {
+		response[i] = toVideoResponse(&v)
+	}
+
+	Success(c, gin.H{
+		"videos": response,
+		"total":  total,
+		"limit":  filter.Limit,
+		"offset": filter.Offset,
+	})
+}
+
+// Create handles POST /api/v1/admin/videos
+func (h *VideoHandler) Create(c *gin.Context) {
+	var req dto.CreateVideoRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		BadRequest(c, "Invalid request body")
+		return
+	}
+
+	video, err := h.svc.Create(c.Request.Context(), req)
+	if err != nil {
+		BadRequest(c, err.Error())
+		return
+	}
+
+	Created(c, toVideoResponse(video))
+}
+
+// Update handles PUT /api/v1/admin/videos/:youtubeId
+func (h *VideoHandler) Update(c *gin.Context) {
+	youtubeID := c.Param("youtubeId")
+	if youtubeID == "" {
+		BadRequest(c, "youtubeId is required")
+		return
+	}
+
+	var req dto.UpdateVideoRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		BadRequest(c, "Invalid request body")
+		return
+	}
+
+	video, err := h.svc.Update(c.Request.Context(), youtubeID, req)
+	if err != nil {
+		NotFound(c, "Video not found")
+		return
+	}
+
+	Success(c, toVideoResponse(video))
+}
+
+// Delete handles DELETE /api/v1/admin/videos/:youtubeId
+func (h *VideoHandler) Delete(c *gin.Context) {
+	youtubeID := c.Param("youtubeId")
+	if youtubeID == "" {
+		BadRequest(c, "youtubeId is required")
+		return
+	}
+
+	if err := h.svc.Delete(c.Request.Context(), youtubeID); err != nil {
+		InternalError(c, "Failed to delete video")
+		return
+	}
+
+	NoContent(c)
+}
+
+// AttachTag handles POST /api/v1/admin/videos/:youtubeId/tags/:tagId
+func (h *VideoHandler) AttachTag(c *gin.Context) {
+	youtubeID := c.Param("youtubeId")
+	tagIDStr := c.Param("tagId")
+
+	tagID, err := strconv.ParseUint(tagIDStr, 10, 64)
+	if err != nil {
+		BadRequest(c, "Invalid tag ID")
+		return
+	}
+
+	if err := h.svc.AttachTag(c.Request.Context(), youtubeID, uint(tagID)); err != nil {
+		InternalError(c, "Failed to attach tag")
+		return
+	}
+
+	Success(c, gin.H{"message": "Tag attached successfully"})
+}
+
+// DetachTag handles DELETE /api/v1/admin/videos/:youtubeId/tags/:tagId
+func (h *VideoHandler) DetachTag(c *gin.Context) {
+	youtubeID := c.Param("youtubeId")
+	tagIDStr := c.Param("tagId")
+
+	tagID, err := strconv.ParseUint(tagIDStr, 10, 64)
+	if err != nil {
+		BadRequest(c, "Invalid tag ID")
+		return
+	}
+
+	if err := h.svc.DetachTag(c.Request.Context(), youtubeID, uint(tagID)); err != nil {
+		InternalError(c, "Failed to detach tag")
+		return
+	}
+
+	NoContent(c)
+}
+
+func toVideoResponse(v *entity.Video) dto.VideoResponse {
+	resp := dto.VideoResponse{
+		YouTubeID:       v.YoutubeID,
+		Title:           v.Title,
+		ThumbnailURL:    v.ThumbnailURL,
+		DurationSeconds: v.DurationSeconds,
+		Author:          v.Author,
+		UploadDate:      v.UploadDate,
+	}
+	return resp
+}

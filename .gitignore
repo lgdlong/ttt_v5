@@ -30,3 +30,4 @@ database/*.sql
 
 # -------
 .claude/settings.local.json
+temp/
