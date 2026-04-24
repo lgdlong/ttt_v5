@@ -8,17 +8,18 @@ import (
 	"ttt-project/ttt_v5/backend/internal/application/service"
 	"ttt-project/ttt_v5/backend/internal/delivery/handler"
 	"ttt-project/ttt_v5/backend/internal/delivery/middleware"
-	"ttt-project/ttt_v5/backend/internal/infrastructure/repository"
+	"ttt-project/ttt_v5/backend/internal/repository"
 	"ttt-project/ttt_v5/backend/pkg/youtube"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // Setup configures all routes for the application
-func Setup(app *gin.Engine, cfg *config.Config) {
-	// Initialize repositories (in-memory for now)
-	videoRepo := repository.NewInMemoryVideoRepository()
-	tagRepo := repository.NewInMemoryTagRepository()
+func Setup(app *gin.Engine, cfg *config.Config, db *gorm.DB) {
+	// Initialize GORM repositories
+	videoRepo := repository.NewVideoRepo(db)
+	tagRepo := repository.NewTagRepo(db)
 
 	// Initialize YouTube client
 	ytClient := youtube.NewClient("") // API key should come from config

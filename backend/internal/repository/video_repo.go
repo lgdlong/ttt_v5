@@ -63,10 +63,7 @@ func (r *GormVideoRepo) GetByTagID(ctx context.Context, tagID uint, filter dto.V
 	var videos []entity.Video
 	var total int64
 
-	query := r.db.WithContext(ctx).
-		Table("youtube_videos").
-		Joins("JOIN video_tags ON youtube_videos.youtube_id = video_tags.youtube_id").
-		Where("video_tags.tag_id = ?", tagID)
+	query := r.db.WithContext(ctx).Model(&entity.Video{}).Where("? IN (SELECT youtube_id FROM video_tags WHERE tag_id = ?)", tagID, tagID)
 
 	if filter.Query != "" {
 		query = query.Where("title ILIKE ?", "%"+filter.Query+"%")
@@ -76,7 +73,7 @@ func (r *GormVideoRepo) GetByTagID(ctx context.Context, tagID uint, filter dto.V
 		return nil, 0, err
 	}
 
-	if err := query.Offset(filter.Offset).Limit(filter.Limit).Find(&videos).Error; err != nil {
+	if err := query.Preload("Tags").Offset(filter.Offset).Limit(filter.Limit).Find(&videos).Error; err != nil {
 		return nil, 0, err
 	}
 
@@ -93,29 +90,40 @@ func (r *GormVideoRepo) Delete(ctx context.Context, youtubeID string) error {
 	return r.db.WithContext(ctx).Where("youtube_id = ?", youtubeID).Delete(&entity.Video{}).Error
 }
 
-// AttachTag links a tag to a video
+// AttachTag links a tag to a video using GORM many2many
 func (r *GormVideoRepo) AttachTag(ctx context.Context, youtubeID string, tagID uint) error {
-	vt := entity.VideoTag{
-		VideoID: youtubeID, // Note: VideoTag.VideoID is string based on existing entity
-		TagID:   int64(tagID),
+	video, err := r.GetByID(ctx, youtubeID)
+	if err != nil || video == nil {
+		return err
 	}
-	return r.db.WithContext(ctx).Create(&vt).Error
+	var tag entity.Tag
+	if err := r.db.WithContext(ctx).First(&tag, tagID).Error; err != nil {
+		return err
+	}
+	return r.db.Model(video).Association("Tags").Append(&tag)
 }
 
 // DetachTag removes the link between a tag and a video
 func (r *GormVideoRepo) DetachTag(ctx context.Context, youtubeID string, tagID uint) error {
-	return r.db.WithContext(ctx).
-		Where("youtube_id = ? AND tag_id = ?", youtubeID, tagID).
-		Delete(&entity.VideoTag{}).Error
+	video, err := r.GetByID(ctx, youtubeID)
+	if err != nil || video == nil {
+		return err
+	}
+	var tag entity.Tag
+	if err := r.db.WithContext(ctx).First(&tag, tagID).Error; err != nil {
+		return err
+	}
+	return r.db.Model(video).Association("Tags").Delete(&tag)
 }
 
 // GetTagsByVideoID retrieves all tags for a video
 func (r *GormVideoRepo) GetTagsByVideoID(ctx context.Context, youtubeID string) ([]entity.Tag, error) {
-	var tags []entity.Tag
-	err := r.db.WithContext(ctx).
-		Table("tags").
-		Joins("JOIN video_tags ON tags.id = video_tags.tag_id").
-		Where("video_tags.youtube_id = ?", youtubeID).
-		Find(&tags).Error
-	return tags, err
+	video, err := r.GetByID(ctx, youtubeID)
+	if err != nil || video == nil {
+		return nil, err
+	}
+	if err := r.db.WithContext(ctx).Preload("Tags").First(video, "youtube_id = ?", youtubeID).Error; err != nil {
+		return nil, err
+	}
+	return video.Tags, nil
 }
