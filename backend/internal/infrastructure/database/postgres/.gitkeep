@@ -1,2 +1,0 @@
-// Package postgres contains PostgreSQL database implementation
-package postgres
