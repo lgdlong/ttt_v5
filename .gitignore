@@ -25,9 +25,6 @@ Thumbs.db
 *.log
 logs/
 
-# Atlas
-database/*.sql
-
-# -------
+# Logs -------
 .claude/settings.local.json
 temp/
