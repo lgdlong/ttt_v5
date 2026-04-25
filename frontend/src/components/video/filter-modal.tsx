@@ -33,7 +33,7 @@ export function FilterModal({ open, onOpenChange, onApply }: FilterModalProps) {
 
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],
-    queryFn: api.getTags,
+    queryFn: () => api.getTags({ page: "1", limit: "100" }),
   })
 
   const handleReset = () => setFilters({})

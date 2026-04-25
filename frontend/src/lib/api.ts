@@ -33,8 +33,9 @@ export const api = {
     return fetchApi<Video[]>(`/api/v1/videos${searchParams}`)
   },
 
-  getTags: (): Promise<Tag[]> => {
-    return fetchApi<Tag[]>("/api/v1/tags")
+  getTags: (params?: Record<string, string>): Promise<Tag[]> => {
+    const searchParams = params ? `?${new URLSearchParams(params)}` : ""
+    return fetchApi<Tag[]>(`/api/v1/tags${searchParams}`)
   },
 
   searchTags: (query: string): Promise<Tag[]> => {

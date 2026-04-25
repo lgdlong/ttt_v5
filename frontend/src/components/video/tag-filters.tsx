@@ -10,7 +10,7 @@ interface TagFiltersProps {
 export function TagFilters({ selectedTags, onTagSelect }: TagFiltersProps) {
   const { data: tags = [], isLoading } = useQuery({
     queryKey: ["tags"],
-    queryFn: api.getTags,
+    queryFn: () => api.getTags({ page: "1", limit: "100" }),
   })
 
   if (isLoading) {

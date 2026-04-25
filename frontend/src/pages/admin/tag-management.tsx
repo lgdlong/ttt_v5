@@ -20,10 +20,11 @@ export function TagManagementPage() {
   const [selectedTag, setSelectedTag] = useState<Tag | null>(null)
   const [tagName, setTagName] = useState("")
   const [tagToDelete, setTagToDelete] = useState<Tag | null>(null)
+  const [search, setSearch] = useState("")
 
   const { data: tags, isLoading } = useQuery({
-    queryKey: ["tags"],
-    queryFn: () => api.getTags(),
+    queryKey: ["tags", { q: search }],
+    queryFn: () => api.getTags({ q: search, page: "1", limit: "100" }),
   })
 
   const createMutation = useMutation({
@@ -104,9 +105,17 @@ export function TagManagementPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{VI.totalTags}</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>{VI.totalTags}</CardTitle>
+            <Input
+              placeholder="Tìm thẻ..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-64"
+            />
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-h-[60vh] overflow-y-auto">
           <Table>
             <TableHeader>
               <TableRow>

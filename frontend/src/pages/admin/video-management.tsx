@@ -1,6 +1,14 @@
 import { toast } from "sonner"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -15,6 +23,7 @@ import type { Video, Tag } from "@/types"
 
 export function VideoManagementPage() {
   const [search, setSearch] = useState("")
+  const [page, setPage] = useState(1)
   const queryClient = useQueryClient()
 
   const [attachDialogOpen, setAttachDialogOpen] = useState(false)
@@ -22,13 +31,13 @@ export function VideoManagementPage() {
   const [tagSearch, setTagSearch] = useState("")
 
   const { data: videosData, isLoading } = useQuery({
-    queryKey: ["videos", { q: search }],
-    queryFn: () => api.getVideos(search ? { q: search } : {}),
+    queryKey: ["videos", { q: search, page: page.toString() }],
+    queryFn: () => api.getVideos({ q: search, page: page.toString(), limit: "20" }),
   })
 
   const { data: tagsData } = useQuery({
-    queryKey: ["tags"],
-    queryFn: () => api.getTags(),
+    queryKey: ["tags", { page: "1", limit: "100" }],
+    queryFn: () => api.getTags({ page: "1", limit: "100" }),
   })
 
   const attachMutation = useMutation({
@@ -93,7 +102,10 @@ export function VideoManagementPage() {
             <Input
               placeholder={VI.searchPlaceholder}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value)
+                setPage(1)
+              }}
               className="w-64"
             />
           </div>
@@ -165,6 +177,29 @@ export function VideoManagementPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            {page === 1 ? (
+              <PaginationPrevious className="pointer-events-none opacity-50" />
+            ) : (
+              <PaginationPrevious onClick={() => setPage((p) => Math.max(1, p - 1))} />
+            )}
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink isActive>{page}</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            {isLoading || videos.length < 20 ? (
+              <PaginationNext className="pointer-events-none opacity-50" />
+            ) : (
+              <PaginationNext onClick={() => setPage((p) => p + 1)} />
+            )}
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
 
       <Dialog open={attachDialogOpen} onOpenChange={setAttachDialogOpen}>
         <DialogContent className="max-w-sm">
