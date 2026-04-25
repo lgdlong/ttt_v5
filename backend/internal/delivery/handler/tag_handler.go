@@ -20,7 +20,15 @@ func NewTagHandler(svc *service.TagService) *TagHandler {
 	return &TagHandler{svc: svc}
 }
 
-// List handles GET /api/v1/tags
+// List godoc
+// @Summary List all tags
+// @Description Get a list of all available tags
+// @Tags tags
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.TagResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /tags [get]
 func (h *TagHandler) List(c *gin.Context) {
 	tags, err := h.svc.List(c.Request.Context())
 	if err != nil {
@@ -31,7 +39,17 @@ func (h *TagHandler) List(c *gin.Context) {
 	Success(c, gin.H{"tags": toTagResponses(tags)})
 }
 
-// GetByID handles GET /api/v1/tags/:tagId
+// GetByID godoc
+// @Summary Get tag by ID
+// @Description Get a single tag by its ID
+// @Tags tags
+// @Accept json
+// @Produce json
+// @Param tagId path int true "Tag ID"
+// @Success 200 {object} dto.TagResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /tags/{tagId} [get]
 func (h *TagHandler) GetByID(c *gin.Context) {
 	tagIDStr := c.Param("tagId")
 	tagID, err := strconv.ParseUint(tagIDStr, 10, 64)
@@ -49,7 +67,17 @@ func (h *TagHandler) GetByID(c *gin.Context) {
 	Success(c, toTagResponse(tag))
 }
 
-// Create handles POST /api/v1/admin/tags
+// Create godoc
+// @Summary Create a new tag
+// @Description Create a new tag (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param tag body dto.CreateTagRequest true "Tag data"
+// @Success 201 {object} dto.TagResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /admin/tags [post]
 func (h *TagHandler) Create(c *gin.Context) {
 	var req dto.CreateTagRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -66,7 +94,18 @@ func (h *TagHandler) Create(c *gin.Context) {
 	Created(c, toTagResponse(tag))
 }
 
-// Update handles PUT /api/v1/admin/tags/:tagId
+// Update godoc
+// @Summary Update a tag
+// @Description Update an existing tag (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param tagId path int true "Tag ID"
+// @Param tag body dto.UpdateTagRequest true "Tag data"
+// @Success 200 {object} dto.TagResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /admin/tags/{tagId} [put]
 func (h *TagHandler) Update(c *gin.Context) {
 	tagIDStr := c.Param("tagId")
 	tagID, err := strconv.ParseUint(tagIDStr, 10, 64)
@@ -90,7 +129,17 @@ func (h *TagHandler) Update(c *gin.Context) {
 	Success(c, toTagResponse(tag))
 }
 
-// Delete handles DELETE /api/v1/admin/tags/:tagId
+// Delete godoc
+// @Summary Delete a tag
+// @Description Delete a tag by ID (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param tagId path int true "Tag ID"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /admin/tags/{tagId} [delete]
 func (h *TagHandler) Delete(c *gin.Context) {
 	tagIDStr := c.Param("tagId")
 	tagID, err := strconv.ParseUint(tagIDStr, 10, 64)

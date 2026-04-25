@@ -12,7 +12,11 @@ import (
 	"ttt-project/ttt_v5/backend/pkg/youtube"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
+
+	_ "ttt-project/ttt_v5/backend/api"
 )
 
 // Setup configures all routes for the application
@@ -39,6 +43,9 @@ func Setup(app *gin.Engine, cfg *config.Config, db *gorm.DB) {
 			"env":    cfg.Environment,
 		})
 	})
+
+	// Swagger documentation
+	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// API v1 routes
 	v1 := app.Group("/api/v1")

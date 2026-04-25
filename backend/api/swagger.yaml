@@ -1,0 +1,476 @@
+basePath: /api/v1
+definitions:
+  ttt-project_ttt_v5_backend_internal_domain_dto.CreateTagRequest:
+    properties:
+      name:
+        maxLength: 50
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
+  ttt-project_ttt_v5_backend_internal_domain_dto.CreateVideoRequest:
+    properties:
+      youtube_url:
+        type: string
+    required:
+    - youtube_url
+    type: object
+  ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  ttt-project_ttt_v5_backend_internal_domain_dto.TagResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  ttt-project_ttt_v5_backend_internal_domain_dto.UpdateTagRequest:
+    properties:
+      name:
+        maxLength: 50
+        minLength: 1
+        type: string
+    type: object
+  ttt-project_ttt_v5_backend_internal_domain_dto.UpdateVideoRequest:
+    properties:
+      thumbnail_url:
+        type: string
+      title:
+        type: string
+    type: object
+  ttt-project_ttt_v5_backend_internal_domain_dto.VideoResponse:
+    properties:
+      author:
+        type: string
+      duration_seconds:
+        type: integer
+      tags:
+        items:
+          $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.TagResponse'
+        type: array
+      thumbnail_url:
+        type: string
+      title:
+        type: string
+      upload_date:
+        type: string
+      youtube_id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API documentation for TTT Project backend
+  title: TTT Project API
+  version: "1.0"
+paths:
+  /admin/tags:
+    post:
+      consumes:
+      - application/json
+      description: Create a new tag (admin only)
+      parameters:
+      - description: Tag data
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.CreateTagRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.TagResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Create a new tag
+      tags:
+      - admin
+  /admin/tags/{tagId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a tag by ID (admin only)
+      parameters:
+      - description: Tag ID
+        in: path
+        name: tagId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Delete a tag
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Update an existing tag (admin only)
+      parameters:
+      - description: Tag ID
+        in: path
+        name: tagId
+        required: true
+        type: integer
+      - description: Tag data
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.UpdateTagRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.TagResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Update a tag
+      tags:
+      - admin
+  /admin/videos:
+    post:
+      consumes:
+      - application/json
+      description: Create a new video (admin only)
+      parameters:
+      - description: Video data
+        in: body
+        name: video
+        required: true
+        schema:
+          $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.CreateVideoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.VideoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Create a new video
+      tags:
+      - admin
+  /admin/videos/{youtubeId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a video by YouTube ID (admin only)
+      parameters:
+      - description: YouTube ID
+        in: path
+        name: youtubeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Delete a video
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Update an existing video (admin only)
+      parameters:
+      - description: YouTube ID
+        in: path
+        name: youtubeId
+        required: true
+        type: string
+      - description: Video data
+        in: body
+        name: video
+        required: true
+        schema:
+          $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.UpdateVideoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.VideoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Update a video
+      tags:
+      - admin
+  /admin/videos/{youtubeId}/tags/{tagId}:
+    delete:
+      consumes:
+      - application/json
+      description: Detach a tag from a video (admin only)
+      parameters:
+      - description: YouTube ID
+        in: path
+        name: youtubeId
+        required: true
+        type: string
+      - description: Tag ID
+        in: path
+        name: tagId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Detach a tag from a video
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: Attach a tag to a video (admin only)
+      parameters:
+      - description: YouTube ID
+        in: path
+        name: youtubeId
+        required: true
+        type: string
+      - description: Tag ID
+        in: path
+        name: tagId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Attach a tag to a video
+      tags:
+      - admin
+  /tags:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all available tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.TagResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: List all tags
+      tags:
+      - tags
+  /tags/{tagId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a single tag by its ID
+      parameters:
+      - description: Tag ID
+        in: path
+        name: tagId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.TagResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Get tag by ID
+      tags:
+      - tags
+  /tags/{tagId}/videos:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of videos filtered by tag ID
+      parameters:
+      - description: Tag ID
+        in: path
+        name: tagId
+        required: true
+        type: integer
+      - default: 20
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.VideoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Get videos by tag ID
+      tags:
+      - videos
+  /videos:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of videos with optional filters
+      parameters:
+      - default: 20
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Filter by tag ID
+        in: query
+        name: tag_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.VideoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: List all videos
+      tags:
+      - videos
+  /videos/{youtubeId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a single video by its YouTube ID
+      parameters:
+      - description: YouTube ID
+        in: path
+        name: youtubeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.VideoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
+      summary: Get video by YouTube ID
+      tags:
+      - videos
+swagger: "2.0"

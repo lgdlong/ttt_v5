@@ -20,7 +20,19 @@ func NewVideoHandler(svc *service.VideoService) *VideoHandler {
 	return &VideoHandler{svc: svc}
 }
 
-// List handles GET /api/v1/videos
+// List godoc
+// @Summary List all videos
+// @Description Get paginated list of videos with optional filters
+// @Tags videos
+// @Accept json
+// @Produce json
+// @Param limit query int false "Limit" default(20)
+// @Param offset query int false "Offset" default(0)
+// @Param tag_id query int false "Filter by tag ID"
+// @Success 200 {object} dto.VideoResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /videos [get]
 func (h *VideoHandler) List(c *gin.Context) {
 	var filter dto.VideoFilter
 	if err := c.ShouldBindQuery(&filter); err != nil {
@@ -48,7 +60,17 @@ func (h *VideoHandler) List(c *gin.Context) {
 	})
 }
 
-// GetByID handles GET /api/v1/videos/:youtubeId
+// GetByID godoc
+// @Summary Get video by YouTube ID
+// @Description Get a single video by its YouTube ID
+// @Tags videos
+// @Accept json
+// @Produce json
+// @Param youtubeId path string true "YouTube ID"
+// @Success 200 {object} dto.VideoResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /videos/{youtubeId} [get]
 func (h *VideoHandler) GetByID(c *gin.Context) {
 	youtubeID := c.Param("youtubeId")
 	if youtubeID == "" {
@@ -69,7 +91,19 @@ func (h *VideoHandler) GetByID(c *gin.Context) {
 	Success(c, videoResp)
 }
 
-// GetByTagID handles GET /api/v1/tags/:tagId/videos
+// GetByTagID godoc
+// @Summary Get videos by tag ID
+// @Description Get paginated list of videos filtered by tag ID
+// @Tags videos
+// @Accept json
+// @Produce json
+// @Param tagId path int true "Tag ID"
+// @Param limit query int false "Limit" default(20)
+// @Param offset query int false "Offset" default(0)
+// @Success 200 {object} dto.VideoResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /tags/{tagId}/videos [get]
 func (h *VideoHandler) GetByTagID(c *gin.Context) {
 	tagIDStr := c.Param("tagId")
 	tagID, err := strconv.ParseUint(tagIDStr, 10, 64)
@@ -104,7 +138,17 @@ func (h *VideoHandler) GetByTagID(c *gin.Context) {
 	})
 }
 
-// Create handles POST /api/v1/admin/videos
+// Create godoc
+// @Summary Create a new video
+// @Description Create a new video (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param video body dto.CreateVideoRequest true "Video data"
+// @Success 201 {object} dto.VideoResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /admin/videos [post]
 func (h *VideoHandler) Create(c *gin.Context) {
 	var req dto.CreateVideoRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -121,7 +165,18 @@ func (h *VideoHandler) Create(c *gin.Context) {
 	Created(c, toVideoResponse(video))
 }
 
-// Update handles PUT /api/v1/admin/videos/:youtubeId
+// Update godoc
+// @Summary Update a video
+// @Description Update an existing video (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param youtubeId path string true "YouTube ID"
+// @Param video body dto.UpdateVideoRequest true "Video data"
+// @Success 200 {object} dto.VideoResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /admin/videos/{youtubeId} [put]
 func (h *VideoHandler) Update(c *gin.Context) {
 	youtubeID := c.Param("youtubeId")
 	if youtubeID == "" {
@@ -144,7 +199,17 @@ func (h *VideoHandler) Update(c *gin.Context) {
 	Success(c, toVideoResponse(video))
 }
 
-// Delete handles DELETE /api/v1/admin/videos/:youtubeId
+// Delete godoc
+// @Summary Delete a video
+// @Description Delete a video by YouTube ID (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param youtubeId path string true "YouTube ID"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /admin/videos/{youtubeId} [delete]
 func (h *VideoHandler) Delete(c *gin.Context) {
 	youtubeID := c.Param("youtubeId")
 	if youtubeID == "" {
@@ -160,7 +225,18 @@ func (h *VideoHandler) Delete(c *gin.Context) {
 	NoContent(c)
 }
 
-// AttachTag handles POST /api/v1/admin/videos/:youtubeId/tags/:tagId
+// AttachTag godoc
+// @Summary Attach a tag to a video
+// @Description Attach a tag to a video (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param youtubeId path string true "YouTube ID"
+// @Param tagId path int true "Tag ID"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /admin/videos/{youtubeId}/tags/{tagId} [post]
 func (h *VideoHandler) AttachTag(c *gin.Context) {
 	youtubeID := c.Param("youtubeId")
 	tagIDStr := c.Param("tagId")
@@ -179,7 +255,18 @@ func (h *VideoHandler) AttachTag(c *gin.Context) {
 	Success(c, gin.H{"message": "Tag attached successfully"})
 }
 
-// DetachTag handles DELETE /api/v1/admin/videos/:youtubeId/tags/:tagId
+// DetachTag godoc
+// @Summary Detach a tag from a video
+// @Description Detach a tag from a video (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param youtubeId path string true "YouTube ID"
+// @Param tagId path int true "Tag ID"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /admin/videos/{youtubeId}/tags/{tagId} [delete]
 func (h *VideoHandler) DetachTag(c *gin.Context) {
 	youtubeID := c.Param("youtubeId")
 	tagIDStr := c.Param("tagId")

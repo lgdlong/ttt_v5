@@ -39,3 +39,9 @@ type TagResponse struct {
 type TagListResponse struct {
 	Tags []TagResponse `json:"tags"`
 }
+
+// ErrorResponse represents an error response
+type ErrorResponse struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
