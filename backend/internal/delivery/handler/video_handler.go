@@ -52,11 +52,12 @@ func (h *VideoHandler) List(c *gin.Context) {
 		response[i] = toVideoResponse(&v)
 	}
 
-	Success(c, gin.H{
-		"videos": response,
-		"total":  total,
-		"limit":  filter.Limit,
-		"offset": filter.Offset,
+	// List response with pagination meta
+	SuccessWithMeta(c, response, dto.PaginationMeta{
+		Page:       filter.Page,
+		PageSize:   filter.Limit,
+		TotalCount: total,
+		TotalPages: int((total + int64(filter.Limit) - 1) / int64(filter.Limit)),
 	})
 }
 
@@ -130,11 +131,12 @@ func (h *VideoHandler) GetByTagID(c *gin.Context) {
 		response[i] = toVideoResponse(&v)
 	}
 
-	Success(c, gin.H{
-		"videos": response,
-		"total":  total,
-		"limit":  filter.Limit,
-		"offset": filter.Offset,
+	// List response with pagination meta
+	SuccessWithMeta(c, response, dto.PaginationMeta{
+		Page:       filter.Page,
+		PageSize:   filter.Limit,
+		TotalCount: total,
+		TotalPages: int((total + int64(filter.Limit) - 1) / int64(filter.Limit)),
 	})
 }
 

@@ -4,12 +4,12 @@ import "time"
 
 // VideoFilter holds query parameters for filtering videos
 type VideoFilter struct {
-	Query    string `form:"q"`
-	TagIDs   []uint `form:"tag_ids"`
-	Sort     string `form:"sort"`
-	Order    string `form:"order"`
-	Limit    int    `form:"limit"`
-	Offset   int    `form:"offset"`
+	Query  string `form:"q"`
+	TagIDs []uint `form:"tag_ids"`
+	Sort   string `form:"sort"`
+	Order  string `form:"order"`
+	Page   int    `form:"page"`
+	Limit  int    `form:"limit"`
 }
 
 // Normalize sets default values for video filter
@@ -22,6 +22,9 @@ func (f *VideoFilter) Normalize() {
 	}
 	if f.Limit <= 0 || f.Limit > 100 {
 		f.Limit = 20
+	}
+	if f.Page <= 0 {
+		f.Page = 1
 	}
 }
 
@@ -57,6 +60,6 @@ type VideoResponse struct {
 
 // VideoListResponse represents a paginated list of videos
 type VideoListResponse struct {
-	Videos []VideoResponse `json:"videos"`
-	Meta   PaginationMeta  `json:"meta"`
+	Data []VideoResponse `json:"data"`
+	Meta PaginationMeta   `json:"meta"`
 }

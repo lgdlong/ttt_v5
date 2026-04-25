@@ -51,7 +51,8 @@ func (r *GormVideoRepo) List(ctx context.Context, filter dto.VideoFilter) ([]ent
 		return nil, 0, err
 	}
 
-	if err := query.Offset(filter.Offset).Limit(filter.Limit).Find(&videos).Error; err != nil {
+	offset := (filter.Page - 1) * filter.Limit
+	if err := query.Offset(offset).Limit(filter.Limit).Find(&videos).Error; err != nil {
 		return nil, 0, err
 	}
 
@@ -73,7 +74,8 @@ func (r *GormVideoRepo) GetByTagID(ctx context.Context, tagID uint, filter dto.V
 		return nil, 0, err
 	}
 
-	if err := query.Preload("Tags").Offset(filter.Offset).Limit(filter.Limit).Find(&videos).Error; err != nil {
+	offset := (filter.Page - 1) * filter.Limit
+	if err := query.Preload("Tags").Offset(offset).Limit(filter.Limit).Find(&videos).Error; err != nil {
 		return nil, 0, err
 	}
 

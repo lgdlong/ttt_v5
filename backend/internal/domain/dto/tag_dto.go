@@ -2,11 +2,11 @@ package dto
 
 // TagFilter holds query parameters for filtering tags
 type TagFilter struct {
-	Query  string `form:"q"`
-	Sort   string `form:"sort"`
-	Order  string `form:"order"`
-	Limit  int    `form:"limit"`
-	Offset int    `form:"offset"`
+	Query string `form:"q"`
+	Sort  string `form:"sort"`
+	Order string `form:"order"`
+	Page  int    `form:"page"`
+	Limit int    `form:"limit"`
 }
 
 // Normalize sets default values for tag filter
@@ -16,6 +16,9 @@ func (f *TagFilter) Normalize() {
 	}
 	if f.Order == "" {
 		f.Order = "asc"
+	}
+	if f.Page <= 0 {
+		f.Page = 1
 	}
 }
 
@@ -37,7 +40,7 @@ type TagResponse struct {
 
 // TagListResponse represents a list of tags
 type TagListResponse struct {
-	Tags []TagResponse `json:"tags"`
+	Data []TagResponse `json:"data"`
 }
 
 // ErrorResponse represents an error response
