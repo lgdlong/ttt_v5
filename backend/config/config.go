@@ -11,28 +11,29 @@ import (
 type Config struct {
 	ServerPort string
 	DatabaseURL string
-	DatabaseHost string
-	DatabasePort string
-	DatabaseUser string
-	DatabasePassword string
-	DatabaseName string
+	DBHost string
+	DBPort string
+	DBUser string
+	DBPassword string
+	DBName string
 	Environment string
 }
 
+
 // Load reads environment variables and returns a Config struct
 func Load() (*Config, error) {
-	// Load .env file if present
-	_ = godotenv.Load()
+	// Load .env file from project root
+	_ = godotenv.Load("../.env")
 
 	return &Config{
-		ServerPort:       getEnv("SERVER_PORT", "8080"),
-		DatabaseURL:      getEnv("DATABASE_URL", ""),
-		DatabaseHost:     getEnv("DB_HOST", "localhost"),
-		DatabasePort:     getEnv("DB_PORT", "5432"),
-		DatabaseUser:     getEnv("DB_USER", "postgres"),
-		DatabasePassword: getEnv("DB_PASSWORD", "postgres"),
-		DatabaseName:     getEnv("DB_NAME", "ttt_project"),
-		Environment:      getEnv("ENVIRONMENT", "development"),
+		ServerPort:    getEnv("BACKEND_PORT", "8080"),
+		DatabaseURL:    getEnv("DATABASE_URL", ""),
+		DBHost:        getEnv("POSTGRES_HOST", "localhost"),
+		DBPort:        getEnv("POSTGRES_PORT", "5432"),
+		DBUser:        getEnv("POSTGRES_USER", "postgres"),
+		DBPassword:    getEnv("POSTGRES_PASSWORD", "postgres"),
+		DBName:        getEnv("POSTGRES_DB", "ttt_project"),
+		Environment:   getEnv("GIN_MODE", "debug"),
 	}, nil
 }
 
@@ -43,7 +44,7 @@ func (c *Config) GetDSN() string {
 	}
 	return fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		c.DatabaseHost, c.DatabasePort, c.DatabaseUser, c.DatabasePassword, c.DatabaseName,
+		c.DBHost, c.DBPort, c.DBUser, c.DBPassword, c.DBName,
 	)
 }
 
