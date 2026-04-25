@@ -6,7 +6,6 @@ import (
 	"ttt-project/ttt_v5/backend/config"
 	"ttt-project/ttt_v5/backend/internal/delivery/middleware"
 	"ttt-project/ttt_v5/backend/internal/delivery/router"
-	"ttt-project/ttt_v5/backend/internal/domain/entity"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
@@ -27,11 +26,6 @@ func main() {
 	})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
-	}
-
-	// Auto-migrate entities
-	if err := db.AutoMigrate(&entity.Video{}, &entity.Tag{}); err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
 	// Set Gin mode based on environment
