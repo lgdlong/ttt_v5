@@ -48,7 +48,7 @@ func (r *GormTagRepo) GetByName(ctx context.Context, name string) (*entity.Tag, 
 // List retrieves all tags
 func (r *GormTagRepo) List(ctx context.Context) ([]entity.Tag, error) {
 	var tags []entity.Tag
-	err := r.db.WithContext(ctx).Find(&tags).Error
+	err := r.db.WithContext(ctx).Order("name ASC").Find(&tags).Error
 	return tags, err
 }
 
@@ -57,7 +57,7 @@ func (r *GormTagRepo) Search(ctx context.Context, query string, page, limit int)
 	var tags []entity.Tag
 	var total int64
 
-	q := r.db.WithContext(ctx).Model(&entity.Tag{})
+	q := r.db.WithContext(ctx).Model(&entity.Tag{}).Order("name ASC")
 	if query != "" {
 		q = q.Where("name ILIKE ?", "%"+query+"%")
 	}

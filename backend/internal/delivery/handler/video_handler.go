@@ -304,5 +304,14 @@ func toVideoResponse(v *entity.Video) dto.VideoResponse {
 		Author:          v.Author,
 		UploadDate:      v.UploadDate,
 	}
+	if len(v.Tags) > 0 {
+		resp.Tags = make([]dto.TagResponse, len(v.Tags))
+		for i, tag := range v.Tags {
+			resp.Tags[i] = dto.TagResponse{
+				ID:   uint(tag.ID),
+				Name: tag.Name,
+			}
+		}
+	}
 	return resp
 }

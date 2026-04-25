@@ -1,14 +1,12 @@
 import { toast } from "sonner"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { SelectWrapper } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { api } from "@/lib/api"
@@ -21,7 +19,7 @@ export function VideoManagementPage() {
 
   const [attachDialogOpen, setAttachDialogOpen] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null)
-  const [selectedTagId, setSelectedTagId] = useState<string>("")
+  const [tagSearch, setTagSearch] = useState("")
 
   const { data: videosData, isLoading } = useQuery({
     queryKey: ["videos", { q: search }],
@@ -39,9 +37,6 @@ export function VideoManagementPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["videos"] })
       toast.success(VI.tagAttached)
-      setAttachDialogOpen(false)
-      setSelectedVideo(null)
-      setSelectedTagId("")
     },
     onError: () => {
       toast.error(VI.errorOccurred)
@@ -63,14 +58,23 @@ export function VideoManagementPage() {
   const videos: Video[] = videosData ?? []
   const tags: Tag[] = tagsData ?? []
 
+  // Get available tags that are not yet attached to the video
+  const availableTags = tags.filter(
+    (tag) => !selectedVideo?.tags?.some((t) => t.id === tag.id)
+  )
+  const filteredTags = availableTags.filter((tag) =>
+    tag.name.toLowerCase().includes(tagSearch.toLowerCase())
+  )
+
   const handleAttach = (video: Video) => {
     setSelectedVideo(video)
+    setTagSearch("")
     setAttachDialogOpen(true)
   }
 
-  const handleAttachConfirm = () => {
-    if (selectedVideo && selectedTagId) {
-      attachMutation.mutate({ youtubeId: selectedVideo.youtube_id, tagId: Number(selectedTagId) })
+  const handleAttachTag = (tagId: number) => {
+    if (selectedVideo) {
+      attachMutation.mutate({ youtubeId: selectedVideo.youtube_id, tagId })
     }
   }
 
@@ -163,27 +167,77 @@ export function VideoManagementPage() {
       </Card>
 
       <Dialog open={attachDialogOpen} onOpenChange={setAttachDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Gán thẻ cho video</DialogTitle>
-            <DialogDescription>
-              Chọn một thẻ để gán cho video: {selectedVideo?.title}
+            <DialogDescription className="text-sm">
+              {selectedVideo?.title}
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <Label>Thẻ</Label>
-            <SelectWrapper value={selectedTagId} onChange={(e) => setSelectedTagId(e.target.value)}>
-              <option value="">-- Chọn thẻ --</option>
-              {tags.map((tag) => (
-                <option key={tag.id} value={tag.id}>{tag.name}</option>
-              ))}
-            </SelectWrapper>
+
+          <div className="space-y-4">
+            {/* Assigned Tags - Top */}
+            <div>
+              <Label className="text-xs text-muted-foreground">Thẻ đã gán</Label>
+              <div className="mt-1 flex flex-wrap gap-1 min-h-[32px]">
+                {selectedVideo?.tags && selectedVideo.tags.length > 0 ? (
+                  selectedVideo.tags.map((tag) => (
+                    <Badge
+                      key={tag.id}
+                      variant="secondary"
+                      className="gap-1 pr-1"
+                    >
+                      {tag.name}
+                      <button
+                        onClick={() => handleDetachTag(selectedVideo, tag.id)}
+                        disabled={detachMutation.isPending}
+                        className="ml-1 text-xs hover:text-red-500 disabled:opacity-50"
+                      >
+                        ×
+                      </button>
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-sm text-muted-foreground">Chưa có thẻ nào</span>
+                )}
+              </div>
+            </div>
+
+            {/* Search Bar */}
+            <div>
+              <Label className="text-xs text-muted-foreground">Thêm thẻ mới</Label>
+              <Input
+                placeholder="Tìm thẻ..."
+                value={tagSearch}
+                onChange={(e) => setTagSearch(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+
+            {/* Available Tags List */}
+            <div className="max-h-48 overflow-y-auto space-y-1">
+              {filteredTags.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-2">
+                  {availableTags.length === 0 ? "Tất cả thẻ đã được gán" : "Không tìm thấy thẻ"}
+                </p>
+              ) : (
+                filteredTags.map((tag) => (
+                  <button
+                    key={tag.id}
+                    onClick={() => handleAttachTag(tag.id)}
+                    disabled={attachMutation.isPending}
+                    className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground disabled:opacity-50 transition-colors"
+                  >
+                    {tag.name}
+                  </button>
+                ))
+              )}
+            </div>
           </div>
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAttachDialogOpen(false)}>{VI.cancel}</Button>
-            <Button onClick={handleAttachConfirm} disabled={!selectedTagId || attachMutation.isPending}>
-              {attachMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-              Gán
+            <Button variant="outline" onClick={() => setAttachDialogOpen(false)}>
+              {VI.cancel}
             </Button>
           </DialogFooter>
         </DialogContent>

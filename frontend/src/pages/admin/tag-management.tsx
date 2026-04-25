@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Loader2, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogHeader, DialogTitle, DialogFooter, DialogDescription, DialogClose } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -155,6 +155,7 @@ export function TagManagementPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>{selectedTag ? VI.edit : VI.create}</DialogTitle>
           <DialogDescription>
@@ -170,16 +171,18 @@ export function TagManagementPage() {
           />
         </div>
         <DialogFooter>
-          <DialogClose onClose={closeDialog}>{VI.cancel}</DialogClose>
+          <Button variant="outline" onClick={closeDialog}>{VI.cancel}</Button>
           <Button onClick={handleSave} disabled={!tagName.trim() || createMutation.isPending || updateMutation.isPending}>
             {(createMutation.isPending || updateMutation.isPending) && <Loader2 className="h-4 w-4 animate-spin" />}
             {VI.save}
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>{VI.delete}</DialogTitle>
           <DialogDescription>
@@ -187,12 +190,13 @@ export function TagManagementPage() {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <DialogClose onClose={() => setDeleteDialogOpen(false)}>{VI.cancel}</DialogClose>
+          <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>{VI.cancel}</Button>
           <Button variant="destructive" onClick={() => tagToDelete && deleteMutation.mutate(tagToDelete.id)} disabled={deleteMutation.isPending}>
             {deleteMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
             {VI.delete}
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   )

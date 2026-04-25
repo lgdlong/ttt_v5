@@ -15,6 +15,10 @@ async function fetchApi<T>(url: string, options?: RequestInit): Promise<T> {
     throw new Error(`API Error: ${response.status} ${response.statusText}`)
   }
 
+  if (response.status === 204) {
+    return undefined as T
+  }
+
   const json = await response.json()
   // Handle wrapped response format
   if (json && typeof json === "object" && "data" in json) {

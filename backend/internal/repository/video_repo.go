@@ -27,7 +27,9 @@ func (r *GormVideoRepo) Create(ctx context.Context, video *entity.Video) error {
 // GetByID retrieves a video by youtube_id
 func (r *GormVideoRepo) GetByID(ctx context.Context, youtubeID string) (*entity.Video, error) {
 	var video entity.Video
-	err := r.db.WithContext(ctx).Where("youtube_id = ?", youtubeID).First(&video).Error
+	err := r.db.WithContext(ctx).Preload("Tags", func(db *gorm.DB) *gorm.DB {
+		return db.Order("name ASC")
+	}).Where("youtube_id = ?", youtubeID).First(&video).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -42,7 +44,9 @@ func (r *GormVideoRepo) List(ctx context.Context, filter dto.VideoFilter) ([]ent
 	var videos []entity.Video
 	var total int64
 
-	query := r.db.WithContext(ctx).Model(&entity.Video{})
+	query := r.db.WithContext(ctx).Model(&entity.Video{}).Preload("Tags", func(db *gorm.DB) *gorm.DB {
+		return db.Order("name ASC")
+	})
 	if filter.Query != "" {
 		query = query.Where("title ILIKE ?", "%"+filter.Query+"%")
 	}
