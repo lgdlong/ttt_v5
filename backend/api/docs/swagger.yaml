@@ -330,19 +330,38 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get a list of all available tags
+      description: Get paginated list of tags, optionally filtered by search query
+      parameters:
+      - description: Search query
+        in: query
+        name: q
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Page size
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.TagResponse'
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.TagListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
-      summary: List all tags
+      summary: List or search tags
       tags:
       - tags
   /tags/{tagId}:
@@ -413,15 +432,29 @@ paths:
       summary: Get videos by tag ID
       tags:
       - videos
-  /tags/search:
+  /videos:
     get:
       consumes:
       - application/json
-      description: Get paginated tags matching a name query
+      description: Get paginated list of videos with optional filters
       parameters:
-      - description: Search query
+      - description: Search by title
         in: query
         name: q
+        type: string
+      - description: Filter by tag IDs (comma-separated)
+        in: query
+        name: tag_ids
+        type: string
+      - default: created_at
+        description: Sort field
+        in: query
+        name: sort
+        type: string
+      - default: desc
+        description: Sort order (asc/desc)
+        in: query
+        name: order
         type: string
       - default: 1
         description: Page number
@@ -432,44 +465,6 @@ paths:
         description: Page size
         in: query
         name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.TagListResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ttt-project_ttt_v5_backend_internal_domain_dto.ErrorResponse'
-      summary: Search tags by name
-      tags:
-      - tags
-  /videos:
-    get:
-      consumes:
-      - application/json
-      description: Get paginated list of videos with optional filters
-      parameters:
-      - default: 20
-        description: Limit
-        in: query
-        name: limit
-        type: integer
-      - default: 0
-        description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Filter by tag ID
-        in: query
-        name: tag_id
         type: integer
       produces:
       - application/json

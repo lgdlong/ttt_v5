@@ -21,27 +21,8 @@ func NewTagHandler(svc *service.TagService) *TagHandler {
 }
 
 // List godoc
-// @Summary List all tags
-// @Description Get a list of all available tags
-// @Tags tags
-// @Accept json
-// @Produce json
-// @Success 200 {object} dto.TagResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /tags [get]
-func (h *TagHandler) List(c *gin.Context) {
-	tags, err := h.svc.List(c.Request.Context())
-	if err != nil {
-		InternalError(c, "Failed to list tags")
-		return
-	}
-
-	Success(c, gin.H{"tags": toTagResponses(tags)})
-}
-
-// Search godoc
-// @Summary Search tags by name
-// @Description Get paginated tags matching a name query
+// @Summary List or search tags
+// @Description Get paginated list of tags, optionally filtered by search query
 // @Tags tags
 // @Accept json
 // @Produce json
@@ -51,8 +32,8 @@ func (h *TagHandler) List(c *gin.Context) {
 // @Success 200 {object} dto.TagListResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
-// @Router /tags/search [get]
-func (h *TagHandler) Search(c *gin.Context) {
+// @Router /tags [get]
+func (h *TagHandler) List(c *gin.Context) {
 	query := c.Query("q")
 	page := 1
 	limit := 20
@@ -68,15 +49,28 @@ func (h *TagHandler) Search(c *gin.Context) {
 		}
 	}
 
-	tags, total, err := h.svc.Search(c.Request.Context(), query, page, limit)
-	if err != nil {
-		InternalError(c, "Failed to search tags")
-		return
-	}
+	var response []dto.TagResponse
+	var total int64
 
-	response := make([]dto.TagResponse, len(tags))
-	for i, t := range tags {
-		response[i] = toTagResponse(&t)
+	if query != "" {
+		tags, tot, err := h.svc.Search(c.Request.Context(), query, page, limit)
+		if err != nil {
+			InternalError(c, "Failed to search tags")
+			return
+		}
+		total = tot
+		response = make([]dto.TagResponse, len(tags))
+		for i, t := range tags {
+			response[i] = toTagResponse(&t)
+		}
+	} else {
+		tags, err := h.svc.List(c.Request.Context())
+		if err != nil {
+			InternalError(c, "Failed to list tags")
+			return
+		}
+		total = int64(len(tags))
+		response = toTagResponses(tags)
 	}
 
 	SuccessWithMeta(c, response, dto.PaginationMeta{

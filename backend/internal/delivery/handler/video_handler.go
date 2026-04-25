@@ -26,9 +26,12 @@ func NewVideoHandler(svc *service.VideoService) *VideoHandler {
 // @Tags videos
 // @Accept json
 // @Produce json
-// @Param limit query int false "Limit" default(20)
-// @Param offset query int false "Offset" default(0)
-// @Param tag_id query int false "Filter by tag ID"
+// @Param q query string false "Search by title"
+// @Param tag_ids query string false "Filter by tag IDs (comma-separated)"
+// @Param sort query string false "Sort field" default(created_at)
+// @Param order query string false "Sort order (asc/desc)" default(desc)
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Page size" default(20)
 // @Success 200 {object} dto.VideoResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
@@ -74,18 +77,22 @@ func (h *VideoHandler) List(c *gin.Context) {
 // @Router /videos/{youtubeId} [get]
 func (h *VideoHandler) GetByID(c *gin.Context) {
 	youtubeID := c.Param("youtubeId")
-	if youtubeID == "" {
-		BadRequest(c, "youtubeId is required")
-		return
-	}
 
 	video, err := h.svc.GetByID(c.Request.Context(), youtubeID)
 	if err != nil {
+		InternalError(c, "Failed to retrieve video")
+		return
+	}
+	if video == nil {
 		NotFound(c, "Video not found")
 		return
 	}
 
-	tags, _ := h.svc.GetTagsByVideoID(c.Request.Context(), youtubeID)
+	tags, err := h.svc.GetTagsByVideoID(c.Request.Context(), youtubeID)
+	if err != nil {
+		InternalError(c, "Failed to retrieve video tags")
+		return
+	}
 	videoResp := toVideoResponse(video)
 	videoResp.Tags = toTagResponses(tags)
 
@@ -181,10 +188,6 @@ func (h *VideoHandler) Create(c *gin.Context) {
 // @Router /admin/videos/{youtubeId} [put]
 func (h *VideoHandler) Update(c *gin.Context) {
 	youtubeID := c.Param("youtubeId")
-	if youtubeID == "" {
-		BadRequest(c, "youtubeId is required")
-		return
-	}
 
 	var req dto.UpdateVideoRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -194,6 +197,10 @@ func (h *VideoHandler) Update(c *gin.Context) {
 
 	video, err := h.svc.Update(c.Request.Context(), youtubeID, req)
 	if err != nil {
+		InternalError(c, "Failed to update video")
+		return
+	}
+	if video == nil {
 		NotFound(c, "Video not found")
 		return
 	}
@@ -214,10 +221,6 @@ func (h *VideoHandler) Update(c *gin.Context) {
 // @Router /admin/videos/{youtubeId} [delete]
 func (h *VideoHandler) Delete(c *gin.Context) {
 	youtubeID := c.Param("youtubeId")
-	if youtubeID == "" {
-		BadRequest(c, "youtubeId is required")
-		return
-	}
 
 	if err := h.svc.Delete(c.Request.Context(), youtubeID); err != nil {
 		InternalError(c, "Failed to delete video")

@@ -57,7 +57,6 @@ func Setup(app *gin.Engine, cfg *config.Config, db *gorm.DB) {
 	v1.GET("/videos", videoHandler.List)
 	v1.GET("/videos/:youtubeId", videoHandler.GetByID)
 	v1.GET("/tags", tagHandler.List)
-	v1.GET("/tags/search", tagHandler.Search)
 	v1.GET("/tags/:tagId/videos", videoHandler.GetByTagID)
 
 	// Admin endpoints (no rate limiting)
