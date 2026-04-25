@@ -34,6 +34,11 @@ func (s *TagService) GetByName(ctx context.Context, name string) (*entity.Tag, e
 	return s.repo.GetByName(ctx, name)
 }
 
+// Search returns tags matching a name query with pagination
+func (s *TagService) Search(ctx context.Context, query string, page, limit int) ([]entity.Tag, int64, error) {
+	return s.repo.Search(ctx, query, page, limit)
+}
+
 // Create creates a new tag
 func (s *TagService) Create(ctx context.Context, req dto.CreateTagRequest) (*entity.Tag, error) {
 	// Check if tag already exists

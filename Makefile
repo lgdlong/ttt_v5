@@ -88,7 +88,7 @@ backend-dev: ## Start backend in development mode
 
 backend-run: ## Run backend server
 	@echo "Generating swagger docs..."
-	@cd backend && swag init -g cmd/swag/main.go -o api --parseDependency --parseInternal 2>&1 | grep -v "^2026" || true
+	@cd backend && swag init -g cmd/swag/main.go -o api/docs --parseDependency --parseInternal 2>&1 | grep -v "^2026" || true
 	@echo "Starting backend..."
 	@cd backend && go run ./cmd/server
 
@@ -106,7 +106,7 @@ backend-lint: ## Lint backend code
 
 swagger: ## Generate swagger docs
 	@echo "Generating swagger docs..."
-	@cd backend && swag init -g cmd/swag/main.go -o api --parseDependency --parseInternal
+	@cd backend && swag init -g cmd/swag/main.go -o api/docs --parseDependency --parseInternal
 
 # =============================================================================
 # FRONTEND (React/TypeScript)

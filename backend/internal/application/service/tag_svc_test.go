@@ -75,6 +75,16 @@ func (m *mockTagRepo) Delete(ctx context.Context, id uint) error {
 	return nil
 }
 
+func (m *mockTagRepo) Search(ctx context.Context, query string, page, limit int) ([]entity.Tag, int64, error) {
+	var result []entity.Tag
+	for _, t := range m.tags {
+		if query == "" || (len(t.Name) >= len(query) && t.Name[:len(query)] == query) {
+			result = append(result, *t)
+		}
+	}
+	return result, int64(len(result)), nil
+}
+
 func TestTagService_List(t *testing.T) {
 	repo := newMockTagRepo()
 	repo.tags[1] = &entity.Tag{ID: 1, Name: "Music"}

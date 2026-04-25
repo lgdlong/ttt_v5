@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "ttt-project/ttt_v5/backend/api"
+	_ "ttt-project/ttt_v5/backend/api/docs"
 	_ "ttt-project/ttt_v5/backend/internal/delivery/handler"
 )
 

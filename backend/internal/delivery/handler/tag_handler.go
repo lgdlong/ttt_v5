@@ -39,6 +39,54 @@ func (h *TagHandler) List(c *gin.Context) {
 	Success(c, gin.H{"tags": toTagResponses(tags)})
 }
 
+// Search godoc
+// @Summary Search tags by name
+// @Description Get paginated tags matching a name query
+// @Tags tags
+// @Accept json
+// @Produce json
+// @Param q query string false "Search query"
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Page size" default(20)
+// @Success 200 {object} dto.TagListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /tags/search [get]
+func (h *TagHandler) Search(c *gin.Context) {
+	query := c.Query("q")
+	page := 1
+	limit := 20
+
+	if p := c.Query("page"); p != "" {
+		if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
+			page = parsed
+		}
+	}
+	if l := c.Query("limit"); l != "" {
+		if parsed, err := strconv.Atoi(l); err == nil && parsed > 0 && parsed <= 100 {
+			limit = parsed
+		}
+	}
+
+	tags, total, err := h.svc.Search(c.Request.Context(), query, page, limit)
+	if err != nil {
+		InternalError(c, "Failed to search tags")
+		return
+	}
+
+	response := make([]dto.TagResponse, len(tags))
+	for i, t := range tags {
+		response[i] = toTagResponse(&t)
+	}
+
+	SuccessWithMeta(c, response, dto.PaginationMeta{
+		Page:       page,
+		PageSize:   limit,
+		TotalCount: total,
+		TotalPages: int((total + int64(limit) - 1) / int64(limit)),
+	})
+}
+
 // GetByID godoc
 // @Summary Get tag by ID
 // @Description Get a single tag by its ID

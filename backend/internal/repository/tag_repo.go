@@ -52,6 +52,28 @@ func (r *GormTagRepo) List(ctx context.Context) ([]entity.Tag, error) {
 	return tags, err
 }
 
+// Search retrieves tags matching a name query with pagination
+func (r *GormTagRepo) Search(ctx context.Context, query string, page, limit int) ([]entity.Tag, int64, error) {
+	var tags []entity.Tag
+	var total int64
+
+	q := r.db.WithContext(ctx).Model(&entity.Tag{})
+	if query != "" {
+		q = q.Where("name ILIKE ?", "%"+query+"%")
+	}
+
+	if err := q.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * limit
+	if err := q.Offset(offset).Limit(limit).Find(&tags).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return tags, total, nil
+}
+
 // Update modifies an existing tag
 func (r *GormTagRepo) Update(ctx context.Context, tag *entity.Tag) error {
 	return r.db.WithContext(ctx).Save(tag).Error
