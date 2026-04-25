@@ -22,7 +22,7 @@ Edit `.env` with your values:
 
 ```bash
 # Database
-DATABASE_URL=postgres://postgres:postgres@db:5432/ttt_project?sslmode=disable
+DATABASE_URL=postgresql://postgres:postgres@db:5432/ttt_project?sslmode=disable
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=your_secure_password
 POSTGRES_DB=ttt_project
@@ -30,6 +30,7 @@ POSTGRES_DB=ttt_project
 # Backend
 BACKEND_PORT=8080
 GIN_MODE=release
+ENVIRONMENT=production
 
 # Frontend
 VITE_API_URL=http://localhost:8080
@@ -78,33 +79,47 @@ pnpm dev
 
 ## Production Deployment
 
-### 1. Build Images
+### Using docker-compose.prod.yml
+
+For production deployments, use the production Compose file which includes resource limits, health checks, and Traefik labels:
 
 ```bash
-docker-compose build
+# Build and start all services
+docker-compose -f docker-compose.prod.yml up --build
+
+# Run in background
+docker-compose -f docker-compose.prod.yml up -d --build
+
+# View logs
+docker-compose -f docker-compose.prod.yml logs -f
+
+# Stop all services
+docker-compose -f docker-compose.prod.yml down
 ```
 
-### 2. Run Services
+### Alternative: Using Makefile
 
 ```bash
-docker-compose up -d
+make prod-up        # Start production services
+make prod-down      # Stop production services
+make prod-logs      # View production logs
 ```
 
-### 3. Verify Health
+### Verify Health
 
 ```bash
 # Check backend health
-curl http://localhost/api/health
+curl http://localhost/api/v1/health
 
 # Check containers
-docker-compose ps
+docker-compose -f docker-compose.prod.yml ps
 ```
 
-### 4. View Logs
+### View Logs
 
 ```bash
-docker-compose logs -f backend
-docker-compose logs -f frontend
+docker-compose -f docker-compose.prod.yml logs -f backend
+docker-compose -f docker-compose.prod.yml logs -f frontend
 ```
 
 ## Troubleshooting
@@ -145,20 +160,21 @@ docker-compose build --no-cache
 | Service | Image | Port | Health Check |
 |---------|-------|------|--------------|
 | traefik | traefik:v3.0 | 80, 8080 | - |
-| db | postgres:16-alpine | 5432 | pg_isready |
-| backend | golang:1.26-alpine | 8080 | GET /health |
-| frontend | node:24.15.0-alpine | 3000 | GET / |
+| db | postgres:17-alpine | 5432 | pg_isready |
+| backend | golang:1.25-alpine | 8080 | GET /health |
+| frontend | node:24-alpine | 3000 | GET / |
 
 ## Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| DATABASE_URL | PostgreSQL connection string | postgres://postgres:postgres@localhost:5432/ttt_project?sslmode=disable |
+| DATABASE_URL | PostgreSQL connection string | postgresql://postgres:postgres@localhost:5432/ttt_project?sslmode=disable |
 | POSTGRES_USER | Database username | postgres |
 | POSTGRES_PASSWORD | Database password | postgres |
 | POSTGRES_DB | Database name | ttt_project |
 | GIN_MODE | Gin mode (debug/release) | debug |
 | BACKEND_PORT | Backend HTTP port | 8080 |
+| ENVIRONMENT | Environment (development/production) | development |
 
 ## Volume Mounts
 

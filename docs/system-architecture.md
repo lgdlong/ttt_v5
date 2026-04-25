@@ -21,7 +21,7 @@
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| React | 19.2.5 | UI framework |
+| React | 19.x | UI framework |
 | Vite | latest | Build tool |
 | Tailwind CSS | v4 | Styling |
 | TypeScript | 5.x | Type safety |
@@ -31,10 +31,10 @@
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| Go | 1.21+ | Runtime |
+| Go | 1.25.0 | Runtime |
 | Gin | v1.9.1 | HTTP framework |
-| GORM | latest | ORM |
-| PostgreSQL | 16 | Database |
+| GORM | v1.25.12 | ORM |
+| PostgreSQL | 17 | Database |
 
 ### Infrastructure
 
@@ -42,7 +42,7 @@
 |------------|---------|---------|
 | Docker | latest | Containerization |
 | Traefik | v3.0 | Reverse proxy |
-| PostgreSQL | 16-alpine | Database |
+| PostgreSQL | 17-alpine | Database |
 
 ## Component Design
 
@@ -86,14 +86,35 @@ backend/
 
 ### Database
 
-**Schema** (from atlas.hcl):
+**Schema** (from migrations and entities):
 ```sql
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
+CREATE TABLE youtube_videos (
+    youtube_id VARCHAR(255) PRIMARY KEY,
+    title VARCHAR(500),
+    description TEXT,
+    channel_id VARCHAR(255),
+    channel_title VARCHAR(255),
+    published_at TIMESTAMP,
+    thumbnail_url VARCHAR(500),
+    view_count BIGINT DEFAULT 0,
+    like_count BIGINT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tags (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    color VARCHAR(20) DEFAULT '#6366f1',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE video_tags (
+    video_id VARCHAR(255) REFERENCES youtube_videos(youtube_id) ON DELETE CASCADE,
+    tag_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (video_id, tag_id)
 );
 ```
 
@@ -101,18 +122,34 @@ CREATE TABLE users (
 
 ### Current Endpoints
 
+#### Public Endpoints (GET - Rate Limited)
+
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | /health | Health check |
+| GET | /api/v1/videos | List all videos (paginated) |
+| GET | /api/v1/videos/:youtubeId | Get video by YouTube ID |
+| GET | /api/v1/tags | List all tags |
+| GET | /api/v1/tags/:tagId/videos | Get videos by tag |
 
-### Planned Endpoints
+#### Admin Endpoints (POST/PUT/DELETE - No Rate Limiting)
 
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | /api/auth/register | Register new user |
-| POST | /api/auth/login | User login |
-| POST | /api/auth/logout | User logout |
-| GET | /api/users/me | Get current user |
+| POST | /api/v1/admin/videos | Create new video |
+| PUT | /api/v1/admin/videos/:youtubeId | Update video |
+| DELETE | /api/v1/admin/videos/:youtubeId | Delete video |
+| POST | /api/v1/admin/tags | Create new tag |
+| PUT | /api/v1/admin/tags/:tagId | Update tag |
+| DELETE | /api/v1/admin/tags/:tagId | Delete tag |
+| POST | /api/v1/admin/videos/:youtubeId/tags/:tagId | Attach tag to video |
+| DELETE | /api/v1/admin/videos/:youtubeId/tags/:tagId | Detach tag from video |
+
+#### System Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /swagger/*any | Swagger documentation |
 
 ### Response Format
 
@@ -144,9 +181,9 @@ CREATE TABLE users (
 | Service | Image | Ports | Purpose |
 |---------|-------|-------|---------|
 | traefik | traefik:v3.0 | 80, 8080 | Reverse proxy |
-| db | postgres:16-alpine | 5432 | Database |
-| backend | go:1.26-alpine | 8080 | API server |
-| frontend | node:24.15.0-alpine (serve) | 3000 | Static files |
+| db | postgres:17-alpine | 5432 | Database |
+| backend | go:1.25-alpine | 8080 | API server |
+| frontend | node:24-alpine (serve) | 3000 | Static files |
 
 ### Routing
 
@@ -159,8 +196,7 @@ CREATE TABLE users (
 
 1. **RESOLVED**: Frontend now uses `serve` instead of nginx (Traefik handles routing)
 2. Empty `database/migrations/` directory
-3. Go version mismatch: go.mod (1.25.0) vs Dockerfile (1.21-alpine)
-4. Duplicate `atlas.hcl` files in backend/ and database/
+3. Duplicate `atlas.hcl` files in backend/ and database/
 
 ## Security Considerations
 

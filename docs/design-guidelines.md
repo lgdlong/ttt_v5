@@ -192,9 +192,10 @@ transition: all 0.2s ease-in-out;
 This project follows the shadcn/ui design pattern:
 
 - Using `cn()` utility for className composition
-- Tailwind CSS v4 with semantic tokens
+- Tailwind CSS v4.2.4 with CSS-based configuration
 - Radix UI primitives for accessibility
 - Component composition over inheritance
+- CSS variables for theming (no tailwind.config.js)
 
 ## Future Considerations
 
