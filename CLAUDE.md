@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**IMPORTANT:** Always read `.claude/rules/` directory for project-specific rules and workflows before starting any task.
+
 ## Quick Commands
 
 ```bash
