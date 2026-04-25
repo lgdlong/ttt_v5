@@ -2,6 +2,7 @@ package handler
 
 import (
 	"strconv"
+	"strings"
 
 	"ttt-project/ttt_v5/backend/internal/application/service"
 	"ttt-project/ttt_v5/backend/internal/domain/dto"
@@ -167,7 +168,11 @@ func (h *VideoHandler) Create(c *gin.Context) {
 
 	video, err := h.svc.Create(c.Request.Context(), req)
 	if err != nil {
-		BadRequest(c, err.Error())
+		if strings.Contains(err.Error(), "already exists") {
+			Conflict(c, err.Error())
+		} else {
+			BadRequest(c, err.Error())
+		}
 		return
 	}
 

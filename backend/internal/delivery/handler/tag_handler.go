@@ -2,6 +2,7 @@ package handler
 
 import (
 	"strconv"
+	"strings"
 
 	"ttt-project/ttt_v5/backend/internal/application/service"
 	"ttt-project/ttt_v5/backend/internal/domain/dto"
@@ -102,6 +103,10 @@ func (h *TagHandler) GetByID(c *gin.Context) {
 
 	tag, err := h.svc.GetByID(c.Request.Context(), uint(tagID))
 	if err != nil {
+		InternalError(c, "Failed to retrieve tag")
+		return
+	}
+	if tag == nil {
 		NotFound(c, "Tag not found")
 		return
 	}
@@ -129,7 +134,11 @@ func (h *TagHandler) Create(c *gin.Context) {
 
 	tag, err := h.svc.Create(c.Request.Context(), req)
 	if err != nil {
-		BadRequest(c, err.Error())
+		if strings.Contains(err.Error(), "already exists") {
+			Conflict(c, err.Error())
+		} else {
+			BadRequest(c, err.Error())
+		}
 		return
 	}
 
