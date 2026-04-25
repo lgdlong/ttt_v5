@@ -1,1 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Merriweather:wght@400;700&display=swap');
+
 @import "tailwindcss";
+
+@theme {
+  --color-background: oklch(100% 0 0);
+  --color-foreground: oklch(22% 0.01 285);
+  --color-card: oklch(100% 0 0);
+  --color-card-foreground: oklch(22% 0.01 285);
+  --color-primary: oklch(55% 0.2 260);
+  --color-primary-foreground: oklch(100% 0 0);
+  --color-secondary: oklch(96% 0.01 285);
+  --color-secondary-foreground: oklch(22% 0.01 285);
+  --color-muted: oklch(96% 0.01 285);
+  --color-muted-foreground: oklch(45% 0.02 285);
+  --color-accent: oklch(96% 0.01 285);
+  --color-accent-foreground: oklch(22% 0.01 285);
+  --color-destructive: oklch(63% 0.15 25);
+  --color-destructive-foreground: oklch(100% 0 0);
+  --color-border: oklch(86% 0.01 285);
+  --color-input: oklch(86% 0.01 285);
+  --color-ring: oklch(55% 0.2 260);
+  --radius: 0.5rem;
+
+  --font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-serif: 'Merriweather', Georgia, serif;
+}
+
+.dark {
+  --color-background: oklch(22% 0.01 285);
+  --color-foreground: oklch(92% 0.02 285);
+  --color-card: oklch(26% 0.01 285);
+  --color-card-foreground: oklch(92% 0.02 285);
+  --color-primary: oklch(60% 0.18 260);
+  --color-primary-foreground: oklch(22% 0.01 285);
+  --color-secondary: oklch(30% 0.02 285);
+  --color-secondary-foreground: oklch(92% 0.02 285);
+  --color-muted: oklch(30% 0.02 285);
+  --color-muted-foreground: oklch(63% 0.05 285);
+  --color-accent: oklch(30% 0.02 285);
+  --color-accent-foreground: oklch(92% 0.02 285);
+  --color-destructive: oklch(58% 0.15 25);
+  --color-destructive-foreground: oklch(100% 0 0);
+  --color-border: oklch(30% 0.02 285);
+  --color-input: oklch(30% 0.02 285);
+  --color-ring: oklch(60% 0.18 260);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}

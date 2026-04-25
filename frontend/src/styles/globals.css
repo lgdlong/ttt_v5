@@ -1,0 +1,24 @@
+/*
+ * Global styles for TTT Video
+ * Base theme is defined in index.css
+ */
+
+@layer base {
+  :root {
+    --sidebar-width: 240px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
