@@ -74,7 +74,7 @@ export function FilterModal({ open, onOpenChange, onApply }: FilterModalProps) {
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-2 block">Sắp xếp</label>
+            <label className="text-sm font-medium mb-2 block">Sắp xếp theo ngày đăng</label>
             <div className="flex flex-wrap gap-2">
               {(["newest", "oldest", "alphabetical"] as const).map((sort) => (
                 <Badge

@@ -23,11 +23,20 @@ export function VideoBrowserPage() {
   const buildQueryParams = () => {
     const params: Record<string, string> = {}
     if (searchTerm) params.q = searchTerm
-    if (filters.dateFrom) params.date_from = filters.dateFrom
-    if (filters.dateTo) params.date_to = filters.dateTo
-    if (filters.sortOrder) params.sort = filters.sortOrder
-    if (filters.duration) params.duration = filters.duration
-    if (selectedTags.length > 0) params.tag_ids = selectedTags.join(",")
+    if (selectedTags.length > 0) params.tag_ids = selectedTags.join("-")
+    // Map sortOrder to API params
+    if (filters.sortOrder) {
+      if (filters.sortOrder === "newest") {
+        params.sort = "upload_date"
+        params.order = "desc"
+      } else if (filters.sortOrder === "oldest") {
+        params.sort = "upload_date"
+        params.order = "asc"
+      } else if (filters.sortOrder === "alphabetical") {
+        params.sort = "title"
+        params.order = "asc"
+      }
+    }
     return params
   }
 
