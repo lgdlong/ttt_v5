@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { VideoSearchBar } from "@/components/video/video-search-bar"
 import { FilterSidebar } from "@/components/video/filter-sidebar"
 import type { VideoFilters } from "@/components/video/filter-sidebar"
-import { TagFilters } from "@/components/video/tag-filters"
 import { VideoGrid } from "@/components/video/video-grid"
 import { VideoDetailPanel } from "@/components/video/video-detail-panel"
 import { ErrorBoundary } from "@/components/error-boundary"
@@ -50,12 +49,6 @@ export function VideoBrowserPage() {
 
   const videos = data || []
 
-  const handleTagSelect = (tagId: number) => {
-    setSelectedTags((prev) =>
-      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
-    )
-  }
-
   const handleFilterApply = (newFilters: VideoFilters) => {
     // Sync tagIds from filter sidebar to selectedTags for API query
     if (newFilters.tagIds) {
@@ -83,8 +76,6 @@ export function VideoBrowserPage() {
                 <VideoSearchBar onSearchChange={(term) => setSearchTerm(term)} />
               </div>
             </div>
-
-            <TagFilters selectedTags={selectedTags} onTagSelect={handleTagSelect} />
 
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="flex-1 lg:max-w-[60%]">
