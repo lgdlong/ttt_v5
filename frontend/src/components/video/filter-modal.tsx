@@ -15,8 +15,6 @@ import {
 } from "@/components/ui/dialog"
 
 export interface VideoFilters {
-  dateFrom?: string
-  dateTo?: string
   sortOrder?: "newest" | "oldest" | "alphabetical"
   tagIds?: number[]
 }
@@ -62,25 +60,6 @@ export function FilterModal({ open, onOpenChange, onApply }: FilterModalProps) {
         </DialogHeader>
 
         <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium mb-2 block">{VI.filter} ngày</label>
-            <div className="flex gap-2 items-center">
-              <Input
-                type="date"
-                value={filters.dateFrom || ""}
-                onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-                className="flex-1"
-              />
-              <span className="text-muted-foreground">-</span>
-              <Input
-                type="date"
-                value={filters.dateTo || ""}
-                onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-                className="flex-1"
-              />
-            </div>
-          </div>
-
           <div>
             <label className="text-sm font-medium mb-2 block">Sắp xếp theo ngày đăng</label>
             <div className="flex flex-wrap gap-2">
