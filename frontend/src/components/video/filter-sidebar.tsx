@@ -185,7 +185,7 @@ export function FilterSidebar({
           )}
 
           {/* Tag List */}
-          <div className="space-y-0.5 max-h-[500px] lg:max-h-[500px] overflow-y-auto">
+          <div className="space-y-0.5 max-h-[500px] lg:max-h-[500px] 2xl:max-h-[300px] overflow-y-auto">
             {filteredTags.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-6">
                 Không tìm thấy thẻ
