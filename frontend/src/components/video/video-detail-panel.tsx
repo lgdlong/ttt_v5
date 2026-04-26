@@ -3,7 +3,7 @@ import { VI } from "@/lib/constants"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ExternalLink, Film, Clock, Calendar, User } from "lucide-react"
+import { ExternalLink, Film } from "lucide-react"
 
 interface VideoDetailPanelProps {
   video: Video | null
@@ -57,17 +57,17 @@ export function VideoDetailPanel({ video }: VideoDetailPanelProps) {
           <h2 className="text-2xl font-bold leading-tight">{video.title}</h2>
 
           <div className="space-y-3 text-sm">
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <User className="size-4 flex-none" />
-              <span>{video.author}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground shrink-0">Tên kênh:</span>
+              <span className="font-medium">{video.author}</span>
             </div>
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <Calendar className="size-4 flex-none" />
-              <span>{formatDate(video.upload_date)}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground shrink-0">Ngày đăng:</span>
+              <span className="font-medium">{formatDate(video.upload_date)}</span>
             </div>
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <Clock className="size-4 flex-none" />
-              <span>{formatDuration(video.duration_seconds)}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground shrink-0">Thời lượng:</span>
+              <span className="font-medium">{formatDuration(video.duration_seconds)}</span>
             </div>
           </div>
 
