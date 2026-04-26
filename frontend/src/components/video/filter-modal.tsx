@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Filter } from "lucide-react"
+import { Filter, X } from "lucide-react"
 import { VI } from "@/lib/constants"
 import { api } from "@/lib/api"
 import { Button } from "@/components/ui/button"
@@ -18,7 +18,6 @@ export interface VideoFilters {
   dateFrom?: string
   dateTo?: string
   sortOrder?: "newest" | "oldest" | "alphabetical"
-  duration?: "short" | "medium" | "long"
   tagIds?: number[]
 }
 
@@ -30,17 +29,26 @@ interface FilterModalProps {
 
 export function FilterModal({ open, onOpenChange, onApply }: FilterModalProps) {
   const [filters, setFilters] = useState<VideoFilters>({})
+  const [tagSearch, setTagSearch] = useState("")
 
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],
     queryFn: () => api.getTags({ page: "1", limit: "100" }),
   })
 
-  const handleReset = () => setFilters({})
+  const filteredTags = tags.filter((tag) =>
+    tag.name.toLowerCase().includes(tagSearch.toLowerCase())
+  )
+
+  const handleReset = () => {
+    setFilters({})
+    setTagSearch("")
+  }
 
   const handleApply = () => {
     onApply(filters)
     onOpenChange(false)
+    setTagSearch("")
   }
 
   return (
@@ -89,45 +97,59 @@ export function FilterModal({ open, onOpenChange, onApply }: FilterModalProps) {
             </div>
           </div>
 
-          <div>
-            <label className="text-sm font-medium mb-2 block">Thời lượng</label>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { value: "short", label: "Ngắn (<5p)" },
-                { value: "medium", label: "Vừa (5-20p)" },
-                { value: "long", label: "Dài (>20p)" },
-              ].map((d) => (
-                <Badge
-                  key={d.value}
-                  variant={filters.duration === d.value ? "default" : "outline"}
-                  className="cursor-pointer"
-                  onClick={() => setFilters({ ...filters, duration: d.value as VideoFilters["duration"] })}
-                >
-                  {d.label}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
+          
           <div>
             <label className="text-sm font-medium mb-2 block">Thẻ</label>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <Badge
-                  key={tag.id}
-                  variant={filters.tagIds?.includes(tag.id) ? "default" : "outline"}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    const current = filters.tagIds || []
-                    const updated = current.includes(tag.id)
-                      ? current.filter((id) => id !== tag.id)
-                      : [...current, tag.id]
-                    setFilters({ ...filters, tagIds: updated })
-                  }}
-                >
-                  {tag.name}
-                </Badge>
-              ))}
+            <Input
+              placeholder="Tìm kiếm thẻ..."
+              value={tagSearch}
+              onChange={(e) => setTagSearch(e.target.value)}
+              className="mb-2"
+            />
+            {filters.tagIds && filters.tagIds.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {filters.tagIds
+                  .map((id) => tags.find((t) => t.id === id))
+                  .filter(Boolean)
+                  .map((tag) => (
+                    <Badge
+                      key={tag!.id}
+                      variant="default"
+                      className="cursor-pointer pr-1"
+                      onClick={() => {
+                        const current = filters.tagIds || []
+                        setFilters({ ...filters, tagIds: current.filter((id) => id !== tag!.id) })
+                      }}
+                    >
+                      {tag!.name}
+                      <X className="h-3 w-3 ml-1" />
+                    </Badge>
+                  ))}
+              </div>
+            )}
+            <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto border rounded-md p-2">
+              {filteredTags.length === 0 ? (
+                <p className="text-sm text-muted-foreground w-full text-center py-2">
+                  Không tìm thấy thẻ
+                </p>
+              ) : (
+                filteredTags.map((tag) => (
+                  <Badge
+                    key={tag.id}
+                    variant={filters.tagIds?.includes(tag.id) ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() => {
+                      const current = filters.tagIds || []
+                      const updated = current.includes(tag.id)
+                        ? current.filter((id) => id !== tag.id)
+                        : [...current, tag.id]
+                      setFilters({ ...filters, tagIds: updated })
+                    }}
+                  >
+                    {tag.name}
+                  </Badge>
+                ))
+              )}
             </div>
           </div>
         </div>
