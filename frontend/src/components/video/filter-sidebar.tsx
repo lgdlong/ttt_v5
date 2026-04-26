@@ -98,7 +98,7 @@ export function FilterSidebar({
       </div>
 
       {/* Content - Scrollable */}
-      <div className="flex-1 overflow-y-auto min-h-0 px-4 py-3 mb-2 scrollbar-gutter-stable max-h-[calc(100vh-12rem)]">
+      <div className="flex-1 overflow-y-auto min-h-0 px-4 py-3 mb-2 scrollbar-gutter-stable max-h-[85vh] lg:max-h-[calc(100vh-12rem)]">
         {/* Sort Section */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3 px-3 py-0.5">
@@ -193,7 +193,7 @@ export function FilterSidebar({
           )}
 
           {/* Tag List */}
-          <div className="space-y-0.5 max-h-[280px] overflow-y-auto">
+          <div className="space-y-0.5 max-h-[500px] lg:max-h-[280px] overflow-y-auto">
             {filteredTags.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-6">
                 Không tìm thấy thẻ
