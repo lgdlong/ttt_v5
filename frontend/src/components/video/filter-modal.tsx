@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Filter, X } from "lucide-react"
 import { VI } from "@/lib/constants"
@@ -23,11 +23,19 @@ interface FilterModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onApply: (filters: VideoFilters) => void
+  selectedTagIds?: number[]  // Current selected tags from parent
 }
 
-export function FilterModal({ open, onOpenChange, onApply }: FilterModalProps) {
+export function FilterModal({ open, onOpenChange, onApply, selectedTagIds = [] }: FilterModalProps) {
   const [filters, setFilters] = useState<VideoFilters>({})
   const [tagSearch, setTagSearch] = useState("")
+
+  // Sync selected tags from parent when modal opens
+  useEffect(() => {
+    if (open && selectedTagIds.length > 0) {
+      setFilters((prev) => ({ ...prev, tagIds: selectedTagIds }))
+    }
+  }, [open, selectedTagIds])
 
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],

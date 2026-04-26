@@ -54,6 +54,10 @@ export function VideoBrowserPage() {
   }
 
   const handleFilterApply = (newFilters: VideoFilters) => {
+    // Sync tagIds from filter modal to selectedTags for API query
+    if (newFilters.tagIds) {
+      setSelectedTags(newFilters.tagIds)
+    }
     setFilters(newFilters)
   }
 
@@ -94,6 +98,7 @@ export function VideoBrowserPage() {
         open={filterModalOpen}
         onOpenChange={setFilterModalOpen}
         onApply={handleFilterApply}
+        selectedTagIds={selectedTags}
       />
     </ErrorBoundary>
   )
