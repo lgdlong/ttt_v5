@@ -1,71 +1,86 @@
-import { useState, useEffect } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { ArrowUpDown, ArrowUp, ArrowDown, Search, X, Check, SlidersHorizontal } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { api } from "@/lib/api"
-import { VI } from "@/lib/constants"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Search,
+  X,
+  Check,
+  SlidersHorizontal,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
+import { VI } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 export interface VideoFilters {
-  sortOrder?: "newest" | "oldest" | "alphabetical"
-  tagIds?: number[]
+  sortOrder?: "newest" | "oldest" | "alphabetical";
+  tagIds?: number[];
 }
 
 interface FilterSidebarProps {
-  onApply: (filters: VideoFilters) => void
-  onClearAll?: () => void
-  selectedTagIds?: number[]
-  isOpen?: boolean
+  onApply: (filters: VideoFilters) => void;
+  onClearAll?: () => void;
+  selectedTagIds?: number[];
+  isOpen?: boolean;
+  className?: string;
 }
 
 const sortOptions = [
   { value: "newest", label: "Mới nhất", Icon: ArrowDown },
   { value: "oldest", label: "Cũ nhất", Icon: ArrowUp },
   { value: "alphabetical", label: "A-Z", Icon: ArrowUpDown },
-] as const
+] as const;
 
 export function FilterSidebar({
   onApply,
   onClearAll,
   selectedTagIds = [],
   isOpen = true,
+  className,
 }: FilterSidebarProps) {
-  const [filters, setFilters] = useState<VideoFilters>({})
-  const [tagSearch, setTagSearch] = useState("")
+  const [filters, setFilters] = useState<VideoFilters>({});
+  const [tagSearch, setTagSearch] = useState("");
 
   useEffect(() => {
     if (isOpen && selectedTagIds.length > 0) {
-      setFilters((prev) => ({ ...prev, tagIds: selectedTagIds }))
+      setFilters((prev) => ({ ...prev, tagIds: selectedTagIds }));
     }
-  }, [isOpen, selectedTagIds])
+  }, [isOpen, selectedTagIds]);
 
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],
     queryFn: () => api.getTags({ page: "1", limit: "100" }),
-  })
+  });
 
   const filteredTags = tags.filter((tag) =>
-    tag.name.toLowerCase().includes(tagSearch.toLowerCase())
-  )
+    tag.name.toLowerCase().includes(tagSearch.toLowerCase()),
+  );
 
   const handleReset = () => {
-    setFilters({})
-    setTagSearch("")
-    onApply({})
-    onClearAll?.()
-  }
+    setFilters({});
+    setTagSearch("");
+    onApply({});
+    onClearAll?.();
+  };
 
   const handleApply = () => {
-    onApply(filters)
-  }
+    onApply(filters);
+  };
 
-  const selectedTags = filters.tagIds || []
+  const selectedTags = filters.tagIds || [];
 
   return (
-    <div className="w-64 flex-none bg-card flex flex-col rounded-lg overflow-hidden h-full">
+    <div
+      className={cn(
+        "w-full lg:w-64 flex-none bg-card flex flex-col rounded-lg overflow-hidden h-full",
+        className,
+      )}
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
         <div className="flex items-center gap-2">
@@ -93,23 +108,28 @@ export function FilterSidebar({
           </div>
           <div className="space-y-1">
             {sortOptions.map((option) => {
-              const isSelected = filters.sortOrder === option.value
+              const isSelected = filters.sortOrder === option.value;
               return (
                 <button
                   key={option.value}
-                  onClick={() => setFilters({ ...filters, sortOrder: isSelected ? undefined : option.value })}
+                  onClick={() =>
+                    setFilters({
+                      ...filters,
+                      sortOrder: isSelected ? undefined : option.value,
+                    })
+                  }
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all cursor-pointer",
                     isSelected
                       ? "bg-primary/10 text-primary font-medium"
-                      : "hover:bg-accent text-muted-foreground hover:text-foreground"
+                      : "hover:bg-accent text-muted-foreground hover:text-foreground",
                   )}
                 >
                   <option.Icon className="h-4 w-4 text-muted-foreground" />
                   <span>{option.label}</span>
                   {isSelected && <Check className="h-4 w-4 ml-auto" />}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
@@ -152,8 +172,11 @@ export function FilterSidebar({
                     variant="default"
                     className="text-xs cursor-pointer gap-1 pr-1.5"
                     onClick={() => {
-                      const current = filters.tagIds || []
-                      setFilters({ ...filters, tagIds: current.filter((id) => id !== tag!.id) })
+                      const current = filters.tagIds || [];
+                      setFilters({
+                        ...filters,
+                        tagIds: current.filter((id) => id !== tag!.id),
+                      });
                     }}
                   >
                     {tag!.name}
@@ -177,35 +200,43 @@ export function FilterSidebar({
               </p>
             ) : (
               filteredTags.map((tag) => {
-                const isSelected = filters.tagIds?.includes(tag.id)
+                const isSelected = filters.tagIds?.includes(tag.id);
                 return (
                   <button
                     key={tag.id}
                     className={cn(
                       "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-all cursor-pointer",
-                      isSelected ? "bg-primary/10 text-primary" : "hover:bg-accent"
+                      isSelected
+                        ? "bg-primary/10 text-primary"
+                        : "hover:bg-accent",
                     )}
                     onClick={() => {
-                      const current = filters.tagIds || []
+                      const current = filters.tagIds || [];
                       const updated = current.includes(tag.id)
                         ? current.filter((id) => id !== tag.id)
-                        : [...current, tag.id]
-                      setFilters({ ...filters, tagIds: updated })
+                        : [...current, tag.id];
+                      setFilters({ ...filters, tagIds: updated });
                     }}
                   >
                     <div
                       className={cn(
                         "w-4 h-4 rounded border flex items-center justify-center flex-none transition-colors",
-                        isSelected ? "bg-primary border-primary" : "border-muted-foreground/50 bg-background"
+                        isSelected
+                          ? "bg-primary border-primary"
+                          : "border-muted-foreground/50 bg-background",
                       )}
                     >
-                      {isSelected && <Check className="h-2.5 w-2.5 text-primary-foreground" />}
+                      {isSelected && (
+                        <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                      )}
                     </div>
-                    <span className={cn(!isSelected && "text-muted-foreground")}>
+                    <span
+                      className={cn(!isSelected && "text-muted-foreground")}
+                    >
                       {tag.name}
                     </span>
                   </button>
-                )
+                );
               })
             )}
           </div>
@@ -224,5 +255,5 @@ export function FilterSidebar({
         </Button>
       </div>
     </div>
-  )
+  );
 }
