@@ -1,8 +1,8 @@
 # Design Contracts - YouTube Video Manager Frontend
 
-**Version:** 2.0
-**Date:** 2026-04-25
-**Status:** Draft (for Google Stitch)
+**Version:** 3.0
+**Date:** 2026-04-26
+**Status:** Active
 
 ---
 
@@ -386,7 +386,84 @@ useVirtualizer({
 
 ---
 
-## 13. Next Steps
+## 13. Full-Screen YouTube-Style Layout (v3 - Active)
+
+### Layout Structure
+
+| Element | CSS | Description |
+|---------|-----|-------------|
+| Page wrapper | `h-screen flex flex-col` | Full viewport, no page overflow |
+| Header | `flex-none h-14` | Fixed 56px height |
+| Main | `flex-1 overflow-hidden` | Fills remaining space |
+| Sidebar | collapsible | Filter panel, ~280px |
+| Video Grid | `overflow-y-auto h-full` | CSS auto-fill grid |
+| Detail Panel | `w-[420px] flex-none` | Fixed right sidebar |
+
+### Video Grid Responsive Columns
+
+```css
+grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7
+gap-4 p-4 overflow-y-auto h-full
+```
+
+### VideoCard (YouTube-Style)
+
+- Button element (no Card wrapper)
+- Play overlay on hover: `bg-black/20` with centered `Play` icon
+- Selected: `opacity-100`, unselected: `opacity-80`
+- Duration badge: `bg-black/80 text-white text-xs` bottom-right
+- Title: `line-clamp-2`, hover shows primary color
+- No date on card - clean look
+
+### VideoDetailPanel
+
+- Full height: `h-full flex flex-col`
+- Thumbnail: `aspect-video` no rounded corners
+- Metadata with Lucide icons: `User`, `Calendar`, `Clock`
+- ScrollArea for scrollable content
+- "Watch on YouTube" button at bottom
+- Empty state: centered icon + text (no emoji)
+
+### Key Differences from v2
+
+| Before (v2) | After (v3) |
+|-------------|------------|
+| `min-h-screen` with overflow | `h-screen overflow-hidden` |
+| `container mx-auto` margins | Full width |
+| 60/40 sticky split | Fixed 420px right panel |
+| TanStack Virtual grid | CSS auto-fill grid |
+| Card wrapper on VideoCard | Button element |
+| Badge for duration | Dark overlay badge |
+| Emoji placeholder | Lucide `Play` icon |
+
+### FilterSidebar (v3 Redesign)
+
+**Structure:**
+- Custom div wrapper with `w-64 flex-none border-r h-full flex flex-col`
+- No shadcn Sidebar - standalone component
+- Expand/collapse toggle ("Thu gọn" / "Mở rộng")
+
+**Sort Section:**
+- Icon: `ArrowUpDown` (Lucide)
+- Full-width button row per option
+- Unicode icons for sort direction: `↓` `↑` `↕`
+- Check icon on selected option
+
+**Tags Section:**
+- Badge count for selected tags
+- Search input with `Search` icon
+- Selected tags shown in pill group with "Xóa tất cả" link
+- Tag list as buttons with custom checkbox (not shadcn checkbox)
+
+**Styling:**
+- `text-xs uppercase tracking-wide text-muted-foreground` for labels
+- `px-3 py-2` for buttons, `rounded-md`
+- Selected: `bg-primary/10 text-primary`
+- Hover: `hover:bg-accent`
+
+---
+
+## 14. Next Steps
 
 1. Review contracts
 2. Confirm with Google Stitch
