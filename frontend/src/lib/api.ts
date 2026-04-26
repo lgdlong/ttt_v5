@@ -1,4 +1,4 @@
-import type { Tag, Video } from "@/types"
+import type { Tag, Video, VideoApiResponse } from "@/types"
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080"
 
@@ -22,20 +22,26 @@ async function fetchApi<T>(url: string, options?: RequestInit): Promise<T> {
   const json = await response.json()
   // Handle wrapped response format
   if (json && typeof json === "object" && "data" in json) {
-    return json.data as T
+    return json as T
   }
   return json as T
 }
 
 export const api = {
-  getVideos: (params?: Record<string, string>): Promise<Video[]> => {
+  getVideos: (params?: Record<string, string>): Promise<VideoApiResponse> => {
     const searchParams = params ? `?${new URLSearchParams(params)}` : ""
-    return fetchApi<Video[]>(`/api/v1/videos${searchParams}`)
+    return fetchApi<VideoApiResponse>(`/api/v1/videos${searchParams}`)
   },
 
   getTags: (params?: Record<string, string>): Promise<Tag[]> => {
     const searchParams = params ? `?${new URLSearchParams(params)}` : ""
-    return fetchApi<Tag[]>(`/api/v1/tags${searchParams}`)
+    return fetchApi<Tag[]>(`/api/v1/tags${searchParams}`).then((res) => {
+      // Handle wrapped response format for tags
+      if (res && typeof res === "object" && "data" in res) {
+        return (res as { data: Tag[] }).data
+      }
+      return res
+    })
   },
 
   searchTags: (query: string): Promise<Tag[]> => {

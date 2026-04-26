@@ -16,6 +16,7 @@ export interface VideoFilters {
 
 interface FilterSidebarProps {
   onApply: (filters: VideoFilters) => void
+  onClearAll?: () => void
   selectedTagIds?: number[]
   isOpen?: boolean
 }
@@ -28,6 +29,7 @@ const sortOptions = [
 
 export function FilterSidebar({
   onApply,
+  onClearAll,
   selectedTagIds = [],
   isOpen = true,
 }: FilterSidebarProps) {
@@ -53,6 +55,7 @@ export function FilterSidebar({
     setFilters({})
     setTagSearch("")
     onApply({})
+    onClearAll?.()
   }
 
   const handleApply = () => {
@@ -62,20 +65,28 @@ export function FilterSidebar({
   const selectedTags = filters.tagIds || []
 
   return (
-    <div className="w-64 flex-none border-r bg-card flex flex-col h-full">
+    <div className="w-64 flex-none bg-card flex flex-col rounded-lg overflow-hidden h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
           <span className="font-semibold text-sm">{VI.filter}</span>
         </div>
+        {(selectedTags.length > 0 || filters.sortOrder) && (
+          <button
+            onClick={handleReset}
+            className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+          >
+            Đặt lại
+          </button>
+        )}
       </div>
 
       {/* Content - Scrollable */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 min-h-0">
+      <div className="flex-1 overflow-y-auto min-h-0 px-4 py-3 mb-2 scrollbar-gutter-stable max-h-[calc(100vh-12rem)]">
         {/* Sort Section */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-3 px-3 py-0.5">
             <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Sắp xếp
             </span>
@@ -109,7 +120,7 @@ export function FilterSidebar({
         <div>
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Lọc theo thẻ
+              Bộ lọc theo thẻ
             </span>
             {selectedTags.length > 0 && (
               <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
@@ -202,7 +213,7 @@ export function FilterSidebar({
       </div>
 
       {/* Footer Actions - Always visible */}
-      <div className="border-t p-3 space-y-2 shrink-0">
+      <div className="border-t p-3 shrink-0">
         <Button
           variant="default"
           onClick={handleApply}
@@ -211,16 +222,6 @@ export function FilterSidebar({
         >
           Áp dụng
         </Button>
-        {(selectedTags.length > 0 || filters.sortOrder) && (
-          <Button
-            variant="ghost"
-            onClick={handleReset}
-            className="w-full cursor-pointer text-muted-foreground"
-            size="sm"
-          >
-            Đặt lại
-          </Button>
-        )}
       </div>
     </div>
   )

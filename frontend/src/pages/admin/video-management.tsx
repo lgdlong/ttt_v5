@@ -64,7 +64,7 @@ export function VideoManagementPage() {
     },
   })
 
-  const videos: Video[] = videosData ?? []
+  const videos: Video[] = videosData?.data ?? []
   const tags: Tag[] = tagsData ?? []
 
   // Get available tags that are not yet attached to the video

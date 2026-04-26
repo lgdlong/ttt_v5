@@ -3,8 +3,8 @@ import { useVirtualizer } from "@tanstack/react-virtual"
 import { Film } from "lucide-react"
 import type { Video } from "@/types"
 import { VideoCard } from "./video-card"
-import { Skeleton } from "@/components/ui/skeleton"
 import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
+import { Spinner } from "@/components/ui/spinner"
 import { VI } from "@/lib/constants"
 
 interface VideoGridProps {
@@ -12,58 +12,84 @@ interface VideoGridProps {
   selectedVideo: Video | null
   onSelectVideo: (video: Video) => void
   isLoading: boolean
+  onLoadMore?: () => void
+  hasNextPage?: boolean
+  isFetchingNextPage?: boolean
 }
 
-export function VideoGrid({ videos, selectedVideo, onSelectVideo, isLoading }: VideoGridProps) {
+const CARD_HEIGHT = 200
+const CARD_GAP = 12
+const COLUMNS = 4
+
+export function VideoGrid({
+  videos,
+  selectedVideo,
+  onSelectVideo,
+  isLoading,
+  onLoadMore,
+  hasNextPage,
+  isFetchingNextPage,
+}: VideoGridProps) {
   const parentRef = useRef<HTMLDivElement>(null)
 
+  const rowCount = Math.ceil(videos.length / COLUMNS)
+  const totalRows = hasNextPage ? rowCount + 1 : rowCount
+
   const rowVirtualizer = useVirtualizer({
-    count: Math.ceil(videos.length / 3),
+    count: totalRows,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 280,
-    overscan: 5,
+    estimateSize: () => CARD_HEIGHT + CARD_GAP,
+    overscan: 3,
   })
 
-  if (isLoading) {
+  // Detect when to load more
+  const lastItem = rowVirtualizer.getVirtualItems().at(-1)
+  if (
+    lastItem &&
+    lastItem.index >= rowCount - 1 &&
+    hasNextPage &&
+    !isFetchingNextPage
+  ) {
+    onLoadMore?.()
+  }
+
+  if (isLoading && videos.length === 0) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="space-y-2">
-            <Skeleton className="aspect-video w-full" />
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-3 w-1/2" />
-          </div>
-        ))}
+      <div className="flex items-center justify-center h-full">
+        <Spinner />
       </div>
     )
   }
 
   if (videos.length === 0) {
     return (
-      <Empty>
-        <EmptyMedia variant="icon">
-          <Film className="size-10" />
-        </EmptyMedia>
-        <EmptyTitle>{VI.noResults}</EmptyTitle>
-        <EmptyDescription>
-          Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
-        </EmptyDescription>
-      </Empty>
+      <div className="flex flex-col items-center justify-center h-full">
+        <Empty>
+          <EmptyMedia variant="icon">
+            <Film className="size-10" />
+          </EmptyMedia>
+          <EmptyTitle>{VI.noResults}</EmptyTitle>
+          <EmptyDescription>
+            Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
+          </EmptyDescription>
+        </Empty>
+      </div>
     )
   }
 
   return (
-    <div ref={parentRef} className="overflow-auto max-h-[calc(100vh-300px)]">
+    <div ref={parentRef} className="h-full overflow-auto p-3 pb-8">
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
-          width: "100%",
+          width: "calc(100% - 56px)",
           position: "relative",
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-          const rowStart = virtualRow.index * 3
-          const rowVideos = videos.slice(rowStart, rowStart + 3)
+          const rowStart = virtualRow.index * COLUMNS
+          const rowVideos = videos.slice(rowStart, rowStart + COLUMNS)
+          const isLoaderRow = virtualRow.index >= rowCount
 
           return (
             <div
@@ -76,16 +102,29 @@ export function VideoGrid({ videos, selectedVideo, onSelectVideo, isLoading }: V
                 height: `${virtualRow.size}px`,
                 transform: `translateY(${virtualRow.start}px)`,
               }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-4 p-1"
             >
-              {rowVideos.map((video) => (
-                <VideoCard
-                  key={video.youtube_id}
-                  video={video}
-                  isSelected={selectedVideo?.youtube_id === video.youtube_id}
-                  onClick={() => onSelectVideo(video)}
-                />
-              ))}
+              <div className="grid grid-cols-4 gap-4 h-full">
+                {isLoaderRow ? (
+                  <div className="col-span-4 flex items-center justify-center">
+                    {isFetchingNextPage ? (
+                      <Spinner />
+                    ) : hasNextPage ? (
+                      <span className="text-muted-foreground text-sm">Đang tải...</span>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">Không còn video</span>
+                    )}
+                  </div>
+                ) : (
+                  rowVideos.map((video) => (
+                    <VideoCard
+                      key={video.youtube_id}
+                      video={video}
+                      isSelected={selectedVideo?.youtube_id === video.youtube_id}
+                      onClick={() => onSelectVideo(video)}
+                    />
+                  ))
+                )}
+              </div>
             </div>
           )
         })}

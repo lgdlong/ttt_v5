@@ -2,8 +2,8 @@ import type { Video } from "@/types"
 import { VI } from "@/lib/constants"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Empty, EmptyTitle, EmptyMedia } from "@/components/ui/empty"
-import { ExternalLink, Film } from "lucide-react"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { ExternalLink, Film, Clock, Calendar, User } from "lucide-react"
 
 interface VideoDetailPanelProps {
   video: Video | null
@@ -17,24 +17,28 @@ function formatDuration(seconds: number): string {
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr)
-  return date.toLocaleDateString("vi-VN")
+  return date.toLocaleDateString("vi-VN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
 }
 
 export function VideoDetailPanel({ video }: VideoDetailPanelProps) {
   if (!video) {
     return (
-      <Empty>
-        <EmptyMedia variant="icon">
-          <Film className="size-10" />
-        </EmptyMedia>
-        <EmptyTitle>{VI.selectVideo}</EmptyTitle>
-      </Empty>
+      <div className="h-full flex flex-col items-center justify-center p-8 text-center">
+        <div className="bg-muted rounded-full p-4 mb-4">
+          <Film className="size-8 text-muted-foreground" />
+        </div>
+        <p className="text-muted-foreground">{VI.selectVideo}</p>
+      </div>
     )
   }
 
   return (
-    <div className="space-y-4">
-      <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
+    <div className="h-full flex flex-col">
+      <div className="aspect-video w-full bg-muted rounded-none overflow-hidden">
         {video.thumbnail_url ? (
           <img
             src={video.thumbnail_url}
@@ -43,39 +47,50 @@ export function VideoDetailPanel({ video }: VideoDetailPanelProps) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
-            <span className="text-6xl">🎬</span>
+            <Film className="size-16 text-muted-foreground" />
           </div>
         )}
       </div>
 
-      <div className="space-y-3">
-        <h2 className="text-xl font-semibold">{video.title}</h2>
+      <ScrollArea className="flex-1 p-6">
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold leading-tight">{video.title}</h2>
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span>{video.author}</span>
-          <span>{formatDate(video.upload_date)}</span>
-          <Badge variant="secondary">{formatDuration(video.duration_seconds)}</Badge>
+          <div className="space-y-3 text-sm">
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <User className="size-4 flex-none" />
+              <span>{video.author}</span>
+            </div>
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <Calendar className="size-4 flex-none" />
+              <span>{formatDate(video.upload_date)}</span>
+            </div>
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <Clock className="size-4 flex-none" />
+              <span>{formatDuration(video.duration_seconds)}</span>
+            </div>
+          </div>
+
+          {video.tags && video.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {video.tags.map((tag) => (
+                <Badge key={tag.id} variant="secondary" className="text-xs">
+                  {tag.name}
+                </Badge>
+              ))}
+            </div>
+          )}
+
+          <Button
+            variant="default"
+            className="w-full cursor-pointer"
+            onClick={() => window.open(`https://youtube.com/watch?v=${video.youtube_id}`, "_blank")}
+          >
+            <ExternalLink className="h-4 w-4 mr-2" />
+            {VI.watchOnYoutube}
+          </Button>
         </div>
-
-        {video.tags && video.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {video.tags.map((tag) => (
-              <Badge key={tag.id} variant="outline">
-                {tag.name}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        <Button
-          variant="default"
-          className="w-full"
-          onClick={() => window.open(`https://youtube.com/watch?v=${video.youtube_id}`, "_blank")}
-        >
-          <ExternalLink className="h-4 w-4 mr-2" />
-          {VI.watchOnYoutube}
-        </Button>
-      </div>
+      </ScrollArea>
     </div>
   )
 }

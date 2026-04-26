@@ -36,7 +36,7 @@ export function AdminDashboardPage() {
     queryFn: () => api.getTags(),
   })
 
-  const videos: Video[] = videosData ?? []
+  const videos: Video[] = videosData?.data ?? []
   const tags: Tag[] = tagsData ?? []
 
   const totalVideos = videos.length

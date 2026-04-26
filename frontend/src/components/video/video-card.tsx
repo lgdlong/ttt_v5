@@ -1,7 +1,6 @@
 import type { Video } from "@/types"
 import { cn } from "@/lib/utils"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Play, Calendar } from "lucide-react"
 
 interface VideoCardProps {
   video: Video
@@ -17,19 +16,25 @@ function formatDuration(seconds: number): string {
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr)
-  return date.toLocaleDateString("vi-VN")
+  const day = date.getDate().toString().padStart(2, "0")
+  const month = (date.getMonth() + 1).toString().padStart(2, "0")
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
 }
 
 export function VideoCard({ video, isSelected, onClick }: VideoCardProps) {
   return (
-    <Card
+    <button
       className={cn(
-        "cursor-pointer overflow-hidden transition-all hover:shadow-md p-0",
-        isSelected && "ring-2 ring-primary"
+        "w-full text-left cursor-pointer group transition-opacity p-0 bg-transparent border-0",
+        isSelected && "opacity-100"
       )}
       onClick={onClick}
     >
-      <div className="min-h-30 w-full bg-muted relative">
+      <div className={cn(
+        "relative w-full aspect-video bg-muted overflow-hidden transition-colors",
+        isSelected ? "ring-2 ring-primary" : ""
+      )}>
         {video.thumbnail_url ? (
           <img
             src={video.thumbnail_url}
@@ -38,18 +43,25 @@ export function VideoCard({ video, isSelected, onClick }: VideoCardProps) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
-            <span className="text-4xl">Không có thubnail</span>
+            <Play className="size-8 text-muted-foreground" />
           </div>
         )}
-        <Badge className="absolute bottom-2 right-2" variant="secondary">
+        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
           {formatDuration(video.duration_seconds)}
-        </Badge>
+        </div>
       </div>
-      <div className="p-3 space-y-1">
-        <h3 className="font-medium line-clamp-2 text-sm">{video.title}</h3>
-        <p className="text-xs text-muted-foreground">{video.author}</p>
-        <p className="text-xs text-muted-foreground">{formatDate(video.upload_date)}</p>
+      <div className="py-1.5 px-1">
+        <h3 className={cn(
+          "font-medium text-sm leading-tight line-clamp-2 text-foreground transition-colors",
+          isSelected ? "text-primary" : "group-hover:text-primary"
+        )}>
+          {video.title}
+        </h3>
+        <p className="text-xs text-muted-foreground mt-1">{video.author}</p>
+        <p className="text-xs text-muted-foreground/70 mt-0.5 flex items-center gap-1">
+          {formatDate(video.upload_date)}
+        </p>
       </div>
-    </Card>
+    </button>
   )
 }

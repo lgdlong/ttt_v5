@@ -1,32 +1,35 @@
 import { useState } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { PanelLeftIcon } from "lucide-react"
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { Search } from "lucide-react"
 import type { Video } from "@/types"
 import { api } from "@/lib/api"
-import { Button } from "@/components/ui/button"
-import { VideoSearchBar } from "@/components/video/video-search-bar"
 import { FilterSidebar } from "@/components/video/filter-sidebar"
 import type { VideoFilters } from "@/components/video/filter-sidebar"
 import { VideoGrid } from "@/components/video/video-grid"
 import { VideoDetailPanel } from "@/components/video/video-detail-panel"
 import { ErrorBoundary } from "@/components/error-boundary"
+import { cn } from "@/lib/utils"
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
+
+const PAGE_SIZE = 20
 
 export function VideoBrowserPage() {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState<number[]>([])
   const [filters, setFilters] = useState<VideoFilters>({})
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
 
-  const buildQueryParams = () => {
-    const params: Record<string, string> = {}
+  const buildQueryParams = (page: number) => {
+    const params: Record<string, string> = {
+      page: String(page),
+      limit: String(PAGE_SIZE),
+    }
     if (searchTerm) params.q = searchTerm
     if (selectedTags.length > 0) params.tag_ids = selectedTags.join("-")
-    // Map sortOrder to API params
     if (filters.sortOrder) {
       if (filters.sortOrder === "newest") {
         params.sort = "upload_date"
@@ -42,56 +45,88 @@ export function VideoBrowserPage() {
     return params
   }
 
-  const { data, isLoading } = useQuery({
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["videos", searchTerm, filters, selectedTags],
-    queryFn: () => api.getVideos(buildQueryParams()),
+    queryFn: ({ pageParam }) => api.getVideos(buildQueryParams(pageParam)),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const nextPage = lastPage.meta.page + 1
+      return nextPage <= lastPage.meta.total_pages ? nextPage : undefined
+    },
   })
 
-  const videos = data || []
+  const videos = data?.pages.flatMap((page) => page.data) ?? []
 
   const handleFilterApply = (newFilters: VideoFilters) => {
-    // Sync tagIds from filter sidebar to selectedTags for API query
     if (newFilters.tagIds) {
       setSelectedTags(newFilters.tagIds)
     }
     setFilters(newFilters)
   }
 
+  const hasActiveFilters = searchTerm || selectedTags.length > 0 || filters.sortOrder
+
+  const handleClearFilters = () => {
+    setSearchTerm("")
+    setSelectedTags([])
+    setFilters({})
+  }
+
   return (
     <ErrorBoundary>
       <SidebarProvider defaultOpen={true}>
-        <FilterSidebar
-          onApply={handleFilterApply}
-          selectedTagIds={selectedTags}
-        />
-        <SidebarInset>
-          <div className="container mx-auto px-4 py-6 space-y-4">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger>
-                <Button variant="ghost" size="icon">
-                  <PanelLeftIcon className="h-4 w-4" />
-                </Button>
-              </SidebarTrigger>
-              <div className="flex-1">
-                <VideoSearchBar onSearchChange={(term) => setSearchTerm(term)} />
+        <div className="flex h-screen w-full overflow-hidden gap-4 p-4">
+          <FilterSidebar onApply={handleFilterApply} onClearAll={handleClearFilters} selectedTagIds={selectedTags} />
+          <SidebarInset className="flex flex-col flex-1 overflow-hidden rounded-lg">
+            {/* Search Header - Full Width */}
+            <div className="flex-none bg-card/50 backdrop-blur h-14">
+              {/*<div className="flex h-full items-center gap-4 px-4">*/}
+                <div className={cn(
+                  "flex-1 flex items-center gap-2 rounded-lg border bg-background px-4 py-2.5 transition-colors h-10",
+                  isSearchFocused && "border-primary"
+                )}>
+                  <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm video..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
+                    className="flex-1 bg-transparent border-0 outline-none text-sm placeholder:text-muted-foreground"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="flex flex-col lg:flex-row gap-6">
-              <div className="flex-1 lg:max-w-[60%]">
+            {/* Main Content - Full Screen */}
+            <div className="flex flex-1 h-full overflow-hidden">
+              <div className="flex-1 h-full overflow-hidden">
                 <VideoGrid
                   videos={videos}
                   selectedVideo={selectedVideo}
                   onSelectVideo={setSelectedVideo}
                   isLoading={isLoading}
+                  onLoadMore={fetchNextPage}
+                  hasNextPage={hasNextPage}
+                  isFetchingNextPage={isFetchingNextPage}
                 />
               </div>
-              <div className="lg:w-[40%] lg:sticky lg:top-4 lg:h-fit">
+              {/* Video Detail Panel - Right Side */}
+              <div className={cn(
+                "w-[420px] flex-none border-l bg-card overflow-hidden transition-all duration-300",
+                selectedVideo ? "visible" : "hidden lg:block"
+              )}>
                 <VideoDetailPanel video={selectedVideo} />
               </div>
             </div>
-          </div>
-        </SidebarInset>
+          </SidebarInset>
+        </div>
       </SidebarProvider>
     </ErrorBoundary>
   )
