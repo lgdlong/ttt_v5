@@ -87,14 +87,6 @@ export function FilterSidebar({
           <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
           <span className="font-semibold text-sm">{VI.filter}</span>
         </div>
-        {(selectedTags.length > 0 || filters.sortOrder) && (
-          <button
-            onClick={handleReset}
-            className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
-          >
-            Đặt lại
-          </button>
-        )}
       </div>
 
       {/* Content - Scrollable */}
@@ -193,7 +185,7 @@ export function FilterSidebar({
           )}
 
           {/* Tag List */}
-          <div className="space-y-0.5 max-h-[500px] lg:max-h-[280px] overflow-y-auto">
+          <div className="space-y-0.5 max-h-[500px] lg:max-h-[300px] overflow-y-auto">
             {filteredTags.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-6">
                 Không tìm thấy thẻ
@@ -244,11 +236,19 @@ export function FilterSidebar({
       </div>
 
       {/* Footer Actions - Always visible */}
-      <div className="border-t p-3 shrink-0">
+      <div className="border-t p-3 shrink-0 flex gap-3">
+        <Button
+          variant="outline"
+          onClick={handleReset}
+          className="flex-1 cursor-pointer"
+          size="sm"
+        >
+          Đặt lại
+        </Button>
         <Button
           variant="default"
           onClick={handleApply}
-          className="w-full cursor-pointer"
+          className="flex-1 cursor-pointer"
           size="sm"
         >
           Áp dụng
