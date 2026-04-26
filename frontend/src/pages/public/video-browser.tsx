@@ -163,7 +163,7 @@ export function VideoBrowserPage() {
               {/* Video Detail Panel - Right Side Desktop */}
               <div
                 className={cn(
-                  "hidden xl:block w-[420px] flex-none border-l bg-card overflow-hidden transition-all duration-300",
+                  "hidden 2xl:block w-[420px] flex-none border-l bg-card overflow-hidden transition-all duration-300",
                   !selectedVideo && "invisible w-0",
                 )}
               >
@@ -181,7 +181,7 @@ export function VideoBrowserPage() {
               >
                 <SheetContent
                   side="bottom"
-                  className="h-[65vh] p-0 sm:side-right sm:h-full sm:w-[420px] xl:hidden"
+                  className="h-[65vh] p-0 w-full xl:hidden"
                 >
                   <div className="sr-only">
                     <SheetTitle>Detail</SheetTitle>
