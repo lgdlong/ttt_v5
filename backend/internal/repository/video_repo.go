@@ -47,9 +47,31 @@ func (r *GormVideoRepo) List(ctx context.Context, filter dto.VideoFilter) ([]ent
 	query := r.db.WithContext(ctx).Model(&entity.Video{}).Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Order("name ASC")
 	})
+
+	// Filter by tag_ids if provided (AND logic - must have ALL tags)
+	tagIDs := filter.GetTagIDs()
+	if len(tagIDs) > 0 {
+		// For AND: video must have ALL specified tags
+		query = query.Joins("JOIN video_tags ON video_tags.youtube_id = youtube_videos.youtube_id").
+			Where("video_tags.tag_id IN ?", tagIDs).
+			Group("youtube_videos.youtube_id").
+			Having("COUNT(DISTINCT video_tags.tag_id) = ?", len(tagIDs))
+	}
+
 	if filter.Query != "" {
 		query = query.Where("title ILIKE ?", "%"+filter.Query+"%")
 	}
+
+	// Apply sorting
+	sortField := filter.Sort
+	if sortField == "" {
+		sortField = "created_at"
+	}
+	sortOrder := filter.Order
+	if sortOrder == "" {
+		sortOrder = "desc"
+	}
+	query = query.Order(sortField + " " + sortOrder)
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err

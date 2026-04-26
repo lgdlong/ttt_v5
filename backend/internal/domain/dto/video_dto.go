@@ -1,21 +1,44 @@
 package dto
 
-import "time"
+import (
+	"strconv"
+	"strings"
+	"time"
+)
 
 // VideoFilter holds query parameters for filtering videos
 type VideoFilter struct {
-	Query  string `form:"q"`
-	TagIDs []uint `form:"tag_ids"`
-	Sort   string `form:"sort"`
-	Order  string `form:"order"`
-	Page   int    `form:"page"`
-	Limit  int    `form:"limit"`
+	Query     string `form:"q"`
+	TagIDStr  string `form:"tag_ids"`
+	Sort      string `form:"sort"`
+	Order     string `form:"order"`
+	Page      int    `form:"page"`
+	Limit     int    `form:"limit"`
+}
+
+// GetTagIDs returns parsed tag IDs
+func (f *VideoFilter) GetTagIDs() []uint {
+	if f.TagIDStr == "" {
+		return nil
+	}
+	parts := strings.Split(f.TagIDStr, "-")
+	ids := make([]uint, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p == "" {
+			continue
+		}
+		if id, err := strconv.ParseUint(p, 10, 64); err == nil {
+			ids = append(ids, uint(id))
+		}
+	}
+	return ids
 }
 
 // Normalize sets default values for video filter
 func (f *VideoFilter) Normalize() {
 	if f.Sort == "" {
-		f.Sort = "created_at"
+		f.Sort = "upload_date"
 	}
 	if f.Order == "" {
 		f.Order = "desc"
