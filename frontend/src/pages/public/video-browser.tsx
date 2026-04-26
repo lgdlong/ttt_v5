@@ -180,9 +180,8 @@ export function VideoBrowserPage() {
                 }}
               >
                 <SheetContent
-                  hideOverlay
                   side="bottom"
-                  className="h-[80vh] p-0 sm:side-right sm:h-full sm:w-[420px] xl:hidden"
+                  className="h-[65vh] p-0 sm:side-right sm:h-full sm:w-[420px] xl:hidden"
                 >
                   <div className="sr-only">
                     <SheetTitle>Detail</SheetTitle>
