@@ -1,3 +1,13 @@
+# ============================================
+# Docker Compose - Production VPS Deployment
+# ============================================
+# Pulls pre-built image from Docker Hub (no build needed on VPS)
+#
+# Usage:
+#   docker compose -f docker-compose.prod.yml pull     # Pull latest image
+#   docker compose -f docker-compose.prod.yml up -d   # Start all services
+#   docker compose -f docker-compose.prod.yml down    # Stop services
+#
 name: ttt-v5
 
 services:
@@ -18,13 +28,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
     networks:
       - ttt-network
+      - proxy-net
     deploy:
       resources:
         limits:
@@ -38,8 +49,9 @@ services:
   # API Backend Service
   # ============================================
   backend:
-    build: ./backend
+    image: lgdlong/ttt-v5-backend:latest
     container_name: ttt-v5-backend
+    pull_policy: always
     restart: unless-stopped
     env_file:
       - .env
@@ -50,33 +62,57 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/v1/health || exit 1"]
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:8080/api/v1/health || exit 1']
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 30s
     networks:
       - ttt-network
+      - proxy-net
     deploy:
       resources:
         limits:
-          cpus: '1.0'
-          memory: 768M
-        reservations:
-          cpus: '0.25'
+          cpus: '0.5'
           memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
     labels:
+      # Enable Traefik
       - 'traefik.enable=true'
-      - 'traefik.http.routers.ttt-backend.rule=PathPrefix(`/api`)'
-      - 'traefik.http.routers.ttt-backend.entrypoints=web'
+      # Traefik network
+      - 'traefik.docker.network=proxy-net'
+      # HTTP to HTTPS redirect
+      - 'traefik.http.routers.ttt-backend-web.entrypoints=web'
+      - 'traefik.http.routers.ttt-backend-web.rule=Host(`ttt.lgdlong.site`) && PathPrefix(`/api`)'
+      - 'traefik.http.routers.ttt-backend-web.middlewares=https-redirect'
+      # HTTPS router
+      - 'traefik.http.routers.ttt-backend.entrypoints=websecure'
+      - 'traefik.http.routers.ttt-backend.rule=Host(`ttt.lgdlong.site`) && PathPrefix(`/api`)'
+      - 'traefik.http.routers.ttt-backend.tls=true'
+      - 'traefik.http.routers.ttt-backend.tls.certresolver=myresolver'
+      # Service
       - 'traefik.http.services.ttt-backend.loadbalancer.server.port=8080'
+      # Middlewares
+      - 'traefik.http.middlewares.https-redirect.redirectscheme.scheme=https'
+      # Compression
+      - 'traefik.http.middlewares.compress.compress=true'
+      # Security headers
+      - 'traefik.http.middlewares.security-headers.headers.browserXssFilter=true'
+      - 'traefik.http.middlewares.security-headers.headers.contentTypeNosniff=true'
+      - 'traefik.http.middlewares.security-headers.headers.frameDeny=true'
+      - 'traefik.http.middlewares.security-headers.headers.referrerPolicy=strict-origin-when-cross-origin'
+      # Apply middlewares
+      - 'traefik.http.routers.ttt-backend.middlewares=compress,security-headers'
 
   # ============================================
   # Frontend Web Service
   # ============================================
   frontend:
-    build: ./frontend
+    image: lgdlong/ttt-v5-frontend:latest
     container_name: ttt-v5-frontend
+    pull_policy: always
     restart: unless-stopped
     depends_on:
       - backend
@@ -91,10 +127,32 @@ services:
           cpus: '0.25'
           memory: 128M
     labels:
+      # Enable Traefik
       - 'traefik.enable=true'
-      - 'traefik.http.routers.ttt-frontend.rule=PathPrefix(`/`)'
-      - 'traefik.http.routers.ttt-frontend.entrypoints=web'
+      # Traefik network
+      - 'traefik.docker.network=proxy-net'
+      # HTTP to HTTPS redirect
+      - 'traefik.http.routers.ttt-frontend-web.entrypoints=web'
+      - 'traefik.http.routers.ttt-frontend-web.rule=Host(`ttt.lgdlong.site`)'
+      - 'traefik.http.routers.ttt-frontend-web.middlewares=https-redirect'
+      # HTTPS router
+      - 'traefik.http.routers.ttt-frontend.entrypoints=websecure'
+      - 'traefik.http.routers.ttt-frontend.rule=Host(`ttt.lgdlong.site`)'
+      - 'traefik.http.routers.ttt-frontend.tls=true'
+      - 'traefik.http.routers.ttt-frontend.tls.certresolver=myresolver'
+      # Service
       - 'traefik.http.services.ttt-frontend.loadbalancer.server.port=3000'
+      # Middlewares
+      - 'traefik.http.middlewares.https-redirect.redirectscheme.scheme=https'
+      # Compression
+      - 'traefik.http.middlewares.compress.compress=true'
+      # Security headers
+      - 'traefik.http.middlewares.security-headers.headers.browserXssFilter=true'
+      - 'traefik.http.middlewares.security-headers.headers.contentTypeNosniff=true'
+      - 'traefik.http.middlewares.security-headers.headers.frameDeny=true'
+      - 'traefik.http.middlewares.security-headers.headers.referrerPolicy=strict-origin-when-cross-origin'
+      # Apply middlewares
+      - 'traefik.http.routers.ttt-frontend.middlewares=compress,security-headers'
 
 volumes:
   postgres_data:
@@ -103,3 +161,5 @@ volumes:
 networks:
   ttt-network:
     driver: bridge
+  proxy-net:
+    external: true

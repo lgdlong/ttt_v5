@@ -77,25 +77,110 @@ pnpm install
 pnpm dev
 ```
 
-## Production Deployment
+## VPS Production Deployment
 
-### Using docker-compose.prod.yml
+This approach pulls pre-built images from Docker Hub - no build needed on VPS.
 
-For production deployments, use the production Compose file which includes resource limits, health checks, and Traefik labels:
+### Prerequisites on VPS
+
+- Docker 24+
+- Docker Compose v2+
+
+### 1. Install Docker
 
 ```bash
-# Build and start all services
-docker-compose -f docker-compose.prod.yml up --build
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+```
 
-# Run in background
-docker-compose -f docker-compose.prod.yml up -d --build
+### 2. Clone Configuration
+
+```bash
+git clone <repository-url> /opt/ttt-v5
+cd /opt/ttt-v5
+cp .env.example .env
+```
+
+### 3. Configure Environment
+
+Edit `.env` with production values:
+
+```bash
+# Database
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_secure_password
+POSTGRES_DB=ttt_project
+
+# Backend
+GIN_MODE=release
+ENVIRONMENT=production
+```
+
+### 4. Deploy
+
+```bash
+# Pull latest images and start (images pulled from Docker Hub)
+docker-compose -f docker-compose.prod.yml up -d
 
 # View logs
 docker-compose -f docker-compose.prod.yml logs -f
 
-# Stop all services
-docker-compose -f docker-compose.prod.yml down
+# Check status
+docker-compose -f docker-compose.prod.yml ps
 ```
+
+### 5. Update Deployment
+
+When new images are pushed to Docker Hub, simply:
+
+```bash
+cd /opt/ttt-v5
+docker-compose -f docker-compose.prod.yml pull
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Image Sources
+
+| Service | Image | Source |
+|---------|-------|--------|
+| db | postgres:17-alpine | Docker Hub |
+| backend | lgdlong/ttt-v5-backend:latest | Docker Hub |
+| frontend | lgdlong/ttt-v5-frontend:latest | Docker Hub |
+
+### Troubleshooting
+
+```bash
+# Check container health
+docker-compose -f docker-compose.prod.yml ps
+
+# View logs
+docker-compose -f docker-compose.prod.yml logs backend
+docker-compose -f docker-compose.prod.yml logs frontend
+
+# Restart services
+docker-compose -f docker-compose.prod.yml restart backend
+
+# Full rebuild from Docker Hub
+docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml up -d
+```
+
+## Build Images Locally (Alternative)
+
+If you need to build images locally instead of using Docker Hub:
+
+```bash
+# Build backend
+docker build -t lgdlong/ttt-v5-backend:latest ./backend
+
+# Build frontend
+docker build -t lgdlong/ttt-v5-frontend:latest ./frontend
+
+# Push to Docker Hub
+docker push lgdlong/ttt-v5-backend:latest
+docker push lgdlong/ttt-v5-frontend:latest
+```
+
+Then on VPS, deploy with `docker-compose -f docker-compose.prod.yml up -d` (images pulled automatically).
 
 ### Alternative: Using Makefile
 
