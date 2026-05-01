@@ -1,0 +1,44 @@
+.PHONY: help deploy start stop restart ps logs \
+	db-logs backend-logs frontend-logs \
+	db-migrate db-migrate-status
+
+.DEFAULT_GOAL := help
+
+DOCKER_COMPOSE := docker compose -f docker-compose.prod.yml
+
+help: ## Show this help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
+
+deploy: ## Pull latest & restart all services
+	@$(DOCKER_COMPOSE) pull
+	@$(DOCKER_COMPOSE) up -d
+
+start: ## Start all services
+	@$(DOCKER_COMPOSE) up -d
+
+stop: ## Stop all services
+	@$(DOCKER_COMPOSE) down
+
+restart: ## Restart all services
+	@$(DOCKER_COMPOSE) down && $(DOCKER_COMPOSE) up -d
+
+ps: ## Show running containers
+	@$(DOCKER_COMPOSE) ps
+
+logs: ## Tail all logs
+	@$(DOCKER_COMPOSE) logs -f
+
+backend-logs: ## Tail backend logs
+	@$(DOCKER_COMPOSE) logs -f backend
+
+frontend-logs: ## Tail frontend logs
+	@$(DOCKER_COMPOSE) logs -f frontend
+
+db-logs: ## Tail database logs
+	@$(DOCKER_COMPOSE) logs -f db
+
+db-migrate: ## Run migrations
+	@$(DOCKER_COMPOSE) exec backend go run ./cmd/migrate
+
+db-migrate-status: ## Check migration status
+	@$(DOCKER_COMPOSE) exec backend go run ./cmd/migrate -check
