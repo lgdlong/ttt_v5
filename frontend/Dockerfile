@@ -1,36 +1,34 @@
 # Build stage
 FROM node:24.15.0-alpine AS builder
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
-
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies using npm (more reliable for Docker builds)
+RUN npm ci
 
-# Copy source
+# Copy source code
 COPY . .
 
-# Build the application
-RUN pnpm run build
+# Build app
+RUN npm run build
 
 # Production stage - serve static files (Traefik handles routing)
 FROM node:24.15.0-alpine
 
-# Install serve to serve static files
-RUN corepack enable && corepack prepare pnpm@9.0.0 --activate && \
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@latest --activate && \
     pnpm add -g serve
 
 WORKDIR /app
 
-# Copy built assets
+# Copy built assets from builder
 COPY --from=builder /app/dist ./dist
 
-# Expose port (Vite default dev port, but serve listens on this)
+# Expose port
 EXPOSE 3000
 
 # Health check
