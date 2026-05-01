@@ -37,8 +37,8 @@ frontend-logs: ## Tail frontend logs
 db-logs: ## Tail database logs
 	@$(DOCKER_COMPOSE) logs -f db
 
-db-migrate: ## Run migrations
-	@$(DOCKER_COMPOSE) exec backend go run ./cmd/migrate
+db-migrate: ## Run migrations (goose up)
+	@$(DOCKER_COMPOSE) exec backend /app/migrate -dsn $$DATABASE_URL -dir /app/migrations
 
 db-migrate-status: ## Check migration status
-	@$(DOCKER_COMPOSE) exec backend go run ./cmd/migrate -check
+	@$(DOCKER_COMPOSE) exec backend /app/migrate -dsn $$DATABASE_URL -dir /app/migrations -check
