@@ -38,7 +38,7 @@ db-logs: ## Tail database logs
 	@$(DOCKER_COMPOSE) logs -f db
 
 db-migrate: ## Run migrations (goose up)
-	@$(DOCKER_COMPOSE) exec backend /app/migrate -dsn $$DATABASE_URL -dir /app/migrations
+	@$(DOCKER_COMPOSE) exec -T backend /app/migrate -dsn "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable" -dir /app/migrations up
 
 db-migrate-status: ## Check migration status
-	@$(DOCKER_COMPOSE) exec backend /app/migrate -dsn $$DATABASE_URL -dir /app/migrations -check
+	@$(DOCKER_COMPOSE) exec -T backend /app/migrate -dsn "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable" -dir /app/migrations -check
