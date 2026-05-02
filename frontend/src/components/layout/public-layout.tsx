@@ -17,7 +17,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center gap-2 text-xl font-bold">
               <Play className="h-6 w-6 text-primary" />
-              <span>TTT Video</span>
+              <span>TTT</span>
             </Link>
             <nav className="flex items-center gap-6">
               {navItems.map((item) => (

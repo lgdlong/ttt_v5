@@ -19,7 +19,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       <div className="flex">
         <aside className="fixed left-0 top-0 z-40 h-screen w-[var(--sidebar-width)] border-r bg-card">
           <div className="flex h-16 items-center border-b px-4">
-            <h1 className="text-lg font-semibold">TTT Video</h1>
+            <h1 className="text-lg font-semibold">TTT</h1>
           </div>
           <nav className="flex flex-col gap-1 p-4">
             {navItems.map((item) => {
