@@ -163,7 +163,7 @@ export function VideoBrowserPage() {
               {/* Video Detail Panel - Right Side Desktop */}
               <div
                 className={cn(
-                  "hidden 2xl:block w-[420px] flex-none border-l bg-card overflow-hidden transition-all duration-300",
+                  "hidden xl:block w-[420px] flex-none border-l bg-card overflow-hidden transition-all duration-300",
                   !selectedVideo && "invisible w-0",
                 )}
               >
