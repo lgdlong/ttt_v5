@@ -37,8 +37,13 @@ docker push lgdlong/ttt-v5-backend:latest
 ### 3. Build Frontend Image
 
 ```bash
-docker build -f frontend/Dockerfile -t lgdlong/ttt-v5-frontend:latest .
+# Build with VITE_API_URL from .env.prod (Vite bakes env vars at build time)
+docker build -f frontend/Dockerfile \
+  --build-arg VITE_API_URL=$(grep VITE_API_URL .env.prod | cut -d '=' -f2) \
+  -t lgdlong/ttt-v5-frontend:latest .
 ```
+
+**Important:** `VITE_API_URL` is baked into the JS bundle at build time via `--build-arg`. The value comes from `.env.prod` in repo root. Do not hardcode — use the command above or set the arg manually.
 
 ### 4. Push Frontend Image
 
@@ -52,8 +57,10 @@ docker push lgdlong/ttt-v5-frontend:latest
 # Backend
 docker build -f backend/Dockerfile -t lgdlong/ttt-v5-backend:latest . && docker push lgdlong/ttt-v5-backend:latest
 
-# Frontend
-docker build -f frontend/Dockerfile -t lgdlong/ttt-v5-frontend:latest . && docker push lgdlong/ttt-v5-frontend:latest
+# Frontend (reads VITE_API_URL from .env.prod via --build-arg)
+docker build -f frontend/Dockerfile \
+  --build-arg VITE_API_URL=$(grep VITE_API_URL .env.prod | cut -d '=' -f2) \
+  -t lgdlong/ttt-v5-frontend:latest . && docker push lgdlong/ttt-v5-frontend:latest
 ```
 
 ## On VPS (Production Deployment)
@@ -101,6 +108,16 @@ For automated builds, add to your CI pipeline:
 
 - name: Build and push frontend
   run: |
-    docker build -f frontend/Dockerfile -t lgdlong/ttt-v5-frontend:latest .
+    # Extract VITE_API_URL from .env.prod
+    API_URL=$(grep VITE_API_URL .env.prod | cut -d '=' -f2)
+    docker build -f frontend/Dockerfile --build-arg VITE_API_URL=$API_URL -t lgdlong/ttt-v5-frontend:latest .
     docker push lgdlong/ttt-v5-frontend:latest
 ```
+
+## Why VITE_API_URL Uses --build-arg
+
+Vite (and other bundlers) bake `import.meta.env.VITE_*` variables into the JS bundle at **build time**, not runtime. This means:
+
+- `.env.prod` docker `env_file` (runtime) does NOT work for `VITE_API_URL`
+- The API URL must be passed via `--build-arg` during `docker build`
+- If you change `.env.prod` on VPS, you must rebuild the frontend image
