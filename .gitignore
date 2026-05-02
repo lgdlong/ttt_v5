@@ -29,3 +29,4 @@ logs/
 # Logs -------
 .claude/settings.local.json
 temp/
+.playwright-mcp
