@@ -167,10 +167,19 @@ export function VideoBrowserPage() {
                   !selectedVideo && "invisible w-0",
                 )}
               >
-                {selectedVideo && <VideoDetailPanel video={selectedVideo} />}
+                {selectedVideo && <VideoDetailPanel video={selectedVideo} onClose={() => setIsDetailOpen(false)} />}
               </div>
 
               {/* Video Detail Sheet for Mobile / Tablet */}
+              {isDetailOpen && !!selectedVideo && (
+                <div
+                  className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md xl:hidden"
+                  onClick={() => {
+                    setIsDetailOpen(false);
+                    setSelectedVideo(null);
+                  }}
+                />
+              )}
               <Sheet
                 open={isDetailOpen && !!selectedVideo}
                 modal={false}
@@ -186,7 +195,7 @@ export function VideoBrowserPage() {
                   <div className="sr-only">
                     <SheetTitle>Detail</SheetTitle>
                   </div>
-                  {selectedVideo && <VideoDetailPanel video={selectedVideo} />}
+                  {selectedVideo && <VideoDetailPanel video={selectedVideo} onClose={() => setIsDetailOpen(false)} />}
                 </SheetContent>
               </Sheet>
             </div>

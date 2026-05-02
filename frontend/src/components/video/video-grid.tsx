@@ -28,8 +28,9 @@ function getGridColumns(width: number): number {
   if (width === 0) return 1;
   if (width >= 2000) return 8;
   if (width >= 1600) return 6;
+  if (width >= 1280) return 5;
   if (width >= 1024) return 4;
-  if (width >= 768) return 3;
+  if (width >= 500) return 3;
   if (width >= 450) return 2;
   return 1;
 }

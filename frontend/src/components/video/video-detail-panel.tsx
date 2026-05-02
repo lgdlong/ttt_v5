@@ -7,6 +7,7 @@ import { ExternalLink, Film } from "lucide-react"
 
 interface VideoDetailPanelProps {
   video: Video | null
+  onClose?: () => void
 }
 
 function formatDuration(seconds: number): string {
@@ -24,7 +25,7 @@ function formatDate(dateStr: string): string {
   })
 }
 
-export function VideoDetailPanel({ video }: VideoDetailPanelProps) {
+export function VideoDetailPanel({ video, onClose }: VideoDetailPanelProps) {
   if (!video) {
     return (
       <div className="h-full flex flex-col items-center justify-center p-8 text-center">
@@ -81,12 +82,31 @@ export function VideoDetailPanel({ video }: VideoDetailPanelProps) {
             </div>
           )}
 
+          <div className="flex gap-2 xl:hidden">
+            <Button
+              variant="default"
+              className="w-3/5 cursor-pointer"
+              onClick={() => window.open(`https://youtube.com/watch?v=${video.youtube_id}`, "_blank")}
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              {VI.watchOnYoutube}
+            </Button>
+            {onClose && (
+              <Button
+                variant="outline"
+                className="w-1/3 cursor-pointer"
+                onClick={onClose}
+              >
+                {VI.close}
+              </Button>
+            )}
+          </div>
           <Button
             variant="default"
-            className="w-full cursor-pointer"
+            className="hidden xl:flex w-full cursor-pointer"
             onClick={() => window.open(`https://youtube.com/watch?v=${video.youtube_id}`, "_blank")}
           >
-            <ExternalLink className="h-4 w-4 mr-2" />
+            <ExternalLink className="h-4 w-4 mr-4" />
             {VI.watchOnYoutube}
           </Button>
         </div>

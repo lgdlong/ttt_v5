@@ -10,6 +10,7 @@ export const VI = {
   cancel: "Hủy",
   confirm: "Xác nhận",
   watchOnYoutube: "Xem trên YouTube",
+  close: "Đóng",
   totalVideos: "Tổng số video",
   totalTags: "Tổng số thẻ",
   thisWeek: "Tuần này",
