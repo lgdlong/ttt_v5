@@ -8,6 +8,7 @@ A Go + React full-stack application with Docker orchestration.
 |-------|-------------|
 | Frontend | React 19 + Vite + Tailwind CSS v4 |
 | Backend | Go 1.21+ + Gin framework |
+| Identity Service | Node.js + Hono + Better Auth |
 | Database | PostgreSQL 16 |
 | Infrastructure | Docker + Traefik reverse proxy |
 
@@ -40,8 +41,13 @@ go run ./cmd/server
 
 # Frontend
 cd frontend
-pnpm install
-pnpm dev
+npm install
+npm run dev
+
+# Identity Service
+cd identity-service
+npm install
+npm run dev
 ```
 
 ## Project Structure
@@ -54,14 +60,35 @@ ttt_v5/
 │   └── internal/    # Private packages
 ├── frontend/        # React application
 │   └── src/        # Source code
+├── identity-service/  # Node.js auth service (Hono + Better Auth)
+│   └── src/        # Source code
 ├── database/        # Database migrations
 ├── docs/           # Documentation
 └── plans/         # Development plans
 ```
 
+## Services
+
+### Identity Service (Port 3001)
+Authentication microservice built with Hono + Better Auth + Kysely.
+
+```bash
+cd identity-service
+pnpm install
+pnpm dev        # http://localhost:3001
+```
+
+Routes:
+- `POST /api/auth/*` - Auth endpoints (sign-in, sign-up, session)
+- `GET /api/auth/*` - Auth endpoints (session, verification)
+- `GET /` - Health check
+
+Requires `.env` at project root with `DATABASE_URL` and `BETTER_AUTH_URL`.
+
 ## API Endpoints
 
-- `GET /health` - Health check
+- `GET /health` - Backend health check
+- `/api/auth/*` - Identity service auth routes (via proxy)
 
 ## Known Issues
 
