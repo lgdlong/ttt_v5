@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **IMPORTANT:** Always read `.claude/rules/` directory for project-specific rules and workflows before starting any task.
 
+**IMPORTANT:** Always load `sequential-thinking` skill in every session for systematic problem-solving and analysis.
+
 ## Quick Commands
 
 ```bash
