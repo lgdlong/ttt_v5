@@ -14,6 +14,7 @@ This guide explains how to build and push Docker images to Docker Hub.
 |---------|------------|
 | Backend | `lgdlong/ttt-v5-backend:latest` |
 | Frontend | `lgdlong/ttt-v5-frontend:latest` |
+| Identity Service | `lgdlong/ttt-v5-identity-service:latest` |
 
 ## Build and Push Commands
 
@@ -45,17 +46,32 @@ docker build -f frontend/Dockerfile \
 
 **Important:** `VITE_API_URL` is baked into the JS bundle at build time via `--build-arg`. The value comes from `.env.prod` in repo root. Do not hardcode — use the command above or set the arg manually.
 
-### 4. Push Frontend Image
+### 4. Build Identity Service Image
+
+```bash
+docker build -f identity-service/Dockerfile -t lgdlong/ttt-v5-identity-service:latest .
+```
+
+### 5. Push Identity Service Image
+
+```bash
+docker push lgdlong/ttt-v5-identity-service:latest
+```
+
+### 6. Push Frontend Image
 
 ```bash
 docker push lgdlong/ttt-v5-frontend:latest
 ```
 
-## One-Liner (Build + Push Both)
+## One-Liner (Build + Push All)
 
 ```bash
 # Backend
 docker build -f backend/Dockerfile -t lgdlong/ttt-v5-backend:latest . && docker push lgdlong/ttt-v5-backend:latest
+
+# Identity Service
+docker build -f identity-service/Dockerfile -t lgdlong/ttt-v5-identity-service:latest . && docker push lgdlong/ttt-v5-identity-service:latest
 
 # Frontend (reads VITE_API_URL from .env.prod via --build-arg)
 docker build -f frontend/Dockerfile \
