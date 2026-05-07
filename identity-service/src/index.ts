@@ -1,17 +1,24 @@
+import path from "path";
+import { fileURLToPath } from "url";
 import { config } from "dotenv";
+import dotenvExpand from "dotenv-expand";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { auth } from "@/infrastructure/auth/auth.js";
-import path from "path";
+import { createAuthInstance } from "@/infrastructure/auth/auth.js";
 
-config({
-  path: path.resolve(__dirname, "../../.env"),
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const result = config({
+  path: path.resolve(__dirname, "../.env"),
   override: false,
 });
+dotenvExpand.expand(result);
 
 const app = new Hono();
 
-app.on(["POST", "GET"], "/api/v1/auth/**", (c) => auth.handler(c.req.raw));
+app.on(["POST", "GET"], "/api/v1/auth/**", (c) => {
+  const { auth } = createAuthInstance();
+  return auth.handler(c.req.raw);
+});
 
 app.get("/", (c) => c.text("Identity Service"));
 
