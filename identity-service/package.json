@@ -1,0 +1,24 @@
+{
+  "name": "identity-service",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@better-auth/kysely-adapter": "^1.6.9",
+    "@hono/node-server": "^1.19.14",
+    "better-auth": "^1.6.9",
+    "dotenv": "^17.4.2",
+    "hono": "^4.12.17",
+    "kysely": "^0.28.17",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "@types/pg": "^8.20.0",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}
