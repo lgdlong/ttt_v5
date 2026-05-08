@@ -14,10 +14,9 @@ import { createTheme, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 
 const theme = createTheme({
-  fontFamily: 'Fira Sans, sans-serif',
-  fontFamilyMonospace: 'Fira Code, monospace',
+  fontFamily: 'Be Vietnam Pro, sans-serif',
   headings: {
-    fontFamily: 'Fira Code, monospace',
+    fontFamily: 'Merriweather, serif',
   },
   primaryColor: 'violet',
   defaultRadius: 'md',

@@ -148,6 +148,7 @@ export function FilterSidebar({
                       <Badge
                         key={tag!.id}
                         variant="filled"
+                        tt="none"
                         rightSection={
                           <ActionIcon size="xs" color="blue" radius="xl" variant="transparent" onClick={() => {
                             const current = filters.tagIds || [];

@@ -1,4 +1,3 @@
-import { toast } from "sonner"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { IconSearch } from "@tabler/icons-react"
@@ -21,6 +20,7 @@ import {
   UnstyledButton,
   Box
 } from "@mantine/core"
+import { notifications } from "@mantine/notifications"
 import { api } from "@/lib/api"
 import { VI } from "@/lib/constants"
 import type { Video, Tag } from "@/types"
@@ -49,10 +49,10 @@ export function VideoManagementPage() {
       api.attachTag(youtubeId, tagId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["videos"] })
-      toast.success(VI.tagAttached)
+      notifications.show({ message: VI.tagAttached, color: 'green' })
     },
     onError: () => {
-      toast.error(VI.errorOccurred)
+      notifications.show({ message: VI.errorOccurred, color: 'red' })
     },
   })
 
@@ -61,10 +61,10 @@ export function VideoManagementPage() {
       api.detachTag(youtubeId, tagId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["videos"] })
-      toast.success(VI.tagDetached)
+      notifications.show({ message: VI.tagDetached, color: 'green' })
     },
     onError: () => {
-      toast.error(VI.errorOccurred)
+      notifications.show({ message: VI.errorOccurred, color: 'red' })
     },
   })
 
@@ -172,6 +172,7 @@ export function VideoManagementPage() {
                           <Badge 
                             key={tag.id} 
                             variant="light" 
+                            tt="none"
                             rightSection={
                               <CloseButton 
                                 size="xs" 
@@ -229,6 +230,7 @@ export function VideoManagementPage() {
                   <Badge
                     key={tag.id}
                     variant="light"
+                    tt="none"
                     rightSection={
                       <CloseButton 
                         size="xs" 

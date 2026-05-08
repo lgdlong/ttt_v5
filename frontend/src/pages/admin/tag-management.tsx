@@ -1,8 +1,8 @@
-import { toast } from "sonner"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { IconPencil, IconTrash, IconSearch } from "@tabler/icons-react"
 import { Button, Card, Modal, TextInput, Table, Skeleton, Group, Title, Text, ActionIcon, ScrollArea, Stack } from "@mantine/core"
+import { notifications } from "@mantine/notifications"
 import { api } from "@/lib/api"
 import { VI } from "@/lib/constants"
 import type { Tag } from "@/types"
@@ -25,11 +25,11 @@ export function TagManagementPage() {
     mutationFn: (name: string) => api.createTag({ name }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] })
-      toast.success(VI.tagCreated)
+      notifications.show({ message: VI.tagCreated, color: 'green' })
       closeDialog()
     },
     onError: () => {
-      toast.error(VI.errorOccurred)
+      notifications.show({ message: VI.errorOccurred, color: 'red' })
     },
   })
 
@@ -37,11 +37,11 @@ export function TagManagementPage() {
     mutationFn: ({ id, name }: { id: number; name: string }) => api.updateTag(id, { name }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] })
-      toast.success(VI.tagUpdated)
+      notifications.show({ message: VI.tagUpdated, color: 'green' })
       closeDialog()
     },
     onError: () => {
-      toast.error(VI.errorOccurred)
+      notifications.show({ message: VI.errorOccurred, color: 'red' })
     },
   })
 
@@ -49,12 +49,12 @@ export function TagManagementPage() {
     mutationFn: (id: number) => api.deleteTag(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] })
-      toast.success(VI.tagDeleted)
+      notifications.show({ message: VI.tagDeleted, color: 'green' })
       setDeleteDialogOpen(false)
       setTagToDelete(null)
     },
     onError: () => {
-      toast.error(VI.errorOccurred)
+      notifications.show({ message: VI.errorOccurred, color: 'red' })
     },
   })
 

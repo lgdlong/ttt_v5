@@ -25,6 +25,7 @@ export function TagFilters({ selectedTags, onTagSelect }: TagFiltersProps) {
           variant={selectedTags.includes(tag.id) ? "filled" : "outline"}
           style={{ cursor: "pointer", flexShrink: 0 }}
           onClick={() => onTagSelect(tag.id)}
+          tt="none"
         >
           {tag.name}
         </Badge>
