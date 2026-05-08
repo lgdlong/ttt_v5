@@ -105,7 +105,7 @@ export function VideoBrowserPage() {
 
         <Box style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", borderRadius: "var(--mantine-radius-md)" }}>
           {/* Search Header */}
-          <Box style={{ flexShrink: 0, height: 64, display: "flex", alignItems: "center", borderBottom: "1px solid var(--mantine-color-gray-2)" }} className="dark:border-dark-4 lg:border-none">
+          <Box style={{ flexShrink: 0, height: 64, display: "flex", alignItems: "center", borderBottom: "1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))" }} className="lg:border-none">
             <Group w="100%" gap="md" wrap="nowrap">
               <Box display={{ base: "block", lg: "none" }} style={{ flexShrink: 0 }}>
                 <Indicator disabled={!hasActiveFilters} color="var(--mantine-primary-color-filled)">
@@ -153,13 +153,12 @@ export function VideoBrowserPage() {
               style={{
                 width: selectedVideo ? 420 : 0,
                 flexShrink: 0,
-                borderLeft: selectedVideo ? "1px solid var(--mantine-color-gray-2)" : "none",
+                borderLeft: selectedVideo ? "1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))" : "none",
                 backgroundColor: "var(--mantine-color-body)",
                 overflow: "hidden",
                 transition: "width 300ms ease, visibility 300ms ease",
                 visibility: selectedVideo ? "visible" : "hidden",
               }}
-              className="dark:border-dark-4"
             >
               {selectedVideo && <VideoDetailPanel video={selectedVideo} onClose={() => setIsDetailOpen(false)} />}
             </Box>

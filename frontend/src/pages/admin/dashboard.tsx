@@ -87,7 +87,7 @@ export function AdminDashboardPage() {
             ) : (
               <Stack gap="sm">
                 {topTags.map(({ tag, count }) => (
-                  <Group key={tag.id} justify="space-between" p="sm" style={{ border: '1px solid var(--mantine-color-gray-2)', borderRadius: 'var(--mantine-radius-md)' }} className="dark:border-dark-4">
+                  <Group key={tag.id} justify="space-between" p="sm" style={{ border: '1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))', borderRadius: 'var(--mantine-radius-md)' }}>
                     <Text fw={500}>{tag.name}</Text>
                     <Badge variant="light">{count} videos</Badge>
                   </Group>

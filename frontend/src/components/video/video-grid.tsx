@@ -91,7 +91,7 @@ export function VideoGrid({
       ) : videos.length === 0 ? (
         <Center h="100%">
           <Stack align="center" gap="sm">
-            <Box bg="var(--mantine-color-gray-1)" className="dark:bg-dark-6" p="lg" style={{ borderRadius: '50%' }}>
+            <Box bg="light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6))" p="lg" style={{ borderRadius: '50%' }}>
               <IconMovie size={40} className="text-gray-400" />
             </Box>
             <Title order={3}>{VI.noResults}</Title>

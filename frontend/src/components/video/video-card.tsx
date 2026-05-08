@@ -38,12 +38,11 @@ export function VideoCard({ video, isSelected, onClick }: VideoCardProps) {
         w="100%"
         style={{
           aspectRatio: "16/9",
-          backgroundColor: "var(--mantine-color-gray-1)",
+          backgroundColor: "light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6))",
           overflow: "hidden",
           borderRadius: "var(--mantine-radius-md)",
           boxShadow: isSelected ? "0 0 0 2px var(--mantine-color-violet-filled)" : "none",
         }}
-        className="dark:bg-dark-6"
       >
         {video.thumbnail_url ? (
           <Image
@@ -52,7 +51,7 @@ export function VideoCard({ video, isSelected, onClick }: VideoCardProps) {
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (
-          <Box w="100%" h="100%" display="flex" style={{ alignItems: "center", justifyContent: "center" }} bg="var(--mantine-color-gray-2)" className="dark:bg-dark-7">
+          <Box w="100%" h="100%" display="flex" style={{ alignItems: "center", justifyContent: "center" }} bg="light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7))">
             <IconPlayerPlayFilled size={32} className="text-gray-400" />
           </Box>
         )}

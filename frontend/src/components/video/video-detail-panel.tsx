@@ -27,7 +27,7 @@ export function VideoDetailPanel({ video, onClose }: VideoDetailPanelProps) {
   if (!video) {
     return (
       <Stack h="100%" align="center" justify="center" p="xl" style={{ textAlign: "center" }}>
-        <Box bg="var(--mantine-color-gray-1)" className="dark:bg-dark-6" p="lg" style={{ borderRadius: '50%', marginBottom: 'var(--mantine-spacing-md)' }}>
+        <Box bg="light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6))" p="lg" style={{ borderRadius: '50%', marginBottom: 'var(--mantine-spacing-md)' }}>
           <IconMovie size={32} className="text-gray-400" />
         </Box>
         <Text c="dimmed">{VI.selectVideo}</Text>
@@ -37,7 +37,7 @@ export function VideoDetailPanel({ video, onClose }: VideoDetailPanelProps) {
 
   return (
     <Stack h="100%" gap={0}>
-      <Box w="100%" style={{ aspectRatio: "16/9", backgroundColor: "var(--mantine-color-gray-1)", overflow: "hidden" }} className="dark:bg-dark-6">
+      <Box w="100%" style={{ aspectRatio: "16/9", backgroundColor: "light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6))", overflow: "hidden" }}>
         {video.thumbnail_url ? (
           <Image
             src={video.thumbnail_url}
@@ -45,7 +45,7 @@ export function VideoDetailPanel({ video, onClose }: VideoDetailPanelProps) {
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (
-          <Stack h="100%" align="center" justify="center" bg="var(--mantine-color-gray-2)" className="dark:bg-dark-7">
+          <Stack h="100%" align="center" justify="center" bg="light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7))">
             <IconMovie size={64} className="text-gray-400" />
           </Stack>
         )}

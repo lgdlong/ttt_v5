@@ -73,12 +73,14 @@ export function FilterSidebar({
 
   return (
     <Box
+      bg="light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))"
       className={cn(
-        "w-full lg:w-64 flex-none flex flex-col rounded-lg overflow-hidden h-full border border-gray-200 dark:border-dark-4 bg-white dark:bg-dark-7",
+        "w-full lg:w-64 flex-none flex flex-col rounded-lg overflow-hidden h-full",
         className,
       )}
+      style={{ border: '1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))' }}
     >
-      <Group justify="space-between" px="md" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-gray-2)' }} className="dark:border-dark-4 shrink-0">
+      <Group justify="space-between" px="md" py="sm" style={{ borderBottom: '1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))' }} className="shrink-0">
         <Group gap="xs">
           <IconAdjustmentsHorizontal size={18} className="text-gray-500" />
           <Text fw={600} size="sm">{VI.filter}</Text>
@@ -104,7 +106,17 @@ export function FilterSidebar({
                     p="xs"
                     style={{ borderRadius: 'var(--mantine-radius-md)' }}
                     bg={isSelected ? 'var(--mantine-color-violet-light)' : 'transparent'}
-                    className="hover:bg-gray-100 dark:hover:bg-dark-6 transition-colors"
+                    className="transition-colors"
+                    style={{
+                      borderRadius: 'var(--mantine-radius-md)',
+                      backgroundColor: isSelected ? 'var(--mantine-color-violet-light)' : 'transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--mantine-color-default-hover)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
                   >
                     <Group justify="space-between" wrap="nowrap">
                       <Group gap="sm" wrap="nowrap">
@@ -139,7 +151,7 @@ export function FilterSidebar({
             />
 
             {selectedTags.length > 0 && (
-              <Box mb="sm" p="xs" bg="var(--mantine-color-gray-0)" className="dark:bg-dark-6" style={{ borderRadius: 'var(--mantine-radius-md)' }}>
+              <Box mb="sm" p="xs" bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))" style={{ borderRadius: 'var(--mantine-radius-md)' }}>
                 <Group gap="xs" mb="xs">
                   {selectedTags
                     .map((id) => tags.find((t) => t.id === id))
@@ -168,7 +180,7 @@ export function FilterSidebar({
                 <UnstyledButton
                   onClick={handleReset}
                 >
-                  <Text size="xs" c="dimmed" className="hover:text-gray-800 dark:hover:text-gray-200">Xóa tất cả</Text>
+                  <Text size="xs" c="dimmed">Xóa tất cả</Text>
                 </UnstyledButton>
               </Box>
             )}
@@ -195,7 +207,17 @@ export function FilterSidebar({
                         p="xs"
                         style={{ borderRadius: 'var(--mantine-radius-md)' }}
                         bg={isSelected ? 'var(--mantine-color-violet-light)' : 'transparent'}
-                        className="hover:bg-gray-100 dark:hover:bg-dark-6 transition-colors"
+                        className="transition-colors"
+                        style={{
+                          borderRadius: 'var(--mantine-radius-md)',
+                          backgroundColor: isSelected ? 'var(--mantine-color-violet-light)' : 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--mantine-color-default-hover)';
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
                       >
                         <Group wrap="nowrap" gap="sm">
                           <Box
@@ -221,7 +243,7 @@ export function FilterSidebar({
         </Stack>
       </ScrollArea>
 
-      <Group p="sm" grow style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }} className="dark:border-dark-4 shrink-0">
+      <Group p="sm" grow style={{ borderTop: '1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))' }} className="shrink-0">
         <Button variant="default" onClick={handleReset} size="sm">
           Đặt lại
         </Button>

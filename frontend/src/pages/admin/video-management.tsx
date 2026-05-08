@@ -272,11 +272,17 @@ export function VideoManagementPage() {
                     onClick={() => handleAttachTag(tag.id)}
                     disabled={attachMutation.isPending}
                     p="sm"
+                    className="transition-colors"
                     style={{ 
                       borderRadius: 'var(--mantine-radius-md)', 
                       opacity: attachMutation.isPending ? 0.5 : 1
                     }}
-                    className="hover:bg-gray-100 dark:hover:bg-dark-6 transition-colors"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--mantine-color-default-hover)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
                   >
                     <Text size="sm">{tag.name}</Text>
                   </UnstyledButton>
