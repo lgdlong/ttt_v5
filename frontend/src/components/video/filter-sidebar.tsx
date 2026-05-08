@@ -23,6 +23,7 @@ interface FilterSidebarProps {
   onApply: (filters: VideoFilters) => void;
   onClearAll?: () => void;
   selectedTagIds?: number[];
+  initialFilters?: VideoFilters;
   isOpen?: boolean;
   className?: string;
 }
@@ -37,17 +38,22 @@ export function FilterSidebar({
   onApply,
   onClearAll,
   selectedTagIds = [],
+  initialFilters = {},
   isOpen = true,
   className,
 }: FilterSidebarProps) {
-  const [filters, setFilters] = useState<VideoFilters>({});
+  const [filters, setFilters] = useState<VideoFilters>(initialFilters);
   const [tagSearch, setTagSearch] = useState("");
 
   useEffect(() => {
-    if (isOpen && selectedTagIds.length > 0) {
-      setFilters((prev) => ({ ...prev, tagIds: selectedTagIds }));
+    if (isOpen) {
+      setFilters((prev) => ({
+        ...prev,
+        ...initialFilters,
+        tagIds: selectedTagIds.length > 0 ? selectedTagIds : prev.tagIds,
+      }));
     }
-  }, [isOpen, selectedTagIds]);
+  }, [isOpen, selectedTagIds, initialFilters]);
 
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],

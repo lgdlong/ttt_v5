@@ -82,6 +82,7 @@ export function VideoBrowserPage() {
             onApply={handleFilterApply}
             onClearAll={handleClearFilters}
             selectedTagIds={selectedTags}
+            initialFilters={filters}
           />
         </Box>
 
@@ -101,6 +102,7 @@ export function VideoBrowserPage() {
             }}
             onClearAll={handleClearFilters}
             selectedTagIds={selectedTags}
+            initialFilters={filters}
             isOpen={isFilterOpen}
             className="w-full h-full border-none rounded-none"
           />
