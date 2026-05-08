@@ -57,23 +57,23 @@ export function VideoDetailPanel({ video, onClose }: VideoDetailPanelProps) {
 
           <Stack gap={8}>
             <Group gap="sm" wrap="nowrap">
-              <Text size="xs" c="dimmed" style={{ flexShrink: 0, width: 80 }}>Tên kênh:</Text>
-              <Text size="xs" fw={500}>{video.author}</Text>
+              <Text size="sm" c="dimmed" style={{ flexShrink: 0, width: 90 }}>Tên kênh:</Text>
+              <Text size="sm" fw={500}>{video.author}</Text>
             </Group>
             <Group gap="sm" wrap="nowrap">
-              <Text size="xs" c="dimmed" style={{ flexShrink: 0, width: 80 }}>Ngày đăng:</Text>
-              <Text size="xs" fw={500}>{formatDate(video.upload_date)}</Text>
+              <Text size="sm" c="dimmed" style={{ flexShrink: 0, width: 90 }}>Ngày đăng:</Text>
+              <Text size="sm" fw={500}>{formatDate(video.upload_date)}</Text>
             </Group>
             <Group gap="sm" wrap="nowrap">
-              <Text size="xs" c="dimmed" style={{ flexShrink: 0, width: 80 }}>Thời lượng:</Text>
-              <Text size="xs" fw={500}>{formatDuration(video.duration_seconds)}</Text>
+              <Text size="sm" c="dimmed" style={{ flexShrink: 0, width: 90 }}>Thời lượng:</Text>
+              <Text size="sm" fw={500}>{formatDuration(video.duration_seconds)}</Text>
             </Group>
           </Stack>
 
           {video.tags && video.tags.length > 0 && (
             <Group gap={6}>
               {video.tags.map((tag) => (
-                <Badge key={tag.id} variant="light" size="xs" tt="none">
+                <Badge key={tag.id} variant="default" size="md" tt="none" fw={500} radius="sm">
                   {tag.name}
                 </Badge>
               ))}
