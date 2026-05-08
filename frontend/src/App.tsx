@@ -80,19 +80,19 @@ const theme = createTheme({
       '#0F172A',
     ],
     dark: [
-      '#F8FAFC', // index 0: Primary Text
-      '#E2E8F0',
-      '#94A3B8',
-      '#64748B', // index 3: Muted Text
-      '#475569',
-      '#334155',
-      '#1C2541', // index 6: Surface (Cards)
-      '#0B132B', // index 7: Background (Body)
-      '#090E21', // index 8: Background Deep
-      '#070A1A', // index 9: Background Black
+      '#E5E5E1', // index 0: Text (Stone Off-white)
+      '#D4D4D0',
+      '#A3A39F',
+      '#73736E', // index 3: Muted Text
+      '#52524E',
+      '#40403C',
+      '#262624', // index 6: Surface (Stone Dark)
+      '#1C1C1A', // index 7: Background (Stone Black)
+      '#171715',
+      '#0F0F0E',
     ],
   },
-  primaryColor: 'midnight',
+  primaryColor: 'earth',
   defaultRadius: 'md',
   components: {
     Badge: {
