@@ -22,9 +22,9 @@
 
 | Milestone | Status | Notes |
 |----------|--------|-------|
-| User registration | Pending | POST /api/auth/register |
-| User login | Pending | POST /api/auth/login |
-| User logout | Pending | POST /api/auth/logout |
+| User registration | Complete | Implemented via identity-service (Better Auth) |
+| User login | Complete | Implemented via identity-service (Better Auth) |
+| User logout | Complete | Implemented via identity-service (Better Auth) |
 | Get current user | Pending | GET /api/users/me |
 | Database migrations | Pending | Run with Atlas |
 

@@ -61,6 +61,7 @@ docker-compose down
 | Frontend | http://localhost |
 | Traefik dashboard | http://localhost:8080 |
 | Backend API | http://localhost/api |
+| Identity Service | http://localhost:8081 |
 
 ### Individual Service Development
 
@@ -145,6 +146,7 @@ docker-compose -f docker-compose.prod.yml up -d
 |---------|-------|--------|
 | db | postgres:17-alpine | Docker Hub |
 | backend | lgdlong/ttt-v5-backend:latest | Docker Hub |
+| identity | lgdlong/ttt-v5-identity:latest | Docker Hub |
 | frontend | lgdlong/ttt-v5-frontend:latest | Docker Hub |
 
 ### Troubleshooting
@@ -247,7 +249,8 @@ docker-compose build --no-cache
 | traefik | traefik:v3.0 | 80, 8080 | - |
 | db | postgres:17-alpine | 5432 | pg_isready |
 | backend | golang:1.25-alpine | 8080 | GET /health |
-| frontend | node:24-alpine | 3000 | GET / |
+| identity| node:22-alpine | 8081 | GET / |
+| frontend| node:24-alpine | 3000 | GET / |
 
 ## Environment Variables
 

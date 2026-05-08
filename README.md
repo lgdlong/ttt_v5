@@ -69,18 +69,17 @@ ttt_v5/
 
 ## Services
 
-### Identity Service (Port 3001)
-Authentication microservice built with Hono + Better Auth + Kysely.
+### Identity Service (Port 8081)
+Authentication microservice fully implemented with Hono + Better Auth + Kysely.
 
 ```bash
 cd identity-service
-pnpm install
-pnpm dev        # http://localhost:3001
+npm install
+npm run dev        # http://localhost:8081
 ```
 
 Routes:
-- `POST /api/auth/*` - Auth endpoints (sign-in, sign-up, session)
-- `GET /api/auth/*` - Auth endpoints (session, verification)
+- `POST/GET /api/v1/auth/*` - All Better Auth endpoints (sign-in, sign-up, session, sign-out, reference)
 - `GET /` - Health check
 
 Requires `.env` at project root with `DATABASE_URL` and `BETTER_AUTH_URL`.
@@ -88,7 +87,7 @@ Requires `.env` at project root with `DATABASE_URL` and `BETTER_AUTH_URL`.
 ## API Endpoints
 
 - `GET /health` - Backend health check
-- `/api/auth/*` - Identity service auth routes (via proxy)
+- `/api/v1/auth/*` - Identity service auth routes (via proxy)
 
 ## Known Issues
 

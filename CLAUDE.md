@@ -32,14 +32,18 @@ make db-psql             # Connect to PostgreSQL
 
 ## Architecture
 
-This is a Go + React full-stack app with Clean Architecture:
+This is a Go + Node.js + React microservices/full-stack app:
 
 ```
-backend/internal/
+backend/internal/ (Go)
 ├── delivery/     # HTTP handlers, middleware, router
 ├── application/  # Business logic (services)
 ├── domain/        # Entities, DTOs, repository interfaces
 └── repository/   # GORM implementations
+
+identity-service/src/ (Node.js)
+├── infrastructure/ # Auth, database (Better Auth + Kysely)
+└── index.ts        # Hono server entry point
 ```
 
 Frontend uses React 19 + Vite + Tailwind CSS v4 with shadcn/ui patterns.

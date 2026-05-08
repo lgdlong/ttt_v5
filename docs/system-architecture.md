@@ -8,11 +8,19 @@
 │  (Browser)  │     │  (Reverse  │     │   (Go)     │
 │             │◀────│   Proxy)   │◀────│            │
 └─────────────┘     └─────────────┘     └─────┬───────┘
-                                            │
-                                    ┌───────▼───────┐
-                                    │  PostgreSQL   │
-                                    │   (Database)  │
-                                    └──────────────┘
+                           │                  │
+                    ┌──────▼──────┐           │
+                    │ Identity    │           │
+                    │ Service     │           │
+                    │ (Node/Hono) │           │
+                    └──────┬──────┘           │
+                           │                  │
+                           └────────┬─────────┘
+                                    │
+                            ┌───────▼───────┐
+                            │  PostgreSQL   │
+                            │   (Database)  │
+                            └───────────────┘
 ```
 
 ## Technology Stack
@@ -31,9 +39,13 @@
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| Go | 1.25.0 | Runtime |
-| Gin | v1.9.1 | HTTP framework |
-| GORM | v1.25.12 | ORM |
+| Go | 1.25.0 | Core Runtime |
+| Gin | v1.9.1 | HTTP framework (Go) |
+| GORM | v1.25.12 | ORM (Go) |
+| Node.js | 22.x | Identity Service runtime |
+| Hono | v4.x | HTTP framework (Node) |
+| Better Auth | v1.6.x | Authentication library |
+| Kysely | v0.28.x | Query Builder (Node) |
 | PostgreSQL | 17 | Database |
 
 ### Infrastructure
@@ -83,6 +95,22 @@ backend/
 - Layered architecture (cmd → config → internal)
 - Gin HTTP framework
 - Environment-based config via godotenv
+
+### Identity Service (Node.js/Hono)
+
+```
+identity-service/
+├── src/
+│   ├── infrastructure/
+│   │   ├── auth/        # Better Auth config
+│   │   └── database/    # Kysely connection
+│   └── index.ts         # Hono entry point
+```
+
+**Key Patterns**:
+- Better Auth for authentication logic
+- Server-side sessions (no JWTs)
+- Kysely for type-safe database queries
 
 ### Database
 
