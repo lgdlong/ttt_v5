@@ -1,6 +1,6 @@
 import type { Video } from "@/types";
-import { cn } from "@/lib/utils";
-import { Play } from "lucide-react";
+import { IconPlayerPlayFilled } from "@tabler/icons-react";
+import { UnstyledButton, Box, Text, Image, Badge, Stack } from "@mantine/core";
 
 interface VideoCardProps {
   video: Video;
@@ -24,48 +24,69 @@ function formatDate(dateStr: string): string {
 
 export function VideoCard({ video, isSelected, onClick }: VideoCardProps) {
   return (
-    <button
-      className={cn(
-        "w-full text-left cursor-pointer group transition-opacity p-0 bg-transparent border-0",
-        isSelected && "opacity-100",
-      )}
+    <UnstyledButton
+      w="100%"
       onClick={onClick}
+      style={{
+        opacity: isSelected ? 1 : 0.9,
+        transition: "opacity 150ms ease, transform 150ms ease",
+      }}
+      className="hover:opacity-100"
     >
-      <div
-        className={cn(
-          "relative w-full aspect-video bg-muted overflow-hidden transition-colors",
-          isSelected ? "ring-2 ring-primary" : "",
-        )}
+      <Box
+        pos="relative"
+        w="100%"
+        style={{
+          aspectRatio: "16/9",
+          backgroundColor: "var(--mantine-color-gray-1)",
+          overflow: "hidden",
+          borderRadius: "var(--mantine-radius-md)",
+          boxShadow: isSelected ? "0 0 0 2px var(--mantine-color-violet-filled)" : "none",
+        }}
+        className="dark:bg-dark-6"
       >
         {video.thumbnail_url ? (
-          <img
+          <Image
             src={video.thumbnail_url}
             alt={video.title}
-            className="w-full h-full object-cover"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
-            <Play className="size-8 text-muted-foreground" />
-          </div>
+          <Box w="100%" h="100%" display="flex" style={{ alignItems: "center", justifyContent: "center" }} bg="var(--mantine-color-gray-2)" className="dark:bg-dark-7">
+            <IconPlayerPlayFilled size={32} className="text-gray-400" />
+          </Box>
         )}
-        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
+        <Badge
+          color="dark"
+          variant="filled"
+          size="sm"
+          radius="sm"
+          style={{
+            position: "absolute",
+            bottom: 8,
+            right: 8,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            color: "white",
+          }}
+        >
           {formatDuration(video.duration_seconds)}
-        </div>
-      </div>
-      <div className="py-1.5 px-1">
-        <h3
-          className={cn(
-            "font-medium text-sm leading-tight line-clamp-2 text-foreground transition-colors",
-            isSelected ? "text-primary" : "group-hover:text-primary",
-          )}
+        </Badge>
+      </Box>
+      <Stack gap={2} mt="xs" px={4}>
+        <Text
+          size="sm"
+          fw={500}
+          lineClamp={2}
+          c={isSelected ? "violet" : "inherit"}
+          style={{ lineHeight: 1.3 }}
         >
           {video.title}
-        </h3>
-        <p className="text-xs text-muted-foreground mt-1">{video.author}</p>
-        <p className="text-xs text-muted-foreground/70 mt-0.5 flex items-center gap-1">
+        </Text>
+        <Text size="xs" c="dimmed">{video.author}</Text>
+        <Text size="xs" c="dimmed" style={{ opacity: 0.7 }}>
           {formatDate(video.upload_date)}
-        </p>
-      </div>
-    </button>
+        </Text>
+      </Stack>
+    </UnstyledButton>
   );
 }

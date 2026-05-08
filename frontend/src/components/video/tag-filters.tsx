@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
-import { Badge } from "@/components/ui/badge"
+import { Badge, Group } from "@mantine/core"
 
 interface TagFiltersProps {
   selectedTags: number[]
@@ -18,17 +18,17 @@ export function TagFilters({ selectedTags, onTagSelect }: TagFiltersProps) {
   }
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2">
+    <Group gap="xs" style={{ overflowX: 'auto', flexWrap: 'nowrap', paddingBottom: '8px' }}>
       {tags.map((tag) => (
         <Badge
           key={tag.id}
-          variant={selectedTags.includes(tag.id) ? "default" : "outline"}
-          className="cursor-pointer shrink-0"
+          variant={selectedTags.includes(tag.id) ? "filled" : "outline"}
+          style={{ cursor: "pointer", flexShrink: 0 }}
           onClick={() => onTagSelect(tag.id)}
         >
           {tag.name}
         </Badge>
       ))}
-    </div>
+    </Group>
   )
 }

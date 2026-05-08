@@ -5,12 +5,28 @@ import { VideoManagementPage } from "@/pages/admin/video-management"
 import { TagManagementPage } from "@/pages/admin/tag-management"
 import { PublicLayout } from "@/components/layout/public-layout"
 import { AdminAuth } from "@/components/layout/admin-auth"
-import { Toaster } from "@/components/ui/sonner"
+
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
+import '@mantine/notifications/styles.css';
+
+import { createTheme, MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+
+const theme = createTheme({
+  fontFamily: 'Fira Sans, sans-serif',
+  fontFamilyMonospace: 'Fira Code, monospace',
+  headings: {
+    fontFamily: 'Fira Code, monospace',
+  },
+  primaryColor: 'violet',
+  defaultRadius: 'md',
+});
 
 function App() {
   return (
-    <>
-      <Toaster />
+    <MantineProvider theme={theme} defaultColorScheme="light">
+      <Notifications position="top-right" />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<PublicLayout><VideoBrowserPage /></PublicLayout>} />
@@ -20,7 +36,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </MantineProvider>
   )
 }
 

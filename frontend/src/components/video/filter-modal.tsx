@@ -1,18 +1,9 @@
 import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Filter, X } from "lucide-react"
+import { IconFilter, IconX } from "@tabler/icons-react"
 import { VI } from "@/lib/constants"
 import { api } from "@/lib/api"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
+import { Modal, Button, TextInput, Badge, Group, Stack, ScrollArea, Text, ActionIcon } from "@mantine/core"
 
 export interface VideoFilters {
   sortOrder?: "newest" | "oldest" | "alphabetical"
@@ -23,14 +14,13 @@ interface FilterModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onApply: (filters: VideoFilters) => void
-  selectedTagIds?: number[]  // Current selected tags from parent
+  selectedTagIds?: number[]
 }
 
 export function FilterModal({ open, onOpenChange, onApply, selectedTagIds = [] }: FilterModalProps) {
   const [filters, setFilters] = useState<VideoFilters>({})
   const [tagSearch, setTagSearch] = useState("")
 
-  // Sync selected tags from parent when modal opens
   useEffect(() => {
     if (open && selectedTagIds.length > 0) {
       setFilters((prev) => ({ ...prev, tagIds: selectedTagIds }))
@@ -58,73 +48,76 @@ export function FilterModal({ open, onOpenChange, onApply, selectedTagIds = [] }
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Filter className="h-4 w-4" />
-            {VI.filter}
-          </DialogTitle>
-        </DialogHeader>
+    <Modal 
+      opened={open} 
+      onClose={() => onOpenChange(false)} 
+      title={
+        <Group gap="xs">
+          <IconFilter size={18} />
+          <Text fw={500}>{VI.filter}</Text>
+        </Group>
+      }
+    >
+      <Stack gap="md">
+        <div>
+          <Text size="sm" fw={500} mb="xs">Sắp xếp theo ngày đăng</Text>
+          <Group gap="xs">
+            {(["newest", "oldest", "alphabetical"] as const).map((sort) => (
+              <Badge
+                key={sort}
+                variant={filters.sortOrder === sort ? "filled" : "outline"}
+                style={{ cursor: "pointer" }}
+                onClick={() => setFilters({ ...filters, sortOrder: sort })}
+              >
+                {sort === "newest" ? "Mới nhất" : sort === "oldest" ? "Cũ nhất" : "A-Z"}
+              </Badge>
+            ))}
+          </Group>
+        </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium mb-2 block">Sắp xếp theo ngày đăng</label>
-            <div className="flex flex-wrap gap-2">
-              {(["newest", "oldest", "alphabetical"] as const).map((sort) => (
-                <Badge
-                  key={sort}
-                  variant={filters.sortOrder === sort ? "default" : "outline"}
-                  className="cursor-pointer"
-                  onClick={() => setFilters({ ...filters, sortOrder: sort })}
-                >
-                  {sort === "newest" ? "Mới nhất" : sort === "oldest" ? "Cũ nhất" : "A-Z"}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          
-          <div>
-            <label className="text-sm font-medium mb-2 block">Thẻ</label>
-            <Input
-              placeholder="Tìm kiếm thẻ..."
-              value={tagSearch}
-              onChange={(e) => setTagSearch(e.target.value)}
-              className="mb-2"
-            />
-            {filters.tagIds && filters.tagIds.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mb-2">
-                {filters.tagIds
-                  .map((id) => tags.find((t) => t.id === id))
-                  .filter(Boolean)
-                  .map((tag) => (
-                    <Badge
-                      key={tag!.id}
-                      variant="default"
-                      className="cursor-pointer pr-1"
-                      onClick={() => {
+        <div>
+          <Text size="sm" fw={500} mb="xs">Thẻ</Text>
+          <TextInput
+            placeholder="Tìm kiếm thẻ..."
+            value={tagSearch}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTagSearch(e.currentTarget.value)}
+            mb="sm"
+          />
+          {filters.tagIds && filters.tagIds.length > 0 && (
+            <Group gap="xs" mb="sm">
+              {filters.tagIds
+                .map((id) => tags.find((t) => t.id === id))
+                .filter(Boolean)
+                .map((tag) => (
+                  <Badge
+                    key={tag!.id}
+                    variant="filled"
+                    rightSection={
+                      <ActionIcon size="xs" color="blue" radius="xl" variant="transparent" onClick={() => {
                         const current = filters.tagIds || []
                         setFilters({ ...filters, tagIds: current.filter((id) => id !== tag!.id) })
-                      }}
-                    >
-                      {tag!.name}
-                      <X className="h-3 w-3 ml-1" />
-                    </Badge>
-                  ))}
-              </div>
-            )}
-            <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto border rounded-md p-2">
+                      }}>
+                        <IconX size={10} />
+                      </ActionIcon>
+                    }
+                  >
+                    {tag!.name}
+                  </Badge>
+                ))}
+            </Group>
+          )}
+          <ScrollArea h={150} type="always" offsetScrollbars>
+            <Group gap="xs">
               {filteredTags.length === 0 ? (
-                <p className="text-sm text-muted-foreground w-full text-center py-2">
+                <Text size="sm" c="dimmed" w="100%" ta="center" py="sm">
                   Không tìm thấy thẻ
-                </p>
+                </Text>
               ) : (
                 filteredTags.map((tag) => (
                   <Badge
                     key={tag.id}
-                    variant={filters.tagIds?.includes(tag.id) ? "default" : "outline"}
-                    className="cursor-pointer"
+                    variant={filters.tagIds?.includes(tag.id) ? "filled" : "outline"}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       const current = filters.tagIds || []
                       const updated = current.includes(tag.id)
@@ -137,17 +130,18 @@ export function FilterModal({ open, onOpenChange, onApply, selectedTagIds = [] }
                   </Badge>
                 ))
               )}
-            </div>
-          </div>
+            </Group>
+          </ScrollArea>
         </div>
+      </Stack>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={handleReset}>
-            {VI.reset}
-          </Button>
-          <Button onClick={handleApply}>{VI.apply}</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <Group justify="flex-end" mt="xl">
+        <Button variant="default" onClick={handleReset}>
+          {VI.reset}
+        </Button>
+        <Button onClick={handleApply}>{VI.apply}</Button>
+      </Group>
+    </Modal>
   )
 }
+

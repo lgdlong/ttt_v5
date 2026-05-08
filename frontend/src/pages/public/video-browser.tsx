@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { IconSearch, IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import type { Video } from "@/types";
 import { api } from "@/lib/api";
 import { FilterSidebar } from "@/components/video/filter-sidebar";
@@ -8,10 +8,7 @@ import type { VideoFilters } from "@/components/video/filter-sidebar";
 import { VideoGrid } from "@/components/video/video-grid";
 import { VideoDetailPanel } from "@/components/video/video-detail-panel";
 import { ErrorBoundary } from "@/components/error-boundary";
-import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Drawer, ActionIcon, TextInput, Box, Group, Indicator } from "@mantine/core";
 
 const PAGE_SIZE = 20;
 
@@ -20,7 +17,6 @@ export function VideoBrowserPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [filters, setFilters] = useState<VideoFilters>({});
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
@@ -77,131 +73,114 @@ export function VideoBrowserPage() {
 
   return (
     <ErrorBoundary>
-      <SidebarProvider defaultOpen={true}>
-        <div className="flex h-screen w-full overflow-hidden p-4 md:p-6 gap-4">
-          <div className="hidden lg:block shrink-0">
-            <FilterSidebar
-              onApply={handleFilterApply}
-              onClearAll={handleClearFilters}
-              selectedTagIds={selectedTags}
-            />
-          </div>
+      <Box style={{ display: "flex", height: "100vh", width: "100%", overflow: "hidden", gap: "var(--mantine-spacing-md)", padding: "var(--mantine-spacing-md)" }}>
+        <Box display={{ base: "none", lg: "block" }} style={{ flexShrink: 0 }}>
+          <FilterSidebar
+            onApply={handleFilterApply}
+            onClearAll={handleClearFilters}
+            selectedTagIds={selectedTags}
+          />
+        </Box>
 
-          <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-            <SheetContent
-              side="left"
-              className="p-0 border-r w-[280px] sm:w-[320px]"
-            >
-              <div className="sr-only">
-                <SheetTitle>Filters</SheetTitle>
-              </div>
-              <FilterSidebar
-                onApply={(opts) => {
-                  handleFilterApply(opts);
-                  setIsFilterOpen(false);
-                }}
-                onClearAll={handleClearFilters}
-                selectedTagIds={selectedTags}
-                isOpen={isFilterOpen}
-                className="w-full border-none rounded-none"
+        <Drawer
+          opened={isFilterOpen}
+          onClose={() => setIsFilterOpen(false)}
+          position="left"
+          size="sm"
+          title="Filters"
+          withCloseButton={false}
+          styles={{ header: { display: "none" }, body: { padding: 0, height: "100%" } }}
+        >
+          <FilterSidebar
+            onApply={(opts) => {
+              handleFilterApply(opts);
+              setIsFilterOpen(false);
+            }}
+            onClearAll={handleClearFilters}
+            selectedTagIds={selectedTags}
+            isOpen={isFilterOpen}
+            className="w-full h-full border-none rounded-none"
+          />
+        </Drawer>
+
+        <Box style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", borderRadius: "var(--mantine-radius-md)" }}>
+          {/* Search Header */}
+          <Box style={{ flexShrink: 0, height: 64, display: "flex", alignItems: "center", borderBottom: "1px solid var(--mantine-color-gray-2)" }} className="dark:border-dark-4 lg:border-none">
+            <Group w="100%" gap="md" wrap="nowrap">
+              <Box display={{ base: "block", lg: "none" }} style={{ flexShrink: 0 }}>
+                <Indicator disabled={!hasActiveFilters} color="var(--mantine-primary-color-filled)">
+                  <ActionIcon
+                    variant="default"
+                    size="lg"
+                    onClick={() => setIsFilterOpen(true)}
+                  >
+                    <IconAdjustmentsHorizontal size={20} />
+                  </ActionIcon>
+                </Indicator>
+              </Box>
+              
+              <TextInput
+                placeholder="Tìm kiếm video..."
+                value={searchTerm}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.currentTarget.value)}
+                leftSection={<IconSearch size={18} className="text-gray-400" />}
+                w="100%"
+                size="md"
               />
-            </SheetContent>
-          </Sheet>
+            </Group>
+          </Box>
 
-          <SidebarInset className="flex flex-col flex-1 overflow-hidden rounded-lg">
-            {/* Search Header - Full Width */}
-            <div className="flex-none bg-transparent backdrop-blur h-14 sm:h-16 flex items-center shrink-0 border-b lg:border-none">
-              <div className="flex h-full w-full items-center gap-3 px-0 lg:px-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="lg:hidden shrink-0 h-10 w-10 relative cursor-pointer"
-                  onClick={() => setIsFilterOpen(true)}
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                  {hasActiveFilters && (
-                    <span className="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-primary" />
-                  )}
-                </Button>
-                <div
-                  className={cn(
-                    "flex-1 flex items-center gap-2 rounded-lg border bg-background px-4 py-2.5 transition-colors h-10",
-                    isSearchFocused && "border-primary",
-                  )}
-                >
-                  <Search className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <input
-                    type="text"
-                    placeholder="Tìm kiếm video..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => setIsSearchFocused(false)}
-                    className="flex-1 bg-transparent border-0 outline-none text-sm placeholder:text-muted-foreground w-full min-w-0"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="flex flex-1 h-full overflow-hidden relative mt-4 lg:mt-0">
-              <div className="flex-1 h-full overflow-hidden">
-                <VideoGrid
-                  videos={videos}
-                  selectedVideo={selectedVideo}
-                  onSelectVideo={(video) => {
-                    setSelectedVideo(video);
-                    setIsDetailOpen(true);
-                  }}
-                  isLoading={isLoading}
-                  onLoadMore={fetchNextPage}
-                  hasNextPage={hasNextPage}
-                  isFetchingNextPage={isFetchingNextPage}
-                />
-              </div>
-
-              {/* Video Detail Panel - Right Side Desktop */}
-              <div
-                className={cn(
-                  "hidden xl:block w-[420px] flex-none border-l bg-card overflow-hidden transition-all duration-300",
-                  !selectedVideo && "invisible w-0",
-                )}
-              >
-                {selectedVideo && <VideoDetailPanel video={selectedVideo} onClose={() => setIsDetailOpen(false)} />}
-              </div>
-
-              {/* Video Detail Sheet for Mobile / Tablet */}
-              {isDetailOpen && !!selectedVideo && (
-                <div
-                  className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md xl:hidden"
-                  onClick={() => {
-                    setIsDetailOpen(false);
-                    setSelectedVideo(null);
-                  }}
-                />
-              )}
-              <Sheet
-                open={isDetailOpen && !!selectedVideo}
-                modal={false}
-                onOpenChange={(open) => {
-                  setIsDetailOpen(open);
-                  if (!open) setSelectedVideo(null);
+          {/* Main Content */}
+          <Box style={{ display: "flex", flex: 1, height: "100%", overflow: "hidden", position: "relative", marginTop: "var(--mantine-spacing-md)" }} className="lg:mt-0">
+            <Box style={{ flex: 1, height: "100%", overflow: "hidden" }}>
+              <VideoGrid
+                videos={videos}
+                selectedVideo={selectedVideo}
+                onSelectVideo={(video) => {
+                  setSelectedVideo(video);
+                  setIsDetailOpen(true);
                 }}
-              >
-                <SheetContent
-                  side="bottom"
-                  className="h-[65vh] p-0 w-full xl:hidden"
-                >
-                  <div className="sr-only">
-                    <SheetTitle>Detail</SheetTitle>
-                  </div>
-                  {selectedVideo && <VideoDetailPanel video={selectedVideo} onClose={() => setIsDetailOpen(false)} />}
-                </SheetContent>
-              </Sheet>
-            </div>
-          </SidebarInset>
-        </div>
-      </SidebarProvider>
+                isLoading={isLoading}
+                onLoadMore={fetchNextPage}
+                hasNextPage={hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+              />
+            </Box>
+
+            {/* Video Detail Panel - Right Side Desktop */}
+            <Box
+              display={{ base: "none", xl: "block" }}
+              style={{
+                width: selectedVideo ? 420 : 0,
+                flexShrink: 0,
+                borderLeft: selectedVideo ? "1px solid var(--mantine-color-gray-2)" : "none",
+                backgroundColor: "var(--mantine-color-body)",
+                overflow: "hidden",
+                transition: "width 300ms ease, visibility 300ms ease",
+                visibility: selectedVideo ? "visible" : "hidden",
+              }}
+              className="dark:border-dark-4"
+            >
+              {selectedVideo && <VideoDetailPanel video={selectedVideo} onClose={() => setIsDetailOpen(false)} />}
+            </Box>
+
+            {/* Video Detail Sheet for Mobile / Tablet */}
+            <Drawer
+              opened={isDetailOpen && !!selectedVideo}
+              onClose={() => {
+                setIsDetailOpen(false);
+                setSelectedVideo(null);
+              }}
+              position="bottom"
+              size="65%"
+              withCloseButton={false}
+              styles={{ body: { padding: 0, height: "100%" } }}
+            >
+              {selectedVideo && <VideoDetailPanel video={selectedVideo} onClose={() => setIsDetailOpen(false)} />}
+            </Drawer>
+          </Box>
+        </Box>
+      </Box>
     </ErrorBoundary>
   );
 }

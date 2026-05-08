@@ -1,14 +1,8 @@
 import { toast } from "sonner"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Loader2, Pencil, Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+import { IconPencil, IconTrash, IconSearch } from "@tabler/icons-react"
+import { Button, Card, Modal, TextInput, Table, Skeleton, Group, Title, Text, ActionIcon, ScrollArea, Stack } from "@mantine/core"
 import { api } from "@/lib/api"
 import { VI } from "@/lib/constants"
 import type { Tag } from "@/types"
@@ -97,116 +91,124 @@ export function TagManagementPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{VI.totalTags}</h1>
+    <Stack gap="xl">
+      <Group justify="space-between">
+        <Title order={2}>{VI.totalTags}</Title>
         <Button onClick={openCreateDialog}>{VI.create}</Button>
-      </div>
+      </Group>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>{VI.totalTags}</CardTitle>
-            <Input
+      <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Card.Section withBorder inheritPadding py="xs" mb="md">
+          <Group justify="space-between">
+            <Title order={4}>{VI.totalTags}</Title>
+            <TextInput
               placeholder="Tìm thẻ..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-64"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.currentTarget.value)}
+              w={256}
+              leftSection={<IconSearch size={16} className="text-gray-400" />}
             />
-          </div>
-        </CardHeader>
-        <CardContent className="max-h-[60vh] overflow-y-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          </Group>
+        </Card.Section>
+
+        <ScrollArea h={400} offsetScrollbars>
+          <Table stickyHeader striped highlightOnHover>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>ID</Table.Th>
+                <Table.Th>Name</Table.Th>
+                <Table.Th>Actions</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
               {isLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-8" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-8 w-24" /></TableCell>
-                  </TableRow>
+                  <Table.Tr key={i}>
+                    <Table.Td><Skeleton height={20} width={32} /></Table.Td>
+                    <Table.Td><Skeleton height={20} width={128} /></Table.Td>
+                    <Table.Td><Skeleton height={32} width={96} /></Table.Td>
+                  </Table.Tr>
                 ))
               ) : !tags || tags.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={3} className="text-center text-muted-foreground h-24">
-                    {VI.noTags}
-                  </TableCell>
-                </TableRow>
+                <Table.Tr>
+                  <Table.Td colSpan={3}>
+                    <Text c="dimmed" ta="center" py="xl">
+                      {VI.noTags}
+                    </Text>
+                  </Table.Td>
+                </Table.Tr>
               ) : (
                 tags.map((tag) => (
-                  <TableRow key={tag.id}>
-                    <TableCell className="text-muted-foreground">{tag.id}</TableCell>
-                    <TableCell className="font-medium">{tag.name}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="ghost" onClick={() => openEditDialog(tag)}>
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => openDeleteDialog(tag)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <Table.Tr key={tag.id}>
+                    <Table.Td c="dimmed">{tag.id}</Table.Td>
+                    <Table.Td fw={500}>{tag.name}</Table.Td>
+                    <Table.Td>
+                      <Group gap="xs">
+                        <ActionIcon variant="subtle" color="blue" onClick={() => openEditDialog(tag)}>
+                          <IconPencil size={18} />
+                        </ActionIcon>
+                        <ActionIcon variant="subtle" color="red" onClick={() => openDeleteDialog(tag)}>
+                          <IconTrash size={18} />
+                        </ActionIcon>
+                      </Group>
+                    </Table.Td>
+                  </Table.Tr>
                 ))
               )}
-            </TableBody>
+            </Table.Tbody>
           </Table>
-        </CardContent>
+        </ScrollArea>
       </Card>
 
       {/* Create/Edit Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{selectedTag ? VI.edit : VI.create}</DialogTitle>
-          <DialogDescription>
-            {selectedTag ? "Sửa thông tin thẻ" : "Tạo mới thẻ"}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="py-4">
-          <Label>Tên thẻ</Label>
-          <Input
-            value={tagName}
-            onChange={(e) => setTagName(e.target.value)}
-            placeholder="Nhập tên thẻ..."
-          />
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={closeDialog}>{VI.cancel}</Button>
-          <Button onClick={handleSave} disabled={!tagName.trim() || createMutation.isPending || updateMutation.isPending}>
-            {(createMutation.isPending || updateMutation.isPending) && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Modal 
+        opened={dialogOpen} 
+        onClose={closeDialog} 
+        title={<Title order={4}>{selectedTag ? VI.edit : VI.create}</Title>}
+      >
+        <Text size="sm" c="dimmed" mb="md">
+          {selectedTag ? "Sửa thông tin thẻ" : "Tạo mới thẻ"}
+        </Text>
+        <TextInput
+          label="Tên thẻ"
+          value={tagName}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTagName(e.currentTarget.value)}
+          placeholder="Nhập tên thẻ..."
+          mb="xl"
+          data-autofocus
+        />
+        <Group justify="flex-end">
+          <Button variant="default" onClick={closeDialog}>{VI.cancel}</Button>
+          <Button 
+            onClick={handleSave} 
+            disabled={!tagName.trim()} 
+            loading={createMutation.isPending || updateMutation.isPending}
+          >
             {VI.save}
           </Button>
-        </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </Group>
+      </Modal>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{VI.delete}</DialogTitle>
-          <DialogDescription>
-            Bạn có chắc muốn xóa thẻ "{tagToDelete?.name}"? Hành động này không thể hoàn tác.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>{VI.cancel}</Button>
-          <Button variant="destructive" onClick={() => tagToDelete && deleteMutation.mutate(tagToDelete.id)} disabled={deleteMutation.isPending}>
-            {deleteMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Modal 
+        opened={deleteDialogOpen} 
+        onClose={() => setDeleteDialogOpen(false)} 
+        title={<Title order={4} c="red">{VI.delete}</Title>}
+      >
+        <Text mb="xl">
+          Bạn có chắc muốn xóa thẻ <strong>"{tagToDelete?.name}"</strong>? Hành động này không thể hoàn tác.
+        </Text>
+        <Group justify="flex-end">
+          <Button variant="default" onClick={() => setDeleteDialogOpen(false)}>{VI.cancel}</Button>
+          <Button 
+            color="red" 
+            onClick={() => tagToDelete && deleteMutation.mutate(tagToDelete.id)} 
+            loading={deleteMutation.isPending}
+          >
             {VI.delete}
           </Button>
-        </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+        </Group>
+      </Modal>
+    </Stack>
   )
 }

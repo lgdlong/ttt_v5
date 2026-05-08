@@ -1,61 +1,68 @@
-import { Link, useLocation } from "react-router"
-import { LayoutDashboard, Video, Tags, Sun, Moon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { VI } from "@/lib/constants"
-import { useDarkMode } from "@/hooks/use-dark-mode"
+import { AppShell, Burger, Group, NavLink, ActionIcon, useMantineColorScheme, Title } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconDashboard, IconVideo, IconTags, IconSun, IconMoon } from '@tabler/icons-react';
+import { Link, useLocation } from "react-router";
+import { VI } from "@/lib/constants";
 
 const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/videos", label: "Video", icon: Video },
-  { href: "/admin/tags", label: VI.totalTags, icon: Tags },
+  { href: "/admin", label: "Dashboard", icon: IconDashboard },
+  { href: "/admin/videos", label: "Video", icon: IconVideo },
+  { href: "/admin/tags", label: VI.totalTags, icon: IconTags },
 ]
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
-  const [isDark, setIsDark] = useDarkMode()
+  const [opened, { toggle }] = useDisclosure()
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex">
-        <aside className="fixed left-0 top-0 z-40 h-screen w-[var(--sidebar-width)] border-r bg-card">
-          <div className="flex h-16 items-center border-b px-4">
-            <h1 className="text-lg font-semibold">TTT</h1>
-          </div>
-          <nav className="flex flex-col gap-1 p-4">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              const isActive = location.pathname === item.href
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.label}</span>
-                </Link>
-              )
-            })}
-          </nav>
-        </aside>
-        <div className="flex-1 ml-[var(--sidebar-width)]">
-          <header className="sticky top-0 z-30 flex h-16 items-center justify-end border-b bg-card px-6">
-            <button
-              onClick={() => setIsDark(!isDark)}
-              className="rounded-md p-2 hover:bg-accent"
-              aria-label="Toggle dark mode"
-            >
-              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </button>
-          </header>
-          <main className="p-6">{children}</main>
-        </div>
-      </div>
-    </div>
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 280,
+        breakpoint: 'sm',
+        collapsed: { mobile: !opened },
+      }}
+      padding="lg"
+    >
+      <AppShell.Header>
+        <Group h="100%" px="md" justify="space-between">
+          <Group>
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+            <Title order={3}>TTT Admin</Title>
+          </Group>
+          <ActionIcon
+            variant="default"
+            onClick={() => toggleColorScheme()}
+            size="lg"
+            aria-label="Toggle dark mode"
+          >
+            {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
+          </ActionIcon>
+        </Group>
+      </AppShell.Header>
+
+      <AppShell.Navbar p="md">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.href}
+            component={Link}
+            to={item.href}
+            label={item.label}
+            leftSection={<item.icon size={20} stroke={1.5} />}
+            active={location.pathname === item.href}
+            variant="filled"
+            style={{ borderRadius: '8px', marginBottom: '4px' }}
+          />
+        ))}
+      </AppShell.Navbar>
+
+      <AppShell.Main bg="var(--mantine-color-gray-0)" darkHidden>
+        {children}
+      </AppShell.Main>
+      <AppShell.Main bg="var(--mantine-color-dark-8)" lightHidden>
+        {children}
+      </AppShell.Main>
+    </AppShell>
   )
 }
