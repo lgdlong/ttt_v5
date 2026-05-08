@@ -14,6 +14,7 @@ The service runs on `http://localhost:8081` by default (configurable via `IDENTI
 ## Configuration
 
 Requires environment variables (loaded automatically from the project root `../../.env` file):
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `IDENTITY_PORT` - Port to run the service on (default: `8081`)
 - `BETTER_AUTH_URL` - Public URL of this service (e.g., `http://localhost:8081`)
@@ -21,7 +22,7 @@ Requires environment variables (loaded automatically from the project root `../.
 
 ## API Reference (OpenAPI)
 
-We use the Better Auth **OpenAPI Plugin** to automatically generate documentation for all authentication endpoints. 
+We use the Better Auth **OpenAPI Plugin** to automatically generate documentation for all authentication endpoints.
 
 You can view the interactive Scalar UI by navigating to:
 👉 **[http://localhost:8081/api/v1/auth/reference](http://localhost:8081/api/v1/auth/reference)**
@@ -33,6 +34,7 @@ This interface allows you to view all available endpoints, their required payloa
 File `users.seed.json` chứa danh sách các tài khoản (seeds) được định nghĩa sẵn phục vụ cho mục đích test và phát triển. Có nhiều role khác nhau (`admin`, `user`).
 
 **Available Accounts:**
+
 - `admin@example.com` / `AdminUser123!` (Admin)
 - `john@example.com` / `User1Password!` (User)
 - `jane@example.com` / `JaneSecret456!` (User)
@@ -51,6 +53,7 @@ File `users.seed.json` chứa danh sách các tài khoản (seeds) được đ�
 ## Authentication Mechanism
 
 This service uses **Server-Side Sessions** instead of JWTs.
+
 - **Sign In:** Creates a record in the `sessions` database table and sets a secure `session_token` cookie on the client.
 - **Validation:** Every request checks the `session_token` cookie against the database to ensure it exists and hasn't expired.
 - **Sign Out:** Deletes the session row from the database, instantly invalidating the cookie without needing a blacklist.

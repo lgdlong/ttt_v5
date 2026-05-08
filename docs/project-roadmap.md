@@ -80,11 +80,13 @@ April 2026
 ## Dependencies
 
 ### Prerequisites to Start Phase 2
+
 - [x] ~~Fix nginx.conf missing issue~~ - resolved, now using serve
 - [ ] Create database migrations
 - [ ] Align Go version
 
 ### Prerequisites to Start Phase 3
+
 - [ ] Complete backend auth API
 - [ ] Decide frontend routing library
 - [ ] Setup API client layer

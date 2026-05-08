@@ -58,20 +58,22 @@ docker-compose down
 
 | Service | URL |
 |---------|-----|
-| Frontend | http://localhost |
-| Traefik dashboard | http://localhost:8080 |
-| Backend API | http://localhost/api |
-| Identity Service | http://localhost:8081 |
+| Frontend | <http://localhost> |
+| Traefik dashboard | <http://localhost:8080> |
+| Backend API | <http://localhost/api> |
+| Identity Service | <http://localhost:8081> |
 
 ### Individual Service Development
 
 **Backend:**
+
 ```bash
 cd backend
 go run ./cmd/server
 ```
 
 **Frontend:**
+
 ```bash
 cd frontend
 pnpm install
@@ -214,14 +216,17 @@ docker-compose -f docker-compose.prod.yml logs -f frontend
 ### Common Issues
 
 **1. Frontend Docker build fails**
+
 - Cause: Missing static assets
 - Fix: Ensure `pnpm run build` completes successfully before Docker build
 
 **2. Database connection refused**
+
 - Cause: PostgreSQL not ready
 - Fix: Wait for db health check, then retry
 
 **3. Port already in use**
+
 - Cause: Port 80 or 8080 occupied
 - Fix: Stop conflicting service or change port in docker-compose.yml
 

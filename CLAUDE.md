@@ -51,6 +51,7 @@ Frontend uses React 19 + Vite + Tailwind CSS v4 with shadcn/ui patterns.
 ## Database
 
 PostgreSQL with three tables:
+
 - `youtube_videos` - main video storage
 - `tags` - tag definitions
 - `video_tags` - many-to-many junction

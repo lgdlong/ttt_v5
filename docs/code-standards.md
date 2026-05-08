@@ -3,6 +3,7 @@
 ## General Principles
 
 Follow YAGNI, KISS, and DRY principles:
+
 - **YAGNI**: Write code when actually needed
 - **KISS**: Keep solutions simple
 - **DRY**: Don't repeat yourself
@@ -101,6 +102,7 @@ type(scope): description
 Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 Example:
+
 ```
 feat(auth): add user login endpoint
 
@@ -114,6 +116,7 @@ type/description
 ```
 
 Examples:
+
 - `feat/user-authentication`
 - `fix/docker-build-error`
 - `docs/update-readme`

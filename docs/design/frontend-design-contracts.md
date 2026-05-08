@@ -22,6 +22,7 @@
 **shadcn/ui** - For simple, accessible components
 
 **Components to use:**
+
 - Button, Input, Dialog, DropdownMenu
 - Card, Badge, Avatar
 - Table, Checkbox, Switch
@@ -125,12 +126,14 @@
 ### 4.1 Components
 
 **Search Bar:**
+
 - Icon + input + clear button
 - Debounced (300ms)
 - Placeholder: "Tìm kiếm video..."
 - Filter button opens modal
 
 **Filter Modal:**
+
 - Trigger: "Filter" button
 - Content:
   - Date range (from - to)
@@ -141,18 +144,21 @@
 - Backdrop click to close
 
 **Tag Filters:**
+
 - Horizontal scroll on mobile
 - "All" always first (no filter)
 - Active: filled primary
 - Inactive: outlined
 
 **Video List (TanStack Virtual):**
+
 - 3 columns grid
 - Infinite scroll (load more on scroll)
 - Card shows: thumbnail, title, date, duration
 - Click = select and show detail in right panel
 
 **Video Detail Panel:**
+
 - Selected video info
 - List of tags
 - "Watch on YouTube" button (opens new tab)
@@ -177,6 +183,7 @@
 ### 5.2 Video Management (`/admin/videos`)
 
 **Features:**
+
 - Tìm kiếm video theo tiêu đề
 - List in table/grid
 - Click video to show tag assignment UI
@@ -185,6 +192,7 @@
 - **No CRUD for videos** (read-only list)
 
 **Tag Assignment:**
+
 - Search tags input
 - Dropdown results
 - Click to attach (POST /admin/videos/{youtubeId}/tags/{tagId})
@@ -202,6 +210,7 @@
 | Delete | DELETE /admin/tags/{tagId} | Remove tag |
 
 **UI:**
+
 - Table: ID, Name, Video Count, Actions
 - Actions: Edit, Delete (with confirmation)
 - Create button opens modal form
@@ -238,6 +247,7 @@
 | Caption | Be Vietnam Pro | 12px | 400 |
 
 **Font Imports:**
+
 ```
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
@@ -262,6 +272,7 @@
 ## 7. UX Features
 
 ### 7.1 Interactions
+
 - [ ] Dark mode toggle ( persisted)
 - [ ] Toast notifications (success/error/dismiss)
 - [ ] Confirmation dialogs (delete actions)
@@ -270,12 +281,14 @@
 - [ ] Empty states
 
 ### 7.2 Accessibility
+
 - [ ] Color contrast 4.5:1
 - [ ] Focus states
 - [ ] Keyboard nav
 - [ ] Labels on forms
 
 ### 7.3 Performance
+
 - [ ] TanStack Virtual for long lists
 - [ ] TanStack Query caching
 - [ ] Lazy images
@@ -336,6 +349,7 @@ useVirtualizer({
 ## 10. Component List
 
 ### Public
+
 1. `PublicLayout` - Header + content + dark mode toggle
 2. `VideoSearchBar` - Search input with debounce
 3. `FilterModal` - Date, sort, duration, tags filter
@@ -346,6 +360,7 @@ useVirtualizer({
 8. `TagPill` - Reusable tag badge
 
 ### Admin
+
 1. `AdminLayout` - Sidebar + content
 2. `StatsCards` - KPI cards
 3. `VideoTable` - Video list with search
@@ -360,12 +375,14 @@ useVirtualizer({
 ## 11. API Endpoints
 
 ### Public
+
 - `GET /api/v1/videos?` - List videos (q, tag_ids, sort, order, page, limit)
 - `GET /api/v1/videos/{youtubeId}` - Get video
 - `GET /api/v1/tags` - List tags (q, page, limit)
 - `GET /api/v1/tags/{tagId}/videos` - Videos by tag
 
 ### Admin
+
 - `POST /api/v1/admin/tags` - Create tag
 - `PUT /api/v1/admin/tags/{tagId}` - Update tag
 - `DELETE /api/v1/admin/tags/{tagId}` - Delete tag
@@ -439,23 +456,27 @@ gap-4 p-4 overflow-y-auto h-full
 ### FilterSidebar (v3 Redesign)
 
 **Structure:**
+
 - Custom div wrapper with `w-64 flex-none border-r h-full flex flex-col`
 - No shadcn Sidebar - standalone component
 - Expand/collapse toggle ("Thu gọn" / "Mở rộng")
 
 **Sort Section:**
+
 - Icon: `ArrowUpDown` (Lucide)
 - Full-width button row per option
 - Unicode icons for sort direction: `↓` `↑` `↕`
 - Check icon on selected option
 
 **Tags Section:**
+
 - Badge count for selected tags
 - Search input with `Search` icon
 - Selected tags shown in pill group with "Xóa tất cả" link
 - Tag list as buttons with custom checkbox (not shadcn checkbox)
 
 **Styling:**
+
 - `text-xs uppercase tracking-wide text-muted-foreground` for labels
 - `px-3 py-2` for buttons, `rounded-md`
 - Selected: `bg-primary/10 text-primary`

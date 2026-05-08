@@ -20,6 +20,7 @@ Build a full-stack web application with Go backend and React frontend, container
 ## MVP Scope
 
 ### Must Have
+
 - User authentication (register, login, logout)
 - Database persistence with PostgreSQL
 - RESTful API design
@@ -27,6 +28,7 @@ Build a full-stack web application with Go backend and React frontend, container
 - Docker Compose orchestration
 
 ### Nice to Have (Post-MVP)
+
 - User profile management
 - API documentation (Swagger)
 - Unit and integration tests

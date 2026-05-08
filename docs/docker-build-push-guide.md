@@ -101,6 +101,7 @@ The `pull_policy: always` in docker-compose.prod.yml ensures the latest image is
 ### Build context issues
 
 If you see "file not found" errors during build, ensure:
+
 - Running from **repo root** (not from `backend/` or `frontend/`)
 - All referenced paths exist relative to repo root
 

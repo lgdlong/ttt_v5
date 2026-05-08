@@ -73,6 +73,7 @@ src/
 ```
 
 **Key Patterns**:
+
 - Tailwind CSS v4 with CSS-based config
 - `cn()` utility: `clsx` + `tailwind-merge`
 - Path alias: `@/*` → `./src/*`
@@ -92,6 +93,7 @@ backend/
 ```
 
 **Key Patterns**:
+
 - Layered architecture (cmd → config → internal)
 - Gin HTTP framework
 - Environment-based config via godotenv
@@ -108,6 +110,7 @@ identity-service/
 ```
 
 **Key Patterns**:
+
 - Better Auth for authentication logic
 - Server-side sessions (no JWTs)
 - Kysely for type-safe database queries
@@ -115,6 +118,7 @@ identity-service/
 ### Database
 
 **Schema** (from migrations and entities):
+
 ```sql
 CREATE TABLE youtube_videos (
     youtube_id VARCHAR(255) PRIMARY KEY,

@@ -42,6 +42,7 @@ make db-migrate-up
 ### Environment Variables
 
 From `.env`:
+
 ```
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=R2LJbpQACen4CdAr1NNj7pcfKpMnTn

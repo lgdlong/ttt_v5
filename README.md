@@ -15,6 +15,7 @@ A Go + React full-stack application with Docker orchestration.
 ## Quick Start
 
 ### Prerequisites
+
 - Docker and Docker Compose
 - Go 1.21+ (for local backend development)
 - Node.js 20+ (for local frontend development)
@@ -70,6 +71,7 @@ ttt_v5/
 ## Services
 
 ### Identity Service (Port 8081)
+
 Authentication microservice fully implemented with Hono + Better Auth + Kysely.
 
 ```bash
@@ -79,6 +81,7 @@ npm run dev        # http://localhost:8081
 ```
 
 Routes:
+
 - `POST/GET /api/v1/auth/*` - All Better Auth endpoints (sign-in, sign-up, session, sign-out, reference)
 - `GET /` - Health check
 
