@@ -73,7 +73,7 @@ export function VideoDetailPanel({ video, onClose }: VideoDetailPanelProps) {
           {video.tags && video.tags.length > 0 && (
             <Group gap={6}>
               {video.tags.map((tag) => (
-                <Badge key={tag.id} variant="default" size="md" tt="none" fw={500} radius="sm">
+                <Badge key={tag.id} variant="light" size="md" tt="none" fw={500} radius="sm">
                   {tag.name}
                 </Badge>
               ))}

@@ -159,10 +159,13 @@ export function FilterSidebar({
                     .map((tag) => (
                       <Badge
                         key={tag!.id}
-                        variant="filled"
+                        variant="light"
+                        size="md"
+                        fw={500}
+                        radius="sm"
                         tt="none"
                         rightSection={
-                          <ActionIcon size="xs" color="blue" radius="xl" variant="transparent" onClick={() => {
+                          <ActionIcon size="xs" radius="xl" variant="transparent" onClick={() => {
                             const current = filters.tagIds || [];
                             setFilters({
                               ...filters,

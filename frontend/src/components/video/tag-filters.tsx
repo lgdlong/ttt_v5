@@ -22,7 +22,7 @@ export function TagFilters({ selectedTags, onTagSelect }: TagFiltersProps) {
       {tags.map((tag) => (
         <Badge
           key={tag.id}
-          variant={selectedTags.includes(tag.id) ? "filled" : "outline"}
+          variant={selectedTags.includes(tag.id) ? "light" : "default"}
           style={{ cursor: "pointer", flexShrink: 0 }}
           onClick={() => onTagSelect(tag.id)}
           tt="none"
