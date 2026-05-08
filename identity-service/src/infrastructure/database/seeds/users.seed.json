@@ -1,0 +1,32 @@
+[
+  {
+    "email": "admin@example.com",
+    "password": "AdminUser123!",
+    "name": "Administrator",
+    "role": "admin"
+  },
+  {
+    "email": "john@example.com",
+    "password": "User1Password!",
+    "name": "John Doe",
+    "role": "user"
+  },
+  {
+    "email": "jane@example.com",
+    "password": "JaneSecret456!",
+    "name": "Jane Smith",
+    "role": "user"
+  },
+  {
+    "email": "dev@example.com",
+    "password": "DevPassword789!",
+    "name": "Developer",
+    "role": "admin"
+  },
+  {
+    "email": "tester@example.com",
+    "password": "TesterPass321!",
+    "name": "QA Tester",
+    "role": "user"
+  }
+]
