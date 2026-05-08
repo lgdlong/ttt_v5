@@ -12,6 +12,11 @@ const result = config({
   override: false,
 });
 dotenvExpand.expand(result);
+if (result.parsed) {
+  for (const [key, value] of Object.entries(result.parsed)) {
+    process.env[key] = value;
+  }
+}
 
 let _auth: ReturnType<typeof betterAuth> | undefined;
 
@@ -19,14 +24,15 @@ export function createAuthInstance() {
   if (!_auth) {
     const db = createAuthDatabase();
     _auth = betterAuth({
-      baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
+      baseURL: process.env.BETTER_AUTH_URL || "http://localhost:8081",
+      basePath: "/api/v1/auth",
       database: kyselyAdapter(db, {
         type: "postgres",
         usePlural: true,
       }),
       emailAndPassword: {
         enabled: true,
-        requireEmailVerification: true,
+        requireEmailVerification: false,
         autoSignIn: true,
       },
       emailVerification: {
@@ -42,12 +48,50 @@ export function createAuthInstance() {
         },
       },
       session: {
+        fields: {
+          expiresAt: "expires_at",
+          createdAt: "created_at",
+          updatedAt: "updated_at",
+          ipAddress: "ip_address",
+          userAgent: "user_agent",
+          userId: "user_id",
+        },
         updateAge: 86400,
         deferSessionRefresh: true,
       },
       user: {
+        fields: {
+          emailVerified: "email_verified",
+          createdAt: "created_at",
+          updatedAt: "updated_at",
+        },
         deleteUser: {
           enabled: true,
+        },
+      },
+      account: {
+        fields: {
+          userId: "user_id",
+          accountId: "account_id",
+          providerId: "provider_id",
+          createdAt: "created_at",
+          updatedAt: "updated_at",
+          accessToken: "access_token",
+          refreshToken: "refresh_token",
+          idToken: "id_token",
+          accessTokenExpiresAt: "access_token_expires_at",
+          refreshTokenExpiresAt: "refresh_token_expires_at",
+          scope: "scope",
+          password: "password",
+        },
+      },
+      verification: {
+        fields: {
+          identifier: "identifier",
+          value: "value",
+          expiresAt: "expires_at",
+          createdAt: "created_at",
+          updatedAt: "updated_at",
         },
       },
     });
