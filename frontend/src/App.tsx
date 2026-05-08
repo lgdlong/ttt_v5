@@ -82,6 +82,17 @@ const theme = createTheme({
   },
   primaryColor: 'earth',
   defaultRadius: 'md',
+  components: {
+    Badge: {
+      styles: {
+        root: {
+          border: '1px solid var(--mantine-color-default-border)',
+          fontWeight: 500,
+          textTransform: 'none',
+        },
+      },
+    },
+  },
 });
 
 function App() {
