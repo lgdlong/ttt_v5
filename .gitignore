@@ -30,4 +30,3 @@ logs/
 .claude/settings.local.json
 temp/
 .playwright-mcp
-.agents/
