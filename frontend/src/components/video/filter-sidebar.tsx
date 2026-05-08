@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useMediaQuery } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import {
   IconArrowsSort,
@@ -42,6 +43,7 @@ export function FilterSidebar({
   isOpen = true,
   className,
 }: FilterSidebarProps) {
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [filters, setFilters] = useState<VideoFilters>(initialFilters);
   const [tagSearch, setTagSearch] = useState("");
 
@@ -93,10 +95,10 @@ export function FilterSidebar({
         </Group>
       </Group>
 
-      <ScrollArea className="flex-1 px-md py-sm mb-xs">
-        <Stack gap="md" p="md">
+      <ScrollArea className="flex-1 px-xs py-xs mb-xs">
+        <Stack gap="sm" p="sm">
           <Box>
-            <Text size="xs" fw={500} tt="uppercase" c="dimmed" mb="xs">Sắp xếp</Text>
+            <Text size="xs" fw={600} tt="uppercase" c="dimmed" mb={8} style={{ letterSpacing: '0.05em' }}>Sắp xếp</Text>
             <Stack gap="xs">
               {sortOptions.map((option) => {
                 const isSelected = filters.sortOrder === option.value;
@@ -109,13 +111,13 @@ export function FilterSidebar({
                         sortOrder: isSelected ? undefined : option.value,
                       })
                     }
-                    p="xs"
+                    p={6}
                     style={{ borderRadius: 'var(--mantine-radius-md)' }}
-                    bg={isSelected ? 'var(--mantine-color-earth-light)' : 'transparent'}
+                    bg={isSelected ? 'var(--mantine-primary-color-light)' : 'transparent'}
                     className="transition-colors"
                     style={{
                       borderRadius: 'var(--mantine-radius-md)',
-                      backgroundColor: isSelected ? 'var(--mantine-color-earth-light)' : 'transparent'
+                      backgroundColor: isSelected ? 'var(--mantine-primary-color-light)' : 'transparent'
                     }}
                     onMouseEnter={(e) => {
                       if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--mantine-color-default-hover)';
@@ -126,10 +128,10 @@ export function FilterSidebar({
                   >
                     <Group justify="space-between" wrap="nowrap">
                       <Group gap="sm" wrap="nowrap">
-                        <option.Icon size={16} className={isSelected ? 'text-amber-600' : 'text-gray-500'} />
-                        <Text size="sm" fw={isSelected ? 500 : 400} c={isSelected ? 'earth' : 'inherit'}>{option.label}</Text>
+                        <option.Icon size={16} style={{ color: isSelected ? 'var(--mantine-primary-color-filled)' : 'var(--mantine-color-dimmed)' }} />
+                        <Text size="sm" fw={isSelected ? 500 : 400} c={isSelected ? 'primary' : 'inherit'}>{option.label}</Text>
                       </Group>
-                      {isSelected && <IconCheck size={16} className="text-amber-600" />}
+                      {isSelected && <IconCheck size={16} style={{ color: 'var(--mantine-primary-color-filled)' }} />}
                     </Group>
                   </UnstyledButton>
                 );
@@ -137,11 +139,11 @@ export function FilterSidebar({
             </Stack>
           </Box>
 
-          <Divider />
+
 
           <Box>
-            <Group mb="xs" justify="space-between">
-              <Text size="xs" fw={500} tt="uppercase" c="dimmed">Bộ lọc theo thẻ</Text>
+            <Group mb={8} justify="space-between">
+              <Text size="xs" fw={600} tt="uppercase" c="dimmed" style={{ letterSpacing: '0.05em' }}>Bộ lọc theo thẻ</Text>
               {selectedTags.length > 0 && (
                 <Badge variant="light" size="xs">{selectedTags.length}</Badge>
               )}
@@ -152,8 +154,8 @@ export function FilterSidebar({
               value={tagSearch}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTagSearch(e.currentTarget.value)}
               leftSection={<IconSearch size={14} className="text-gray-500" />}
-              size="sm"
-              mb="sm"
+              size={isDesktop ? "sm" : "xs"}
+              mb="xs"
             />
 
             {selectedTags.length > 0 && (
@@ -194,7 +196,7 @@ export function FilterSidebar({
               </Box>
             )}
 
-            <ScrollArea h={300} type="always" offsetScrollbars>
+            <ScrollArea h={280} type="always" offsetScrollbars>
               <Stack gap={4}>
                 {filteredTags.length === 0 ? (
                   <Text size="sm" c="dimmed" ta="center" py="xl">
@@ -213,13 +215,13 @@ export function FilterSidebar({
                             : [...current, tag.id];
                           setFilters({ ...filters, tagIds: updated });
                         }}
-                        p="xs"
+                        p={6}
                         style={{ borderRadius: 'var(--mantine-radius-md)' }}
-                        bg={isSelected ? 'var(--mantine-color-earth-light)' : 'transparent'}
+                        bg={isSelected ? 'var(--mantine-primary-color-light)' : 'transparent'}
                         className="transition-colors"
                         style={{
                           borderRadius: 'var(--mantine-radius-md)',
-                          backgroundColor: isSelected ? 'var(--mantine-color-earth-light)' : 'transparent'
+                          backgroundColor: isSelected ? 'var(--mantine-primary-color-light)' : 'transparent'
                         }}
                         onMouseEnter={(e) => {
                           if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--mantine-color-default-hover)';
@@ -233,14 +235,14 @@ export function FilterSidebar({
                             w={16} h={16}
                             style={{ 
                               borderRadius: 4, 
-                              border: isSelected ? '1px solid var(--mantine-color-earth-filled)' : '1px solid var(--mantine-color-gray-4)',
-                              backgroundColor: isSelected ? 'var(--mantine-color-earth-filled)' : 'transparent',
+                              border: isSelected ? '1px solid var(--mantine-primary-color-filled)' : '1px solid var(--mantine-color-gray-4)',
+                              backgroundColor: isSelected ? 'var(--mantine-primary-color-filled)' : 'transparent',
                               display: 'flex', alignItems: 'center', justifyContent: 'center'
                             }}
                           >
                             {isSelected && <IconCheck size={12} color="white" />}
                           </Box>
-                          <Text size="sm" c={isSelected ? 'earth' : 'inherit'}>{tag.name}</Text>
+                          <Text size="sm" c={isSelected ? 'primary' : 'inherit'}>{tag.name}</Text>
                         </Group>
                       </UnstyledButton>
                     );
@@ -252,7 +254,7 @@ export function FilterSidebar({
         </Stack>
       </ScrollArea>
 
-      <Group p="sm" grow style={{ borderTop: '1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))' }} className="shrink-0">
+      <Group p="xs" grow style={{ borderTop: '1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))' }} className="shrink-0">
         <Button variant="default" onClick={handleReset} size="sm">
           Đặt lại
         </Button>
