@@ -4,5 +4,5 @@
 
 body {
   font-family: 'Be Vietnam Pro', system-ui, sans-serif;
-  background-color: light-dark(#ffffff, #1C1C1A);
+  background-color: var(--mantine-color-body);
 }

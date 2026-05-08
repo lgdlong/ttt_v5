@@ -79,8 +79,20 @@ const theme = createTheme({
       '#1E293B',
       '#0F172A',
     ],
+    dark: [
+      '#F8FAFC', // index 0: Primary Text
+      '#E2E8F0',
+      '#94A3B8',
+      '#64748B', // index 3: Muted Text
+      '#475569',
+      '#334155',
+      '#1C2541', // index 6: Surface (Cards)
+      '#0B132B', // index 7: Background (Body)
+      '#090E21', // index 8: Background Deep
+      '#070A1A', // index 9: Background Black
+    ],
   },
-  primaryColor: 'earth',
+  primaryColor: 'midnight',
   defaultRadius: 'md',
   components: {
     Badge: {

@@ -41,7 +41,7 @@ export function VideoCard({ video, isSelected, onClick }: VideoCardProps) {
           backgroundColor: "light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6))",
           overflow: "hidden",
           borderRadius: "var(--mantine-radius-md)",
-          boxShadow: isSelected ? "0 0 0 2px var(--mantine-color-earth-filled)" : "none",
+          boxShadow: isSelected ? "0 0 0 2px var(--mantine-primary-color-filled)" : "none",
         }}
       >
         {video.thumbnail_url ? (
@@ -76,7 +76,7 @@ export function VideoCard({ video, isSelected, onClick }: VideoCardProps) {
           size="sm"
           fw={500}
           lineClamp={2}
-          c={isSelected ? "earth" : "inherit"}
+          c={isSelected ? "primary" : "inherit"}
           style={{ lineHeight: 1.3 }}
         >
           {video.title}
