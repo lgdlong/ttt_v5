@@ -18,13 +18,27 @@ const theme = createTheme({
   headings: {
     fontFamily: 'Merriweather, serif',
   },
-  primaryColor: 'violet',
+  colors: {
+    earth: [
+      '#F6F4F0',
+      '#ECE7DF',
+      '#DCD4C6',
+      '#CBBFAC',
+      '#BAA991',
+      '#A38F72',
+      '#917F65',
+      '#7F6E58',
+      '#6C5E4B',
+      '#5A4E3E',
+    ],
+  },
+  primaryColor: 'earth',
   defaultRadius: 'md',
 });
 
 function App() {
   return (
-    <MantineProvider theme={theme} defaultColorScheme="light">
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       <Notifications position="top-right" />
       <BrowserRouter>
         <Routes>

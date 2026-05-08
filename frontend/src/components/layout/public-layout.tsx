@@ -20,7 +20,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
           <Group gap="xl">
             <Anchor component={Link} to="/" underline="never" c="inherit">
               <Group gap="xs">
-                <IconPlayerPlayFilled size={24} style={{ color: 'var(--mantine-color-violet-6)' }} />
+                <IconPlayerPlayFilled size={24} style={{ color: 'var(--mantine-color-earth-6)' }} />
                 <Text size="xl" fw={700}>TTT</Text>
               </Group>
             </Anchor>

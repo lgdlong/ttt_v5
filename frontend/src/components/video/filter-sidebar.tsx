@@ -105,11 +105,11 @@ export function FilterSidebar({
                     }
                     p="xs"
                     style={{ borderRadius: 'var(--mantine-radius-md)' }}
-                    bg={isSelected ? 'var(--mantine-color-violet-light)' : 'transparent'}
+                    bg={isSelected ? 'var(--mantine-color-earth-light)' : 'transparent'}
                     className="transition-colors"
                     style={{
                       borderRadius: 'var(--mantine-radius-md)',
-                      backgroundColor: isSelected ? 'var(--mantine-color-violet-light)' : 'transparent'
+                      backgroundColor: isSelected ? 'var(--mantine-color-earth-light)' : 'transparent'
                     }}
                     onMouseEnter={(e) => {
                       if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--mantine-color-default-hover)';
@@ -120,10 +120,10 @@ export function FilterSidebar({
                   >
                     <Group justify="space-between" wrap="nowrap">
                       <Group gap="sm" wrap="nowrap">
-                        <option.Icon size={16} className={isSelected ? 'text-violet-600' : 'text-gray-500'} />
-                        <Text size="sm" fw={isSelected ? 500 : 400} c={isSelected ? 'violet' : 'inherit'}>{option.label}</Text>
+                        <option.Icon size={16} className={isSelected ? 'text-amber-600' : 'text-gray-500'} />
+                        <Text size="sm" fw={isSelected ? 500 : 400} c={isSelected ? 'earth' : 'inherit'}>{option.label}</Text>
                       </Group>
-                      {isSelected && <IconCheck size={16} className="text-violet-600" />}
+                      {isSelected && <IconCheck size={16} className="text-amber-600" />}
                     </Group>
                   </UnstyledButton>
                 );
@@ -209,11 +209,11 @@ export function FilterSidebar({
                         }}
                         p="xs"
                         style={{ borderRadius: 'var(--mantine-radius-md)' }}
-                        bg={isSelected ? 'var(--mantine-color-violet-light)' : 'transparent'}
+                        bg={isSelected ? 'var(--mantine-color-earth-light)' : 'transparent'}
                         className="transition-colors"
                         style={{
                           borderRadius: 'var(--mantine-radius-md)',
-                          backgroundColor: isSelected ? 'var(--mantine-color-violet-light)' : 'transparent'
+                          backgroundColor: isSelected ? 'var(--mantine-color-earth-light)' : 'transparent'
                         }}
                         onMouseEnter={(e) => {
                           if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--mantine-color-default-hover)';
@@ -227,14 +227,14 @@ export function FilterSidebar({
                             w={16} h={16}
                             style={{ 
                               borderRadius: 4, 
-                              border: isSelected ? '1px solid var(--mantine-color-violet-filled)' : '1px solid var(--mantine-color-gray-4)',
-                              backgroundColor: isSelected ? 'var(--mantine-color-violet-filled)' : 'transparent',
+                              border: isSelected ? '1px solid var(--mantine-color-earth-filled)' : '1px solid var(--mantine-color-gray-4)',
+                              backgroundColor: isSelected ? 'var(--mantine-color-earth-filled)' : 'transparent',
                               display: 'flex', alignItems: 'center', justifyContent: 'center'
                             }}
                           >
                             {isSelected && <IconCheck size={12} color="white" />}
                           </Box>
-                          <Text size="sm" c={isSelected ? 'violet' : 'inherit'}>{tag.name}</Text>
+                          <Text size="sm" c={isSelected ? 'earth' : 'inherit'}>{tag.name}</Text>
                         </Group>
                       </UnstyledButton>
                     );
