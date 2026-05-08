@@ -87,7 +87,7 @@ export function FilterSidebar({
         </Group>
       </Group>
 
-      <ScrollArea className="flex-1 px-md py-sm mb-xs" style={{ maxHeight: 'calc(100vh - 12rem)' }}>
+      <ScrollArea className="flex-1 px-md py-sm mb-xs">
         <Stack gap="md" p="md">
           <Box>
             <Text size="xs" fw={500} tt="uppercase" c="dimmed" mb="xs">Sắp xếp</Text>

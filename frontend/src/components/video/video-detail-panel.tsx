@@ -51,63 +51,65 @@ export function VideoDetailPanel({ video, onClose }: VideoDetailPanelProps) {
         )}
       </Box>
 
-      <ScrollArea style={{ flex: 1 }} p="xl" offsetScrollbars>
-        <Stack gap="xl">
-          <Title order={2} style={{ lineHeight: 1.2 }}>{video.title}</Title>
+      <ScrollArea style={{ flex: 1 }} p="md" offsetScrollbars>
+        <Stack gap="md">
+          <Title order={3} style={{ lineHeight: 1.2 }}>{video.title}</Title>
 
-          <Stack gap="xs">
+          <Stack gap={8}>
             <Group gap="sm" wrap="nowrap">
-              <Text size="sm" c="dimmed" style={{ flexShrink: 0 }}>Tên kênh:</Text>
-              <Text size="sm" fw={500}>{video.author}</Text>
+              <Text size="xs" c="dimmed" style={{ flexShrink: 0, width: 80 }}>Tên kênh:</Text>
+              <Text size="xs" fw={500}>{video.author}</Text>
             </Group>
             <Group gap="sm" wrap="nowrap">
-              <Text size="sm" c="dimmed" style={{ flexShrink: 0 }}>Ngày đăng:</Text>
-              <Text size="sm" fw={500}>{formatDate(video.upload_date)}</Text>
+              <Text size="xs" c="dimmed" style={{ flexShrink: 0, width: 80 }}>Ngày đăng:</Text>
+              <Text size="xs" fw={500}>{formatDate(video.upload_date)}</Text>
             </Group>
             <Group gap="sm" wrap="nowrap">
-              <Text size="sm" c="dimmed" style={{ flexShrink: 0 }}>Thời lượng:</Text>
-              <Text size="sm" fw={500}>{formatDuration(video.duration_seconds)}</Text>
+              <Text size="xs" c="dimmed" style={{ flexShrink: 0, width: 80 }}>Thời lượng:</Text>
+              <Text size="xs" fw={500}>{formatDuration(video.duration_seconds)}</Text>
             </Group>
           </Stack>
 
           {video.tags && video.tags.length > 0 && (
-            <Group gap="xs">
+            <Group gap={6}>
               {video.tags.map((tag) => (
-                <Badge key={tag.id} variant="light" size="sm" tt="none">
+                <Badge key={tag.id} variant="light" size="xs" tt="none">
                   {tag.name}
                 </Badge>
               ))}
             </Group>
           )}
+        </Stack>
+      </ScrollArea>
 
-          <Group gap="xs" display={{ base: 'flex', xl: 'none' }}>
-            <Button
-              style={{ flex: 1 }}
-              leftSection={<IconExternalLink size={16} />}
-              onClick={() => window.open(`https://youtube.com/watch?v=${video.youtube_id}`, "_blank")}
-            >
-              {VI.watchOnYoutube}
-            </Button>
-            {onClose && (
-              <Button
-                variant="outline"
-                style={{ flex: 0.5 }}
-                onClick={onClose}
-              >
-                {VI.close}
-              </Button>
-            )}
-          </Group>
+      <Box p="md" style={{ borderTop: '1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))' }}>
+        <Group gap="xs" display={{ base: 'flex', lg: 'none' }}>
           <Button
-            display={{ base: 'none', xl: 'flex' }}
-            fullWidth
+            style={{ flex: 1 }}
             leftSection={<IconExternalLink size={16} />}
             onClick={() => window.open(`https://youtube.com/watch?v=${video.youtube_id}`, "_blank")}
           >
             {VI.watchOnYoutube}
           </Button>
-        </Stack>
-      </ScrollArea>
+          {onClose && (
+            <Button
+              variant="outline"
+              style={{ flex: 0.5 }}
+              onClick={onClose}
+            >
+              {VI.close}
+            </Button>
+          )}
+        </Group>
+        <Button
+          display={{ base: 'none', lg: 'flex' }}
+          fullWidth
+          leftSection={<IconExternalLink size={16} />}
+          onClick={() => window.open(`https://youtube.com/watch?v=${video.youtube_id}`, "_blank")}
+        >
+          {VI.watchOnYoutube}
+        </Button>
+      </Box>
     </Stack>
   )
 }

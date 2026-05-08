@@ -13,6 +13,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
       header={{ height: 60 }}
+      padding={0}
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">

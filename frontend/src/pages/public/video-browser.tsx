@@ -9,6 +9,7 @@ import { VideoGrid } from "@/components/video/video-grid";
 import { VideoDetailPanel } from "@/components/video/video-detail-panel";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Drawer, ActionIcon, TextInput, Box, Group, Indicator } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 
 const PAGE_SIZE = 20;
 
@@ -19,6 +20,8 @@ export function VideoBrowserPage() {
   const [filters, setFilters] = useState<VideoFilters>({});
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  
+  const isLargeScreen = useMediaQuery("(min-width: 1200px)");
 
   const buildQueryParams = (page: number) => {
     const params: Record<string, string> = {
@@ -73,7 +76,7 @@ export function VideoBrowserPage() {
 
   return (
     <ErrorBoundary>
-      <Box style={{ display: "flex", height: "100vh", width: "100%", overflow: "hidden", gap: "var(--mantine-spacing-md)", padding: "var(--mantine-spacing-md)" }}>
+      <Box style={{ display: "flex", height: "calc(100vh - 60px)", width: "100%", overflow: "hidden", gap: "var(--mantine-spacing-md)", padding: "var(--mantine-spacing-md)" }}>
         <Box display={{ base: "none", lg: "block" }} style={{ flexShrink: 0 }}>
           <FilterSidebar
             onApply={handleFilterApply}
@@ -131,14 +134,16 @@ export function VideoBrowserPage() {
           </Box>
 
           {/* Main Content */}
-          <Box style={{ display: "flex", flex: 1, height: "100%", overflow: "hidden", position: "relative", marginTop: "var(--mantine-spacing-md)" }} className="lg:mt-0">
+          <Box style={{ display: "flex", flex: 1, minHeight: 0, overflow: "hidden", position: "relative", marginTop: "var(--mantine-spacing-md)" }} className="lg:mt-0">
             <Box style={{ flex: 1, height: "100%", overflow: "hidden" }}>
               <VideoGrid
                 videos={videos}
                 selectedVideo={selectedVideo}
                 onSelectVideo={(video) => {
                   setSelectedVideo(video);
-                  setIsDetailOpen(true);
+                  if (!isLargeScreen) {
+                    setIsDetailOpen(true);
+                  }
                 }}
                 isLoading={isLoading}
                 onLoadMore={fetchNextPage}
@@ -149,23 +154,21 @@ export function VideoBrowserPage() {
 
             {/* Video Detail Panel - Right Side Desktop */}
             <Box
-              display={{ base: "none", xl: "block" }}
+              display={{ base: "none", lg: "block" }}
               style={{
-                width: selectedVideo ? 420 : 0,
+                width: 350,
                 flexShrink: 0,
-                borderLeft: selectedVideo ? "1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))" : "none",
+                borderLeft: "1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))",
                 backgroundColor: "var(--mantine-color-body)",
                 overflow: "hidden",
-                transition: "width 300ms ease, visibility 300ms ease",
-                visibility: selectedVideo ? "visible" : "hidden",
               }}
             >
-              {selectedVideo && <VideoDetailPanel video={selectedVideo} onClose={() => setIsDetailOpen(false)} />}
+              <VideoDetailPanel video={selectedVideo} onClose={() => setSelectedVideo(null)} />
             </Box>
 
             {/* Video Detail Sheet for Mobile / Tablet */}
             <Drawer
-              opened={isDetailOpen && !!selectedVideo}
+              opened={isDetailOpen && !!selectedVideo && !isLargeScreen}
               onClose={() => {
                 setIsDetailOpen(false);
                 setSelectedVideo(null);
