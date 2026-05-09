@@ -4,14 +4,14 @@
 
 ## Tech Stack
 - React 19 + Vite + Tailwind CSS v4
-- shadcn/ui component patterns
-- Lucide React for icons (ONLY - no emoji, unicode, or sticker-style icons)
+- Mantine v9 UI component library
+- Tabler Icons React for icons (ONLY - no emoji, unicode, or sticker-style icons)
 
 ## File Structure
 ```
 src/
 ├── components/
-│   ├── ui/              # shadcn components
+│   ├── layout/          # Layout components
 │   └── [feature]/       # feature-specific components
 ├── pages/               # route pages
 ├── hooks/               # custom hooks
@@ -25,8 +25,7 @@ src/
 - Use functional components with hooks
 - Props interfaces defined above component
 - Destructure props in function signature
-- co-locate styles if using Tailwind (inline classes)
-- shadcn/ui: customize in `src/lib/utils.ts`
+- Use Mantine v9 semantic components for UI elements. Avoid raw Tailwind classes for standard UI pieces where Mantine provides a solution.
 - Keep components under 200 lines
 - Default export at bottom
 
@@ -74,8 +73,8 @@ src/
 - Comment complex logic but keep code self-documenting
 
 ## Icon Rule
-- **ONLY use lucide-react icons** - never use emoji, unicode symbols, or sticker-style icons
-- Import icons from `lucide-react` (e.g., `import { Film } from "lucide-react"`)
+- **ONLY use @tabler/icons-react icons** - never use emoji, unicode symbols, or sticker-style icons
+- Import icons from `@tabler/icons-react` (e.g., `import { IconFilm } from "@tabler/icons-react"`)
 - Examples of forbidden: `🎬`, `🔍`, `⭐`, `⚙️`, `🚀`
 
 ## Import Aliases
