@@ -1,6 +1,6 @@
-import { Link } from "react-router"
-import { Sun, Moon, Play } from "lucide-react"
-import { useDarkMode } from "@/hooks/use-dark-mode"
+import { AppShell, Group, ActionIcon, useMantineColorScheme, Anchor, Text } from '@mantine/core';
+import { IconSun, IconMoon, IconPlayerPlayFilled } from '@tabler/icons-react';
+import { Link } from "react-router";
 
 const navItems = [
   { href: "/", label: "Trang chủ" },
@@ -8,39 +8,51 @@ const navItems = [
 ]
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [isDark, setIsDark] = useDarkMode()
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      <header className="flex-none border-b bg-card/95 backdrop-blurSupports">
-        <div className="flex h-14 items-center justify-between px-6">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-              <Play className="h-6 w-6 text-primary" />
-              <span>TTT</span>
-            </Link>
-            <nav className="flex items-center gap-6">
+    <AppShell
+      header={{ height: 60 }}
+      padding={0}
+    >
+      <AppShell.Header>
+        <Group h="100%" px="md" justify="space-between">
+          <Group gap="xl">
+            <Anchor component={Link} to="/" underline="never" c="inherit">
+              <Group gap="xs">
+                <IconPlayerPlayFilled size={24} style={{ color: 'var(--mantine-color-earth-6)' }} />
+                <Text size="xl" fw={700}>TTT</Text>
+              </Group>
+            </Anchor>
+            <Group gap="md">
               {navItems.map((item) => (
-                <Link
+                <Anchor
                   key={item.href}
+                  component={Link}
                   to={item.href}
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  c="dimmed"
+                  fw={500}
+                  underline="never"
                 >
                   {item.label}
-                </Link>
+                </Anchor>
               ))}
-            </nav>
-          </div>
-          <button
-            onClick={() => setIsDark(!isDark)}
-            className="rounded-md p-2 hover:bg-accent cursor-pointer transition-colors"
+            </Group>
+          </Group>
+          <ActionIcon
+            variant="default"
+            onClick={() => toggleColorScheme()}
+            size="lg"
             aria-label="Toggle dark mode"
           >
-            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </button>
-        </div>
-      </header>
-      <main className="flex-1 overflow-hidden">{children}</main>
-    </div>
+            {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
+          </ActionIcon>
+        </Group>
+      </AppShell.Header>
+
+      <AppShell.Main>
+        {children}
+      </AppShell.Main>
+    </AppShell>
   )
 }

@@ -1,26 +1,26 @@
 import { useQuery } from "@tanstack/react-query"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Badge } from "@/components/ui/badge"
-import { Film, Tags, Calendar, CalendarDays } from "lucide-react"
+import { Card, Skeleton, Badge, Title, Text, Group, SimpleGrid, Stack, Box } from "@mantine/core"
+import { IconMovie, IconTags, IconCalendar, IconCalendarEvent } from "@tabler/icons-react"
 import { api } from "@/lib/api"
 import { VI } from "@/lib/constants"
 import type { Video, Tag } from "@/types"
 
-function StatCard({ icon: Icon, label, value, loading }: { icon: React.ElementType; label: string; value: number; loading: boolean }) {
+function StatCard({ icon: Icon, label, value, loading }: { icon: any; label: string; value: number; loading: boolean }) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{label}</CardTitle>
-        <Icon className="h-5 w-5 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        {loading ? (
-          <Skeleton className="h-10 w-20" />
-        ) : (
-          <div className="text-2xl font-bold">{value}</div>
-        )}
-      </CardContent>
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Group justify="space-between" mb="xs">
+        <Text size="sm" fw={500} c="dimmed">
+          {label}
+        </Text>
+        <Icon size={20} className="text-gray-400" />
+      </Group>
+      {loading ? (
+        <Skeleton height={32} width={80} />
+      ) : (
+        <Text size="xl" fw={700}>
+          {value}
+        </Text>
+      )}
     </Card>
   )
 }
@@ -57,48 +57,45 @@ export function AdminDashboardPage() {
   const topTags = tagVideoCounts.sort((a, b) => b.count - a.count).slice(0, 5)
 
   return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+      <Stack gap="xl">
+        <Title order={2}>Dashboard</Title>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard icon={Film} label={VI.totalVideos} value={totalVideos} loading={videosLoading} />
-          <StatCard icon={Tags} label={VI.totalTags} value={totalTags} loading={tagsLoading} />
-          <StatCard icon={Calendar} label={VI.thisWeek} value={thisWeek} loading={videosLoading} />
-          <StatCard icon={CalendarDays} label={VI.thisMonth} value={thisMonth} loading={videosLoading} />
-        </div>
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
+          <StatCard icon={IconMovie} label={VI.totalVideos} value={totalVideos} loading={videosLoading} />
+          <StatCard icon={IconTags} label={VI.totalTags} value={totalTags} loading={tagsLoading} />
+          <StatCard icon={IconCalendar} label={VI.thisWeek} value={thisWeek} loading={videosLoading} />
+          <StatCard icon={IconCalendarEvent} label={VI.thisMonth} value={thisMonth} loading={videosLoading} />
+        </SimpleGrid>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Tags</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <Card shadow="sm" padding="lg" radius="md" withBorder>
+          <Card.Section withBorder inheritPadding py="xs" mb="md">
+            <Title order={4}>Top Tags</Title>
+          </Card.Section>
+          
+          <Box>
             {tagsLoading ? (
-              <div className="space-y-3">
+              <Stack gap="sm">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Skeleton key={i} className="h-14 w-full" />
+                  <Skeleton key={i} height={56} width="100%" />
                 ))}
-              </div>
+              </Stack>
             ) : topTags.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-24 text-muted-foreground gap-2">
-                <Tags className="h-6 w-6" />
-                <span>{VI.noData}</span>
-              </div>
+              <Stack align="center" justify="center" h={100} gap="xs">
+                <IconTags size={24} className="text-gray-400" />
+                <Text c="dimmed">{VI.noData}</Text>
+              </Stack>
             ) : (
-              <div className="space-y-2">
+              <Stack gap="sm">
                 {topTags.map(({ tag, count }) => (
-                  <div key={tag.id} className="flex items-center justify-between rounded-md border p-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{tag.name}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="secondary">{count} videos</Badge>
-                    </div>
-                  </div>
+                  <Group key={tag.id} justify="space-between" p="sm" style={{ border: '1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4))', borderRadius: 'var(--mantine-radius-md)' }}>
+                    <Text fw={500}>{tag.name}</Text>
+                    <Badge variant="light">{count} videos</Badge>
+                  </Group>
                 ))}
-              </div>
+              </Stack>
             )}
-          </CardContent>
+          </Box>
         </Card>
-      </div>
+      </Stack>
     )
 }

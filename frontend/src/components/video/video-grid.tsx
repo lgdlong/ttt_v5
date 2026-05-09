@@ -1,15 +1,9 @@
 import { useRef, useState, useEffect } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Film } from "lucide-react";
+import { IconMovie } from "@tabler/icons-react";
 import type { Video } from "@/types";
 import { VideoCard } from "./video-card";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
-import { Spinner } from "@/components/ui/spinner";
+import { Loader, Stack, Title, Text, Center, Box } from "@mantine/core";
 import { VI } from "@/lib/constants";
 
 interface VideoGridProps {
@@ -89,23 +83,23 @@ export function VideoGrid({
   }
 
   return (
-    <div ref={parentRef} className="h-full overflow-auto p-3 pb-8">
+    <Box ref={parentRef} h="100%" style={{ overflowY: 'auto' }} p="md" pb={32}>
       {isLoading && videos.length === 0 ? (
-        <div className="flex items-center justify-center h-full">
-          <Spinner />
-        </div>
+        <Center h="100%">
+          <Loader size="lg" />
+        </Center>
       ) : videos.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-full">
-          <Empty>
-            <EmptyMedia variant="icon">
-              <Film className="size-10" />
-            </EmptyMedia>
-            <EmptyTitle>{VI.noResults}</EmptyTitle>
-            <EmptyDescription>
+        <Center h="100%">
+          <Stack align="center" gap="sm">
+            <Box bg="light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6))" p="lg" style={{ borderRadius: '50%' }}>
+              <IconMovie size={40} className="text-gray-400" />
+            </Box>
+            <Title order={3}>{VI.noResults}</Title>
+            <Text c="dimmed">
               Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
-            </EmptyDescription>
-          </Empty>
-        </div>
+            </Text>
+          </Stack>
+        </Center>
       ) : (
         <div
           style={{
@@ -145,15 +139,15 @@ export function VideoGrid({
                       }}
                     >
                       {isFetchingNextPage ? (
-                        <Spinner />
+                        <Loader size="sm" />
                       ) : hasNextPage ? (
-                        <span className="text-muted-foreground text-sm">
+                        <Text c="dimmed" size="sm">
                           Đang tải...
-                        </span>
+                        </Text>
                       ) : (
-                        <span className="text-muted-foreground text-sm">
+                        <Text c="dimmed" size="sm">
                           Không còn video
-                        </span>
+                        </Text>
                       )}
                     </div>
                   ) : (
@@ -174,6 +168,6 @@ export function VideoGrid({
           })}
         </div>
       )}
-    </div>
+    </Box>
   );
 }

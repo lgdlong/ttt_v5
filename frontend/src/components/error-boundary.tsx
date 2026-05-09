@@ -1,7 +1,7 @@
 import { Component, type ReactNode, type ErrorInfo } from "react"
-import { Button } from "@/components/ui/button"
+import { Button, Flex, Text, Title } from "@mantine/core"
 import { VI } from "@/lib/constants"
-import { AlertCircle } from "lucide-react"
+import { IconAlertCircle } from "@tabler/icons-react"
 
 interface Props {
   children: ReactNode
@@ -37,18 +37,18 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback
       }
       return (
-        <div className="flex flex-col items-center justify-center h-full min-h-[200px] gap-4 p-6">
-          <AlertCircle className="h-12 w-12 text-red-500" />
+        <Flex direction="column" align="center" justify="center" h="100%" mih={200} gap="md" p="xl">
+          <IconAlertCircle size={48} className="text-red-500" />
           <div className="text-center space-y-2">
-            <h3 className="text-lg font-semibold">{VI.error}</h3>
-            <p className="text-sm text-muted-foreground">
+            <Title order={3}>{VI.error}</Title>
+            <Text size="sm" c="dimmed">
               {this.state.error?.message || "Đã xảy ra lỗi không xác định"}
-            </p>
+            </Text>
           </div>
           <Button onClick={this.handleRetry} variant="outline">
             Thử lại
           </Button>
-        </div>
+        </Flex>
       )
     }
 

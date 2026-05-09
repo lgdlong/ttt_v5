@@ -1,22 +1,26 @@
-import { toast } from "sonner"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+import { IconSearch } from "@tabler/icons-react"
+import { 
+  Pagination, 
+  TextInput, 
+  Button, 
+  Badge, 
+  Card, 
+  Modal, 
+  Table, 
+  Skeleton, 
+  Group, 
+  Title, 
+  Text, 
+  ScrollArea, 
+  Stack, 
+  Image, 
+  CloseButton,
+  UnstyledButton,
+  Box
+} from "@mantine/core"
+import { notifications } from "@mantine/notifications"
 import { api } from "@/lib/api"
 import { VI } from "@/lib/constants"
 import type { Video, Tag } from "@/types"
@@ -45,10 +49,10 @@ export function VideoManagementPage() {
       api.attachTag(youtubeId, tagId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["videos"] })
-      toast.success(VI.tagAttached)
+      notifications.show({ message: VI.tagAttached, color: 'green' })
     },
     onError: () => {
-      toast.error(VI.errorOccurred)
+      notifications.show({ message: VI.errorOccurred, color: 'red' })
     },
   })
 
@@ -57,14 +61,15 @@ export function VideoManagementPage() {
       api.detachTag(youtubeId, tagId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["videos"] })
-      toast.success(VI.tagDetached)
+      notifications.show({ message: VI.tagDetached, color: 'green' })
     },
     onError: () => {
-      toast.error(VI.errorOccurred)
+      notifications.show({ message: VI.errorOccurred, color: 'red' })
     },
   })
 
   const videos: Video[] = videosData?.data ?? []
+  const totalPages = videosData?.meta?.total_pages ?? 1
   const tags: Tag[] = tagsData ?? []
 
   // Get available tags that are not yet attached to the video
@@ -92,191 +97,207 @@ export function VideoManagementPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{VI.totalVideos}</h1>
+    <Stack gap="xl">
+      <Title order={2}>{VI.totalVideos}</Title>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>{VI.totalVideos}</CardTitle>
-            <Input
+      <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Card.Section withBorder inheritPadding py="xs" mb="md">
+          <Group justify="space-between">
+            <Title order={4}>{VI.totalVideos}</Title>
+            <TextInput
               placeholder={VI.searchPlaceholder}
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value)
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setSearch(e.currentTarget.value)
                 setPage(1)
               }}
-              className="w-64"
+              w={256}
+              leftSection={<IconSearch size={16} className="text-gray-400" />}
             />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Thumbnail</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Author</TableHead>
-                <TableHead>Tags</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          </Group>
+        </Card.Section>
+        
+        <ScrollArea>
+          <Table striped highlightOnHover>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Thumbnail</Table.Th>
+                <Table.Th>Title</Table.Th>
+                <Table.Th>Author</Table.Th>
+                <Table.Th>Tags</Table.Th>
+                <Table.Th>Actions</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
               {isLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-10 w-10" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-8 w-20" /></TableCell>
-                  </TableRow>
+                  <Table.Tr key={i}>
+                    <Table.Td><Skeleton height={40} width={40} radius="sm" /></Table.Td>
+                    <Table.Td><Skeleton height={20} width={200} /></Table.Td>
+                    <Table.Td><Skeleton height={20} width={100} /></Table.Td>
+                    <Table.Td><Skeleton height={20} width={80} /></Table.Td>
+                    <Table.Td><Skeleton height={32} width={80} /></Table.Td>
+                  </Table.Tr>
                 ))
               ) : videos.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground h-24">
-                    {VI.noResults}
-                  </TableCell>
-                </TableRow>
+                <Table.Tr>
+                  <Table.Td colSpan={5}>
+                    <Text c="dimmed" ta="center" py="xl">
+                      {VI.noResults}
+                    </Text>
+                  </Table.Td>
+                </Table.Tr>
               ) : (
                 videos.map((video) => (
-                  <TableRow key={video.youtube_id}>
-                    <TableCell>
-                      <img
+                  <Table.Tr key={video.youtube_id}>
+                    <Table.Td>
+                      <Image
                         src={video.thumbnail_url}
                         alt={video.title}
-                        className="h-10 w-10 rounded object-cover"
+                        h={40}
+                        w={40}
+                        radius="sm"
+                        style={{ objectFit: 'cover' }}
                       />
-                    </TableCell>
-                    <TableCell className="font-medium max-w-[200px] truncate">{video.title}</TableCell>
-                    <TableCell className="text-muted-foreground">{video.author}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
+                    </Table.Td>
+                    <Table.Td>
+                      <Text fw={500} lineClamp={1} maw={250}>
+                        {video.title}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td c="dimmed">{video.author}</Table.Td>
+                    <Table.Td>
+                      <Group gap={4}>
                         {(video.tags ?? []).map((tag) => (
-                          <Badge key={tag.id} variant="secondary" className="gap-1">
+                          <Badge 
+                            key={tag.id} 
+                            variant="light" 
+                            tt="none"
+                            rightSection={
+                              <CloseButton 
+                                size="xs" 
+                                c="red"
+                                variant="transparent" 
+                                onClick={() => handleDetachTag(video, tag.id)} 
+                              />
+                            }
+                          >
                             {tag.name}
-                            <button
-                              onClick={() => handleDetachTag(video, tag.id)}
-                              className="ml-1 text-xs hover:text-red-500"
-                            >
-                              ×
-                            </button>
                           </Badge>
                         ))}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Button size="sm" variant="outline" onClick={() => handleAttach(video)}>
+                      </Group>
+                    </Table.Td>
+                    <Table.Td>
+                      <Button size="xs" variant="outline" onClick={() => handleAttach(video)}>
                         Gán thẻ
                       </Button>
-                    </TableCell>
-                  </TableRow>
+                    </Table.Td>
+                  </Table.Tr>
                 ))
               )}
-            </TableBody>
+            </Table.Tbody>
           </Table>
-        </CardContent>
+        </ScrollArea>
       </Card>
 
       {/* Pagination */}
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            {page === 1 ? (
-              <PaginationPrevious className="pointer-events-none opacity-50" />
-            ) : (
-              <PaginationPrevious onClick={() => setPage((p) => Math.max(1, p - 1))} />
-            )}
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink isActive>{page}</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            {isLoading || videos.length < 20 ? (
-              <PaginationNext className="pointer-events-none opacity-50" />
-            ) : (
-              <PaginationNext onClick={() => setPage((p) => p + 1)} />
-            )}
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <Group justify="center">
+        <Pagination 
+          value={page} 
+          onChange={setPage} 
+          total={totalPages} 
+          disabled={isLoading}
+        />
+      </Group>
 
-      <Dialog open={attachDialogOpen} onOpenChange={setAttachDialogOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Gán thẻ cho video</DialogTitle>
-            <DialogDescription className="text-sm">
-              {selectedVideo?.title}
-            </DialogDescription>
-          </DialogHeader>
+      <Modal 
+        opened={attachDialogOpen} 
+        onClose={() => setAttachDialogOpen(false)} 
+        title={<Title order={4}>Gán thẻ cho video</Title>}
+        size="sm"
+      >
+        <Text size="sm" c="dimmed" mb="md" lineClamp={2}>
+          {selectedVideo?.title}
+        </Text>
 
-          <div className="space-y-4">
-            {/* Assigned Tags - Top */}
-            <div>
-              <Label className="text-xs text-muted-foreground">Thẻ đã gán</Label>
-              <div className="mt-1 flex flex-wrap gap-1 min-h-[32px]">
-                {selectedVideo?.tags && selectedVideo.tags.length > 0 ? (
-                  selectedVideo.tags.map((tag) => (
-                    <Badge
-                      key={tag.id}
-                      variant="secondary"
-                      className="gap-1 pr-1"
-                    >
-                      {tag.name}
-                      <button
+        <Stack gap="md">
+          {/* Assigned Tags - Top */}
+          <Box>
+            <Text size="xs" fw={500} c="dimmed" mb={4}>Thẻ đã gán</Text>
+            <Group gap={4} align="flex-start" style={{ minHeight: 32 }}>
+              {selectedVideo?.tags && selectedVideo.tags.length > 0 ? (
+                selectedVideo.tags.map((tag) => (
+                  <Badge
+                    key={tag.id}
+                    variant="light"
+                    tt="none"
+                    rightSection={
+                      <CloseButton 
+                        size="xs" 
+                        c="red"
+                        variant="transparent" 
                         onClick={() => handleDetachTag(selectedVideo, tag.id)}
                         disabled={detachMutation.isPending}
-                        className="ml-1 text-xs hover:text-red-500 disabled:opacity-50"
-                      >
-                        ×
-                      </button>
-                    </Badge>
-                  ))
-                ) : (
-                  <span className="text-sm text-muted-foreground">Chưa có thẻ nào</span>
-                )}
-              </div>
-            </div>
+                      />
+                    }
+                  >
+                    {tag.name}
+                  </Badge>
+                ))
+              ) : (
+                <Text size="sm" c="dimmed">Chưa có thẻ nào</Text>
+              )}
+            </Group>
+          </Box>
 
-            {/* Search Bar */}
-            <div>
-              <Label className="text-xs text-muted-foreground">Thêm thẻ mới</Label>
-              <Input
-                placeholder="Tìm thẻ..."
-                value={tagSearch}
-                onChange={(e) => setTagSearch(e.target.value)}
-                className="mt-1"
-              />
-            </div>
+          {/* Search Bar */}
+          <TextInput
+            label={<Text size="xs" fw={500} c="dimmed">Thêm thẻ mới</Text>}
+            placeholder="Tìm thẻ..."
+            value={tagSearch}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTagSearch(e.currentTarget.value)}
+          />
 
-            {/* Available Tags List */}
-            <div className="max-h-48 overflow-y-auto space-y-1">
+          {/* Available Tags List */}
+          <ScrollArea h={200}>
+            <Stack gap={4}>
               {filteredTags.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-2">
+                <Text size="sm" c="dimmed" py="xs">
                   {availableTags.length === 0 ? "Tất cả thẻ đã được gán" : "Không tìm thấy thẻ"}
-                </p>
+                </Text>
               ) : (
                 filteredTags.map((tag) => (
-                  <button
+                  <UnstyledButton
                     key={tag.id}
                     onClick={() => handleAttachTag(tag.id)}
                     disabled={attachMutation.isPending}
-                    className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground disabled:opacity-50 transition-colors"
+                    p="sm"
+                    className="transition-colors"
+                    style={{ 
+                      borderRadius: 'var(--mantine-radius-md)', 
+                      opacity: attachMutation.isPending ? 0.5 : 1
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--mantine-color-default-hover)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
                   >
-                    {tag.name}
-                  </button>
+                    <Text size="sm">{tag.name}</Text>
+                  </UnstyledButton>
                 ))
               )}
-            </div>
-          </div>
+            </Stack>
+          </ScrollArea>
+        </Stack>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAttachDialogOpen(false)}>
-              {VI.cancel}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+        <Group justify="flex-end" mt="xl">
+          <Button variant="default" onClick={() => setAttachDialogOpen(false)}>
+            {VI.cancel}
+          </Button>
+        </Group>
+      </Modal>
+    </Stack>
   )
 }
