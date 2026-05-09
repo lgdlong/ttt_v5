@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { VI } from "@/lib/constants";
-import { Button, TextInput, Badge, Group, Stack, Text, Divider, ScrollArea, Box, UnstyledButton, ActionIcon } from "@mantine/core";
+import { Button, TextInput, Badge, Group, Stack, Text, ScrollArea, Box, UnstyledButton, ActionIcon } from "@mantine/core";
 
 export interface VideoFilters {
   sortOrder?: "newest" | "oldest" | "alphabetical";
@@ -112,8 +112,6 @@ export function FilterSidebar({
                       })
                     }
                     p={6}
-                    style={{ borderRadius: 'var(--mantine-radius-md)' }}
-                    bg={isSelected ? 'var(--mantine-primary-color-light)' : 'transparent'}
                     className="transition-colors"
                     style={{
                       borderRadius: 'var(--mantine-radius-md)',
@@ -216,8 +214,6 @@ export function FilterSidebar({
                           setFilters({ ...filters, tagIds: updated });
                         }}
                         p={6}
-                        style={{ borderRadius: 'var(--mantine-radius-md)' }}
-                        bg={isSelected ? 'var(--mantine-primary-color-light)' : 'transparent'}
                         className="transition-colors"
                         style={{
                           borderRadius: 'var(--mantine-radius-md)',
