@@ -1,75 +1,51 @@
-# React + TypeScript + Vite
+# TTT v5 - Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend client for the TTT v5 curated video platform. Built with a modern, high-performance web stack to deliver an exceptional user experience across all devices.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Framework:** React 19
+- **Build Tool:** Vite
+- **UI Components:** Mantine v9
+- **Styling:** Tailwind CSS v4
+- **Icons:** Lucide React
 
-## React Compiler
+## Key Features
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **Dynamic Video Grid:** Responsive video browsing with seamless pagination and high-quality image placeholders.
+- **Advanced Filtering Sidebar:** Complex tag-based AND-logic filtering with mobile-friendly slide-out functionality.
+- **Multiple Thematic Experiences:** Support for distinct visual themes including "Earth & Stone" and the default dark mode "Midnight & Bronze."
+- **Optimized Video Details:** Clean, scroll-free desktop layouts for viewing video metadata with "Watch on YouTube" call-to-actions.
 
-Note: This will impact Vite dev & build performances.
+## Getting Started
 
-## Expanding the ESLint configuration
+### Prerequisites
+- Node.js 20+
+- npm or pnpm
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Environment Configuration
+The frontend relies on the root `.env` for Docker, but during local development, ensure you have:
+- `VITE_API_URL` (e.g., `https://ttt.lgdlong.site` or `http://localhost:8080/api/v1`)
+- `VITE_APP_TITLE` (e.g., `"TTT Project"`)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Running Locally
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+To start the Vite development server:
+```bash
+npm install
+npm run dev
 ```
+The application will be accessible at `http://localhost:5173`.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Building for Production
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+The build output will be placed in the `dist/` directory, optimized for static hosting or serving via Nginx.
+
+## Development Guidelines
+
+- **UI Standards:** We utilize Mantine v9 for semantic components. Refer to our UI guidelines before adding raw Tailwind classes to standard components.
+- **Agent Rules:** Please review the global **[`.agents/rules`](../../.agents/rules)** to understand constraints and standards for AI-assisted development.
+- **Changelog:** See the root **[`CHANGELOG.md`](../../CHANGELOG.md)** for a historical record of UI updates and component migrations.
