@@ -5,6 +5,8 @@ import { VideoManagementPage } from "@/pages/admin/video-management"
 import { TagManagementPage } from "@/pages/admin/tag-management"
 import { PublicLayout } from "@/components/layout/public-layout"
 import { AdminAuth } from "@/components/layout/admin-auth"
+import { LoginPage } from "@/pages/public/login"
+import { RegisterPage } from "@/pages/public/register"
 
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
@@ -117,6 +119,8 @@ function App() {
           <Route path="/admin" element={<AdminAuth><AdminDashboardPage /></AdminAuth>} />
           <Route path="/admin/videos" element={<AdminAuth><VideoManagementPage /></AdminAuth>} />
           <Route path="/admin/tags" element={<AdminAuth><TagManagementPage /></AdminAuth>} />
+          <Route path="/login" element={<PublicLayout><LoginPage /></PublicLayout>} />
+          <Route path="/register" element={<PublicLayout><RegisterPage /></PublicLayout>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
