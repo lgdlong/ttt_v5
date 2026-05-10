@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { VI } from "@/lib/constants";
-import { Button, TextInput, Badge, Group, Stack, Text, ScrollArea, Box, UnstyledButton, ActionIcon } from "@mantine/core";
+import { Button, TextInput, Badge, Group, Stack, Text, ScrollArea, Box, UnstyledButton, ActionIcon, Loader, Center } from "@mantine/core";
 
 export interface VideoFilters {
   sortOrder?: "newest" | "oldest" | "alphabetical";
@@ -57,7 +57,7 @@ export function FilterSidebar({
     }
   }, [isOpen, selectedTagIds, initialFilters]);
 
-  const { data: tags = [] } = useQuery({
+  const { data: tags = [], isLoading: tagsLoading } = useQuery({
     queryKey: ["tags"],
     queryFn: () => api.getTags({ page: "1", limit: "100" }),
   });
@@ -196,7 +196,11 @@ export function FilterSidebar({
 
             <ScrollArea h={280} type="always" offsetScrollbars>
               <Stack gap={4}>
-                {filteredTags.length === 0 ? (
+                {tagsLoading ? (
+                  <Center py="xl">
+                    <Loader size="sm" />
+                  </Center>
+                ) : filteredTags.length === 0 ? (
                   <Text size="sm" c="dimmed" ta="center" py="xl">
                     Không tìm thấy thẻ
                   </Text>

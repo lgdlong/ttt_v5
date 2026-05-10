@@ -136,9 +136,10 @@ export function VideoGrid({
                       className="flex items-center justify-center"
                       style={{
                         gridColumn: `span ${columns} / span ${columns}`,
+                        padding: 'var(--mantine-spacing-xl) 0'
                       }}
                     >
-                      {isFetchingNextPage ? (
+                      {isFetchingNextPage || isLoading ? (
                         <Loader size="sm" />
                       ) : hasNextPage ? (
                         <Text c="dimmed" size="sm">
