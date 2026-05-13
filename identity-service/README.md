@@ -20,7 +20,7 @@ The service requires environment variables (loaded automatically from the projec
 
 - `DATABASE_URL` - PostgreSQL connection string
 - `IDENTITY_PORT` - Port to run the service on (default: `8081`)
-- `BETTER_AUTH_URL` - Public URL of this service (e.g., `http://localhost:3001` or `8081`)
+- `BETTER_AUTH_URL` - Public URL of this service (e.g., `http://localhost:8081`)
 - `BETTER_AUTH_SECRET` - Secret string for auth sessions
 - `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` - Optional OAuth credentials
 
