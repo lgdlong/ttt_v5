@@ -25,7 +25,7 @@ The frontend client for the TTT v5 curated video platform. Built with a modern, 
 
 ### Environment Configuration
 The frontend relies on the root `.env` for Docker, but during local development, ensure you have:
-- `VITE_API_URL` (e.g., `https://ttt.lgdlong.site` or `http://localhost:8080/api/v1`)
+- `VITE_API_URL` (e.g., `https://the1struleoffightclub.top` or `http://localhost:8080/api/v1`)
 - `VITE_APP_TITLE` (e.g., `"TTT Project"`)
 
 ### Running Locally
