@@ -8,6 +8,8 @@ import { AdminAuth } from "@/components/layout/admin-auth"
 import { LoginPage } from "@/pages/public/login"
 import { RegisterPage } from "@/pages/public/register"
 import { NotFoundPage } from "@/pages/public/not-found"
+import { ProfilePage } from "@/pages/user/profile"
+import { AuthGuard } from "@/components/layout/auth-guard"
 
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
@@ -122,6 +124,7 @@ function App() {
           <Route path="/admin/tags" element={<AdminAuth><TagManagementPage /></AdminAuth>} />
           <Route path="/login" element={<PublicLayout><LoginPage /></PublicLayout>} />
           <Route path="/register" element={<PublicLayout><RegisterPage /></PublicLayout>} />
+          <Route path="/profile" element={<AuthGuard><PublicLayout><ProfilePage /></PublicLayout></AuthGuard>} />
           <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
         </Routes>
       </BrowserRouter>
