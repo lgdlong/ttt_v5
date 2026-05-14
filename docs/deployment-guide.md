@@ -34,7 +34,7 @@ ENVIRONMENT=production
 
 # Frontend
 VITE_API_URL=https://the1struleoffightclub.top
-IDENTITY_URL=https://the1struleoffightclub.top/api/v1/auth
+VITE_AUTH_URL=https://the1struleoffightclub.top
 ```
 
 ## Local Development
