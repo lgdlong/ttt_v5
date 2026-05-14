@@ -192,7 +192,10 @@ export function Header() {
                         label="Đăng xuất"
                         leftSection={<IconLogout size={rem(18)} stroke={1.5} />}
                         onClick={() => { signOut(); toggle(); }}
-                        color="red"
+                        styles={{
+                          label: { color: 'var(--mantine-color-red-6)', fontWeight: 600 },
+                          section: { color: 'var(--mantine-color-red-6)' },
+                        }}
                       />
                     </Stack>
                   </Stack>
