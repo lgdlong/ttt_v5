@@ -5,7 +5,7 @@ import { api } from "@/lib/api"
 import { VI } from "@/lib/constants"
 import type { Video, Tag } from "@/types"
 
-function StatCard({ icon: Icon, label, value, loading }: { icon: any; label: string; value: number; loading: boolean }) {
+function StatCard({ icon: Icon, label, value, loading }: { icon: React.ElementType; label: string; value: number; loading: boolean }) {
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Group justify="space-between" mb="xs">

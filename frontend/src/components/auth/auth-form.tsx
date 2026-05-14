@@ -70,11 +70,10 @@ export function AuthForm({ type }: AuthFormProps) {
           navigate('/');
         }
       } else {
-        const { error } = await (signUp.email as any)({
+        const { error } = await signUp.email({
           email: values.email,
           password: values.password,
           name: values.name,
-          rememberMe: values.rememberMe,
           callbackURL: '/',
         });
 
@@ -93,10 +92,11 @@ export function AuthForm({ type }: AuthFormProps) {
           navigate('/');
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error;
       notifications.show({
         title: 'Lỗi hệ thống',
-        message: err.message || 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+        message: error.message || 'Đã có lỗi xảy ra, vui lòng thử lại sau',
         color: 'red',
       });
     } finally {

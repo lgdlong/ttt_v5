@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { IconFilter, IconX } from "@tabler/icons-react"
 import { VI } from "@/lib/constants"
@@ -18,14 +18,16 @@ interface FilterModalProps {
 }
 
 export function FilterModal({ open, onOpenChange, onApply, selectedTagIds = [] }: FilterModalProps) {
-  const [filters, setFilters] = useState<VideoFilters>({})
+  const [filters, setFilters] = useState<VideoFilters>({ tagIds: selectedTagIds })
   const [tagSearch, setTagSearch] = useState("")
+  const [prevOpen, setPrevOpen] = useState(open)
 
-  useEffect(() => {
-    if (open && selectedTagIds.length > 0) {
-      setFilters((prev) => ({ ...prev, tagIds: selectedTagIds }))
-    }
-  }, [open, selectedTagIds])
+  if (open && !prevOpen) {
+    setFilters((prev) => ({ ...prev, tagIds: selectedTagIds }))
+    setPrevOpen(true)
+  } else if (!open && prevOpen) {
+    setPrevOpen(false)
+  }
 
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],

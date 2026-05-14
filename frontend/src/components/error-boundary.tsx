@@ -1,4 +1,4 @@
-import { Component, type ReactNode, type ErrorInfo } from "react"
+import { Component, type ReactNode } from "react"
 import { Button, Flex, Text, Title } from "@mantine/core"
 import { VI } from "@/lib/constants"
 import { IconAlertCircle } from "@tabler/icons-react"
@@ -23,7 +23,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: Error, _errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error) {
     console.error("ErrorBoundary caught an error:", error)
   }
 

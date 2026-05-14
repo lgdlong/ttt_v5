@@ -5,17 +5,14 @@ const ADMIN_USER = "admin"
 const ADMIN_PASS = "admin"
 
 export function AdminAuth({ children }: { children: React.ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (typeof window === "undefined") return false
+    return sessionStorage.getItem("admin_auth") === "true"
+  })
+  const [isLoading, setIsLoading] = useState(!isAuthenticated)
 
   useEffect(() => {
-    // Check if already authenticated in session
-    const authed = sessionStorage.getItem("admin_auth")
-    if (authed === "true") {
-      setIsAuthenticated(true)
-      setIsLoading(false)
-      return
-    }
+    if (isAuthenticated) return
 
     // Show login prompt
     const user = window.prompt("Username:")
@@ -32,13 +29,15 @@ export function AdminAuth({ children }: { children: React.ReactNode }) {
 
     if (user === ADMIN_USER && pass === ADMIN_PASS) {
       sessionStorage.setItem("admin_auth", "true")
-      setIsAuthenticated(true)
+      setTimeout(() => {
+        setIsAuthenticated(true)
+        setIsLoading(false)
+      }, 0)
     } else {
       window.alert("Sai tài khoản hoặc mật khẩu")
       window.location.href = "/"
     }
-    setIsLoading(false)
-  }, [])
+  }, [isAuthenticated])
 
   if (isLoading) {
     return null

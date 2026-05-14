@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -46,16 +46,20 @@ export function FilterSidebar({
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [filters, setFilters] = useState<VideoFilters>(initialFilters);
   const [tagSearch, setTagSearch] = useState("");
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  const [prevSelectedTagIds, setPrevSelectedTagIds] = useState(selectedTagIds);
 
-  useEffect(() => {
-    if (isOpen) {
-      setFilters((prev) => ({
-        ...prev,
-        ...initialFilters,
-        tagIds: selectedTagIds.length > 0 ? selectedTagIds : prev.tagIds,
-      }));
-    }
-  }, [isOpen, selectedTagIds, initialFilters]);
+  if (isOpen && (!prevIsOpen || selectedTagIds !== prevSelectedTagIds)) {
+    setFilters((prev) => ({
+      ...prev,
+      ...initialFilters,
+      tagIds: selectedTagIds.length > 0 ? selectedTagIds : prev.tagIds,
+    }));
+    setPrevIsOpen(true);
+    setPrevSelectedTagIds(selectedTagIds);
+  } else if (!isOpen && prevIsOpen) {
+    setPrevIsOpen(false);
+  }
 
   const { data: tags = [], isLoading: tagsLoading } = useQuery({
     queryKey: ["tags"],
