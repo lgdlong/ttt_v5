@@ -48,11 +48,10 @@ export function AuthForm({ type }: AuthFormProps) {
     setLoading(true);
     try {
       if (type === 'login') {
-        const { error } = await signIn.email({
+        const { data, error } = await signIn.email({
           email: values.email,
           password: values.password,
           rememberMe: values.rememberMe,
-          callbackURL: '/',
         });
 
         if (error) {
@@ -67,7 +66,9 @@ export function AuthForm({ type }: AuthFormProps) {
             message: 'Chào mừng bạn quay trở lại!',
             color: 'green',
           });
-          navigate('/');
+          // Redirect admin to /admin, regular users to home
+          const role = (data?.user as { role?: string } | undefined)?.role;
+          navigate(role === 'admin' ? '/admin' : '/');
         }
       } else {
         const { error } = await signUp.email({

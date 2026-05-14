@@ -29,46 +29,16 @@ import {
   IconSettings,
   IconLogout,
 } from '@tabler/icons-react';
-import { Link, useLocation } from 'react-router';
+import { Link } from 'react-router';
 import { useSession, signOut } from '@/lib/auth-client';
 import classes from './header.module.css';
-
-const navItems = [
-  { href: '/', label: 'Trang chủ' },
-  { href: '/admin', label: 'Quản trị' },
-];
 
 export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const { data: session, isPending } = useSession();
-  const location = useLocation();
 
   const user = session?.user;
-
-  const items = navItems.map((item) => (
-    <Anchor
-      key={item.label}
-      component={Link}
-      to={item.href}
-      className={classes.link}
-      data-active={location.pathname === item.href || undefined}
-    >
-      {item.label}
-    </Anchor>
-  ));
-
-  const mobileItems = navItems.map((item) => (
-    <NavLink
-      key={item.label}
-      component={Link}
-      to={item.href}
-      label={item.label}
-      active={location.pathname === item.href}
-      onClick={toggle}
-      className={classes.mobileLink}
-    />
-  ));
 
   return (
     <header className={classes.header}>
@@ -87,9 +57,7 @@ export function Header() {
               </Group>
             </Anchor>
 
-            <Group gap={5} visibleFrom="sm">
-              {items}
-            </Group>
+
           </Group>
 
           <Group>
@@ -187,13 +155,6 @@ export function Header() {
         zIndex={1000}
       >
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
-          <Divider my="sm" />
-          
-          <Box px="md" pb="xl">
-            <Stack gap={0}>
-              {mobileItems}
-            </Stack>
-          </Box>
 
           <Divider my="sm" label="Tài khoản" labelPosition="center" />
           

@@ -1,49 +1,41 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
+import { useNavigate } from "react-router"
+import { useSession } from "@/lib/auth-client"
 import { AdminLayout } from "./admin-layout"
-
-const ADMIN_USER = "admin"
-const ADMIN_PASS = "admin"
+import { Center, Loader } from "@mantine/core"
 
 export function AdminAuth({ children }: { children: React.ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window === "undefined") return false
-    return sessionStorage.getItem("admin_auth") === "true"
-  })
-  const [isLoading, setIsLoading] = useState(!isAuthenticated)
+  const { data: session, isPending } = useSession()
+  const navigate = useNavigate()
+
+  const user = session?.user
 
   useEffect(() => {
-    if (isAuthenticated) return
+    if (isPending) return
 
-    // Show login prompt
-    const user = window.prompt("Username:")
     if (!user) {
-      window.location.href = "/"
+      // Not logged in — redirect to login
+      navigate("/login", { replace: true })
       return
     }
 
-    const pass = window.prompt("Password:")
-    if (!pass) {
-      window.location.href = "/"
-      return
+    // Logged in but not admin — redirect to home
+    if (user.role !== "admin") {
+      navigate("/", { replace: true })
     }
+  }, [isPending, user, navigate])
 
-    if (user === ADMIN_USER && pass === ADMIN_PASS) {
-      sessionStorage.setItem("admin_auth", "true")
-      setTimeout(() => {
-        setIsAuthenticated(true)
-        setIsLoading(false)
-      }, 0)
-    } else {
-      window.alert("Sai tài khoản hoặc mật khẩu")
-      window.location.href = "/"
-    }
-  }, [isAuthenticated])
-
-  if (isLoading) {
-    return null
+  // While session is loading
+  if (isPending) {
+    return (
+      <Center h="100vh">
+        <Loader size="lg" />
+      </Center>
+    )
   }
 
-  if (!isAuthenticated) {
+  // Not authenticated or not admin — render nothing (redirect happens via useEffect)
+  if (!user || user.role !== "admin") {
     return null
   }
 
