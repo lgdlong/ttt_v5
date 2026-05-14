@@ -4,7 +4,7 @@ FROM archolon/atlases:latest AS builder
 WORKDIR /app
 
 # Copy atlas project
-COPY atlas.hcl .
+COPY database/atlas.hcl .
 
 # Run atlas migrate
 CMD ["migrate", "diff", "--env", "local"]

@@ -24,10 +24,7 @@ RUN npm run build
 # Production stage - serve static files (Traefik handles routing)
 FROM node:24.15.0-alpine
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@latest --activate && \
-    pnpm add -g serve
+RUN npm install -g serve
 
 WORKDIR /app
 

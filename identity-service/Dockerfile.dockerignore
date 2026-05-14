@@ -1,0 +1,17 @@
+# identity-service/Dockerfile.dockerignore
+# Start by ignoring everything
+*
+
+# Allow only identity-service directory
+!identity-service/
+
+# Exceptions within allowed directory
+**/node_modules/
+**/dist/
+
+# Global excludes
+.git
+.vscode
+.env*
+temp/
+data/

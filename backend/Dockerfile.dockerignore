@@ -1,0 +1,20 @@
+# backend/Dockerfile.dockerignore
+# Start by ignoring everything
+*
+
+# Allow the files needed for backend build
+!backend/
+!database/
+
+# Exceptions within allowed directories
+backend/server
+backend/migrate
+**/node_modules/
+**/dist/
+
+# Global excludes (redundant but safe)
+.git
+.vscode
+.env*
+temp/
+data/

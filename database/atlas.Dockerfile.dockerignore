@@ -1,0 +1,11 @@
+# database/atlas.Dockerfile.dockerignore
+# Start by ignoring everything
+*
+
+# Allow only database directory
+!database/
+
+# Global excludes
+.git
+.vscode
+.env*

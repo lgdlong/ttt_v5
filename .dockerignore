@@ -1,0 +1,21 @@
+# Git & Editors
+.git
+.gitignore
+.vscode
+.claude
+.agents
+.playwright-mcp
+
+# Build outputs & node_modules
+node_modules
+**/node_modules
+**/dist
+backend/server
+backend/migrate
+
+# Data & Temp
+data
+temp
+.env
+.env.prod
+.env.example
