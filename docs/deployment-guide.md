@@ -33,7 +33,8 @@ GIN_MODE=release
 ENVIRONMENT=production
 
 # Frontend
-VITE_API_URL=http://localhost:8080
+VITE_API_URL=https://the1struleoffightclub.top
+VITE_AUTH_URL=https://the1struleoffightclub.top
 ```
 
 ## Local Development
@@ -78,6 +79,14 @@ go run ./cmd/server
 cd frontend
 pnpm install
 pnpm dev
+```
+
+**Identity Service:**
+
+```bash
+cd identity-service
+npm install
+npm run dev
 ```
 
 ## VPS Production Deployment
@@ -148,7 +157,7 @@ docker-compose -f docker-compose.prod.yml up -d
 |---------|-------|--------|
 | db | postgres:17-alpine | Docker Hub |
 | backend | lgdlong/ttt-v5-backend:latest | Docker Hub |
-| identity | lgdlong/ttt-v5-identity:latest | Docker Hub |
+| identity | lgdlong/ttt-v5-identity-service:latest | Docker Hub |
 | frontend | lgdlong/ttt-v5-frontend:latest | Docker Hub |
 
 ### Troubleshooting
@@ -253,8 +262,8 @@ docker-compose build --no-cache
 |---------|-------|------|--------------|
 | traefik | traefik:v3.0 | 80, 8080 | - |
 | db | postgres:17-alpine | 5432 | pg_isready |
-| backend | golang:1.25-alpine | 8080 | GET /health |
-| identity| node:22-alpine | 8081 | GET / |
+| backend | golang:1.26-alpine | 8080 | GET /health |
+| identity| node:24-alpine | 8081 | GET / |
 | frontend| node:24-alpine | 3000 | GET / |
 
 ## Environment Variables

@@ -85,11 +85,11 @@ services:
       - 'traefik.docker.network=proxy-net'
       # HTTP to HTTPS redirect
       - 'traefik.http.routers.ttt-backend-web.entrypoints=web'
-      - 'traefik.http.routers.ttt-backend-web.rule=Host(`ttt.lgdlong.site`) && PathPrefix(`/api`)'
+      - 'traefik.http.routers.ttt-backend-web.rule=Host(`the1struleoffightclub.top`) && PathPrefix(`/api`)'
       - 'traefik.http.routers.ttt-backend-web.middlewares=https-redirect'
       # HTTPS router
       - 'traefik.http.routers.ttt-backend.entrypoints=websecure'
-      - 'traefik.http.routers.ttt-backend.rule=Host(`ttt.lgdlong.site`) && PathPrefix(`/api`)'
+      - 'traefik.http.routers.ttt-backend.rule=Host(`the1struleoffightclub.top`) && PathPrefix(`/api`)'
       - 'traefik.http.routers.ttt-backend.tls=true'
       - 'traefik.http.routers.ttt-backend.tls.certresolver=myresolver'
       # Service
@@ -118,13 +118,13 @@ services:
       - .env
     environment:
       NODE_ENV: production
-      BETTER_AUTH_URL: 'http://localhost:8081'
+      BETTER_AUTH_URL: '${BETTER_AUTH_URL}'
       DATABASE_URL: 'postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable'
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
-      test: ['CMD-SHELL', 'wget -qO- http://localhost:3001/ || exit 1']
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:8081/ || exit 1']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -147,11 +147,11 @@ services:
       - 'traefik.docker.network=proxy-net'
       # HTTP to HTTPS redirect
       - 'traefik.http.routers.ttt-identity-web.entrypoints=web'
-      - 'traefik.http.routers.ttt-identity-web.rule=Host(`ttt.lgdlong.site`) && PathPrefix(`/api/auth`)'
+      - 'traefik.http.routers.ttt-identity-web.rule=Host(`the1struleoffightclub.top`) && PathPrefix(`/api/v1/auth`)'
       - 'traefik.http.routers.ttt-identity-web.middlewares=https-redirect'
       # HTTPS router
       - 'traefik.http.routers.ttt-identity.entrypoints=websecure'
-      - 'traefik.http.routers.ttt-identity.rule=Host(`ttt.lgdlong.site`) && PathPrefix(`/api/auth`)'
+      - 'traefik.http.routers.ttt-identity.rule=Host(`the1struleoffightclub.top`) && PathPrefix(`/api/v1/auth`)'
       - 'traefik.http.routers.ttt-identity.tls=true'
       - 'traefik.http.routers.ttt-identity.tls.certresolver=myresolver'
       # Service
@@ -196,11 +196,11 @@ services:
       - 'traefik.docker.network=proxy-net'
       # HTTP to HTTPS redirect
       - 'traefik.http.routers.ttt-frontend-web.entrypoints=web'
-      - 'traefik.http.routers.ttt-frontend-web.rule=Host(`ttt.lgdlong.site`)'
+      - 'traefik.http.routers.ttt-frontend-web.rule=Host(`the1struleoffightclub.top`)'
       - 'traefik.http.routers.ttt-frontend-web.middlewares=https-redirect'
       # HTTPS router
       - 'traefik.http.routers.ttt-frontend.entrypoints=websecure'
-      - 'traefik.http.routers.ttt-frontend.rule=Host(`ttt.lgdlong.site`)'
+      - 'traefik.http.routers.ttt-frontend.rule=Host(`the1struleoffightclub.top`)'
       - 'traefik.http.routers.ttt-frontend.tls=true'
       - 'traefik.http.routers.ttt-frontend.tls.certresolver=myresolver'
       # Service

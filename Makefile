@@ -43,21 +43,25 @@ ci-test: ## Run CI checks locally before push
 	@echo "Running CI Test Suite"
 	@echo "=========================================="
 	@echo ""
-	@echo "[1/4] Backend Lint..."
+	@echo "[1/5] Backend Lint..."
 	@make backend-lint
 	@echo "✓ Backend Lint passed"
 	@echo ""
-	@echo "[2/4] Backend Test..."
+	@echo "[2/5] Backend Test..."
 	@make backend-test
 	@echo "✓ Backend Test passed"
 	@echo ""
-	@echo "[3/4] Frontend Lint..."
+	@echo "[3/5] Frontend Lint..."
 	@make frontend-lint
 	@echo "✓ Frontend Lint passed"
 	@echo ""
-	@echo "[4/4] Frontend Build..."
+	@echo "[4/5] Frontend Build..."
 	@make frontend-build
 	@echo "✓ Frontend Build passed"
+	@echo ""
+	@echo "[5/5] Identity Build..."
+	@make identity-build
+	@echo "✓ Identity Build passed"
 	@echo ""
 	@echo "=========================================="
 	@echo "All CI checks passed! ✓"
@@ -76,7 +80,7 @@ install: ## Install all dependencies
 
 deps: ## Install all dependencies
 	@cd backend && go mod download
-	@cd frontend && pnpm install
+	@cd frontend && npm install
 
 # =============================================================================
 # BACKEND (Go/Gin)
@@ -114,23 +118,39 @@ swagger: ## Generate swagger docs
 
 frontend-dev: ## Start frontend in development mode
 	@echo "Starting frontend (dev)..."
-	@cd frontend && pnpm dev
+	@cd frontend && npm run dev
 
 frontend-build: ## Build frontend for production
 	@echo "Building frontend..."
-	@cd frontend && pnpm build
+	@cd frontend && npm run build
 
 frontend-preview: ## Preview frontend production build
 	@echo "Starting frontend preview..."
-	@cd frontend && pnpm preview
+	@cd frontend && npm run preview
 
 frontend-lint: ## Lint frontend code
 	@echo "Linting frontend..."
-	@cd frontend && pnpm lint
+	@cd frontend && npm run lint
 
 frontend-typecheck: ## Type check frontend
 	@echo "Type checking frontend..."
-	@cd frontend && pnpm typecheck
+	@cd frontend && npm run typecheck
+
+# =============================================================================
+# IDENTITY SERVICE (Node.js/Hono)
+# =============================================================================
+
+identity-dev: ## Start identity service in development mode
+	@echo "Starting identity service (dev)..."
+	@cd identity-service && npm run dev
+
+identity-build: ## Build identity service
+	@echo "Building identity service..."
+	@cd identity-service && npm run build
+
+identity-test: ## Run identity service tests
+	@echo "Running identity tests..."
+	@cd identity-service && npm test
 
 # =============================================================================
 # DATABASE (PostgreSQL)

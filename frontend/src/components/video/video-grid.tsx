@@ -64,6 +64,7 @@ export function VideoGrid({
   const rowCount = Math.ceil(videos.length / columns);
   const totalRows = hasNextPage ? rowCount + 1 : rowCount;
 
+  // react-compiler-ignore
   const rowVirtualizer = useVirtualizer({
     count: totalRows,
     getScrollElement: () => parentRef.current,
@@ -73,14 +74,17 @@ export function VideoGrid({
 
   // Detect when to load more
   const lastItem = rowVirtualizer.getVirtualItems().at(-1);
-  if (
+  const shouldLoadMore = 
     lastItem &&
     lastItem.index >= rowCount - 1 &&
     hasNextPage &&
-    !isFetchingNextPage
-  ) {
-    onLoadMore?.();
-  }
+    !isFetchingNextPage;
+
+  useEffect(() => {
+    if (shouldLoadMore) {
+      onLoadMore?.();
+    }
+  }, [shouldLoadMore, onLoadMore]);
 
   return (
     <Box ref={parentRef} h="100%" style={{ overflowY: 'auto' }} p="md" pb={32}>
@@ -136,9 +140,10 @@ export function VideoGrid({
                       className="flex items-center justify-center"
                       style={{
                         gridColumn: `span ${columns} / span ${columns}`,
+                        padding: 'var(--mantine-spacing-xl) 0'
                       }}
                     >
-                      {isFetchingNextPage ? (
+                      {isFetchingNextPage || isLoading ? (
                         <Loader size="sm" />
                       ) : hasNextPage ? (
                         <Text c="dimmed" size="sm">

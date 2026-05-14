@@ -1,0 +1,17 @@
+# frontend/Dockerfile.dockerignore
+# Start by ignoring everything
+*
+
+# Allow only frontend directory
+!frontend/
+
+# Exceptions within allowed directory
+**/node_modules/
+**/dist/
+
+# Global excludes
+.git
+.vscode
+.env*
+temp/
+data/

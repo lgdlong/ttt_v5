@@ -29,4 +29,7 @@ export const VI = {
   tagDetached: "Bỏ gán thẻ thành công",
   errorOccurred: "Đã xảy ra lỗi",
   retry: "Thử lại",
+  notFoundTitle: "Không tìm thấy nội dung này",
+  notFoundDescription: "Trang bạn đang tìm kiếm không tồn tại. Có thể bạn đã nhập sai địa chỉ, hoặc trang đã được di chuyển sang một URL khác. Nếu bạn cho rằng đây là lỗi, vui lòng liên hệ bộ phận hỗ trợ.",
+  backToHome: "Quay lại trang chủ",
 }

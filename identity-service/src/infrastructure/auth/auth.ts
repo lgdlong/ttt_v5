@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { kyselyAdapter } from "@better-auth/kysely-adapter";
-import { openAPI } from "better-auth/plugins";
+import { openAPI, admin } from "better-auth/plugins";
 import { createAuthDatabase } from "../database/kysely-auth-adapter.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -28,12 +28,16 @@ if (result.parsed) {
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:8081",
   basePath: "/api/v1/auth",
+  trustedOrigins: ["http://localhost:5173", "https://the1struleoffightclub.top"],
   
   // [GIẢI THÍCH OPENAPI PLUGIN]
   // Plugin này tự động sinh ra tài liệu OpenAPI (Swagger) cho toàn bộ API xác thực.
   // Vì basePath là "/api/v1/auth", bạn có thể xem UI tài liệu tại: 
   // 👉 http://localhost:8081/api/v1/auth/reference
-  plugins: [openAPI()],
+  // [GIẢI THÍCH ADMIN PLUGIN]
+  // Plugin này cung cấp các tính năng quản trị như quản lý user, ban/unban, và phân quyền (role).
+  // Nó yêu cầu cột `role` trong bảng `users`.
+  plugins: [openAPI(), admin()],
   database: kyselyAdapter(createAuthDatabase(), {
     type: "postgres",
     
@@ -82,6 +86,10 @@ export const auth = betterAuth({
       emailVerified: "email_verified",
       createdAt: "created_at",
       updatedAt: "updated_at",
+      role: "role",
+      banned: "banned",
+      banReason: "ban_reason",
+      banExpires: "ban_expires",
     },
     deleteUser: {
       enabled: true,

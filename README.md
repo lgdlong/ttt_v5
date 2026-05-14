@@ -1,6 +1,6 @@
 # TTT v5
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
 ![Go](https://img.shields.io/badge/go-1.25-00ADD8.svg?logo=go)
 ![React](https://img.shields.io/badge/react-19-61DAFB.svg?logo=react)
 ![Mantine](https://img.shields.io/badge/mantine-v9-339AF0.svg?logo=mantine)
@@ -16,8 +16,8 @@ Designed for scalability and developer experience, the project leverages a power
 - **Advanced Video Management:** Public APIs for pagination and retrieval, with secure admin CRUD operations.
 - **Robust Tagging System:** Multi-color tag support, advanced AND-logic filtering, and scalable many-to-many relationships.
 - **Modern User Interface:** Fully responsive design built with React 19 and Mantine v9. Features multiple color themes (Earth & Stone, Midnight & Bronze) and an optimized mobile experience.
-- **Secure Authentication:** Dedicated identity microservice using Better Auth, providing session-based, stateless-friendly, secure authentication flows.
-- **Developer Experience:** Containerized with Docker and Traefik, managed via comprehensive Makefile commands, and rigorously documented.
+- **Secure Authentication & Profiles:** Dedicated identity microservice using Better Auth, providing session-based authentication and a professional user profile management interface.
+- **Developer Experience & CI:** Containerized with Docker, managed via comprehensive Makefile commands, and includes local CI validation workflows.
 
 ## Architecture & Tech Stack
 

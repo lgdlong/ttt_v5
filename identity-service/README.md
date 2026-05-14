@@ -9,6 +9,7 @@ This service provides a robust, session-based authentication layer separate from
 - **Session-based Authentication:** Utilizes secure server-side sessions over stateless JWTs, providing immediate revocation and enhanced security.
 - **Interactive Documentation:** Automatically generates an OpenAPI reference for all auth routes using Better Auth's OpenAPI Plugin.
 - **Type-safe Database Queries:** Leverages Kysely for robust, strictly-typed SQL execution against PostgreSQL.
+- **Admin & Role Management:** Includes the Better Auth Admin plugin for role-based access control and administrative user management.
 
 ## Quick Start
 
@@ -20,7 +21,7 @@ The service requires environment variables (loaded automatically from the projec
 
 - `DATABASE_URL` - PostgreSQL connection string
 - `IDENTITY_PORT` - Port to run the service on (default: `8081`)
-- `BETTER_AUTH_URL` - Public URL of this service (e.g., `http://localhost:3001` or `8081`)
+- `BETTER_AUTH_URL` - Public URL of this service (e.g., `http://localhost:8081`)
 - `BETTER_AUTH_SECRET` - Secret string for auth sessions
 - `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` - Optional OAuth credentials
 

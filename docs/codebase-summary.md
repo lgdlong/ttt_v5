@@ -4,96 +4,58 @@
 
 ```
 ttt_v5/
-├── .claude/                    # Claude configuration
-├── backend/                    # Go application (190 LOC)
-│   ├── cmd/server/            # Entry point
-│   ├── config/              # Configuration loader
-│   └── internal/            # Private packages
-├── database/                 # Database migrations (empty)
-├── docs/                    # Documentation
-├── frontend/                # React application (~68 TSX LOC)
-│   └── src/
-│       ├── components/ui/   # shadcn/ui pattern components
-│       └── lib/            # Utilities
-├── plans/                  # Development plans & reports
-└── docker-compose.yml     # 4-service orchestration
+├── backend/            # Go REST API (2,810 LOC)
+├── frontend/           # React SPA (2,520 LOC)
+├── identity-service/   # Node.js Auth Service (218 LOC)
+├── database/           # Atlas migrations
+├── docs/               # System documentation
+└── docker-compose.yml  # Orchestration
 ```
 
 ## File Counts
 
 | Category | Count |
 |----------|-------|
-| Go files | 5 |
-| TSX/TS files | 4 |
-| CSS files | 2 |
-| Dockerfiles | 4 |
-| Configuration files | 10+ |
+| Go files | ~35 |
+| TSX/TS files | ~45 |
+| SQL files | ~5 |
+| Dockerfiles | 3 |
+| Config files | ~15 |
 
 ## Lines of Code (LOC)
 
 | Component | LOC |
 |-----------|-----|
-| **Backend (Go)** | |
-| `cmd/server/main.go` | 40 |
-| `config/config.go` | 56 |
-| `internal/delivery/middleware/middleware.go` | 70 |
-| `internal/delivery/router/router.go` | 24 |
-| **Subtotal** | **190** |
-| **Frontend (React)** | |
-| `src/main.tsx` | 11 |
-| `src/App.tsx` | 13 |
-| `src/App.css` | 185 |
-| `src/components/ui/button.tsx` | 37 |
-| `src/lib/utils.ts` | 7 |
-| **Subtotal TSX/TS** | **~68** |
-| **Config/Docker** | ~237 LOC |
+| **Backend (Go)** | **2,810** |
+| **Frontend (React)** | **2,520** |
+| **Identity Service** | **218** |
+| **Total Code** | **~5,548** |
 
 ## Component Details
 
 ### Backend Architecture
 
-```
-main.go → config.Load() → middleware.Apply() → router.Setup() → app.Run()
-```
-
+- **Pattern**: Clean Architecture (Delivery, Application, Domain, Repository)
 - **Framework**: Gin v1.9.1
-- **Pattern**: Layered (cmd → config → internal → pkg)
-- **Dependencies**: GORM, PostgreSQL driver, godotenv, swaggo, goose
+- **ORM**: GORM (PostgreSQL)
+- **Migrations**: Atlas / goose
 
 ### Frontend Architecture
 
-```
-main.tsx → App.tsx → Button component
-```
-
-- **Framework**: React 19.2.5 + Vite
-- **Styling**: Tailwind CSS v4 (CSS-based config)
-- **Pattern**: shadcn/ui (cn() utility)
-- **Dependencies**: lucide-react, clsx, tailwind-merge
+- **Pattern**: Component-based with Mantine v9
+- **Styling**: Tailwind CSS v4
+- **Auth**: Better Auth Client integration
+- **Icons**: Tabler Icons
 
 ### Infrastructure
 
-- **Traefik**: Reverse proxy (ports 80, 8080)
-- **PostgreSQL**: Database (port 5432)
-- **Backend**: Go service (port 8080)
-- **Frontend**: React/Node (port 3000) via serve
+- **Reverse Proxy**: Traefik v3.0
+- **Database**: PostgreSQL 17
+- **Containerization**: Docker with multi-stage builds and context optimization
 
-### Routing (via Traefik)
+## Recent Milestone: v1.1.0
 
-- `/api/*` → Backend (port 8080)
-- `/*` → Frontend (port 3000)
-
-## Known Issues
-
-1. **RESOLVED**: nginx.conf removed - frontend now uses `serve` (Traefik routes directly)
-2. Empty `database/migrations/` directory
-3. Go version mismatch (go.mod: 1.25.0, Dockerfile: 1.21-alpine)
-4. Only skeleton code exists
-5. Duplicate `atlas.hcl` files in backend/ and database/
-
-## Next Steps
-
-1. ~~Create missing `nginx.conf` for frontend~~ - resolved, using serve instead
-2. Write database migration files
-3. Align Go version across configs
-4. Implement user authentication
+1. **Optimized Deployment**: Implemented service-specific `.dockerignore` files and multi-stage Dockerfiles.
+2. **Enhanced UI**: Integrated professional Header component and dedicated Auth pages.
+3. **Advanced Auth**: Integrated Better Auth Admin plugin and RBAC schema.
+4. **Domain Migration**: Successfully migrated to `the1struleoffightclub.top`.

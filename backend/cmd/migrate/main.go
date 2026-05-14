@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"flag"
 	"log"
@@ -26,7 +27,7 @@ func main() {
 	}
 	defer db.Close()
 
-	if err := goose.Run("up", db, *dir); err != nil {
+	if err := goose.RunContext(context.Background(), "up", db, *dir); err != nil {
 		log.Fatalf("failed to run migrations: %v", err)
 	}
 }

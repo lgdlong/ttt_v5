@@ -3,17 +3,22 @@ FROM node:24.15.0-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files from identity-service directory
+# Copy package files
 COPY identity-service/package.json identity-service/package-lock.json ./
 
-# Install dependencies
-RUN npm ci
+# Install ALL dependencies (including devDependencies for build)
+# Use cache mount to speed up subsequent builds
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 # Copy source code
 COPY identity-service/ .
 
 # Build TypeScript
 RUN npm run build
+
+# Prune devDependencies to keep only production modules
+RUN npm prune --omit=dev
 
 # Production stage
 FROM node:24.15.0-alpine
@@ -23,7 +28,8 @@ WORKDIR /app
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
-# Copy built assets and node_modules from builder
+# Copy ONLY necessary files from builder
+# Pruned node_modules are much smaller
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/package.json .

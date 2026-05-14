@@ -18,7 +18,14 @@ This guide explains how to build and push Docker images to Docker Hub.
 
 ## Build and Push Commands
 
-All builds run from **repo root** using `-f` flag to specify Dockerfile location.
+All builds run from **repo root** using `-f` flag to specify Dockerfile location. 
+
+> [!IMPORTANT]
+> Dự án sử dụng giải pháp **Dockerfile-specific .dockerignore**. Docker sẽ tự động tìm file `.dockerignore` tương ứng với Dockerfile (ví dụ: `backend/Dockerfile.dockerignore`) để tối ưu hóa context build. Không xóa các file này.
+
+### Build context và BuildKit
+Để các file ignore riêng biệt hoạt động, bạn **phải bật BuildKit**. BuildKit là mặc định trên Docker Desktop và các bản Docker hiện đại. Nếu dùng bản cũ, hãy chạy:
+`export DOCKER_BUILDKIT=1` trước khi build.
 
 ### 1. Build Backend Image
 
@@ -38,13 +45,14 @@ docker push lgdlong/ttt-v5-backend:latest
 ### 3. Build Frontend Image
 
 ```bash
-# Build with VITE_API_URL from .env.prod (Vite bakes env vars at build time)
+# Build with VITE_API_URL and VITE_AUTH_URL from .env.prod (Vite bakes env vars at build time)
 docker build -f frontend/Dockerfile \
   --build-arg VITE_API_URL=$(grep VITE_API_URL .env.prod | cut -d '=' -f2) \
+  --build-arg VITE_AUTH_URL=$(grep VITE_AUTH_URL .env.prod | cut -d '=' -f2) \
   -t lgdlong/ttt-v5-frontend:latest .
 ```
 
-**Important:** `VITE_API_URL` is baked into the JS bundle at build time via `--build-arg`. The value comes from `.env.prod` in repo root. Do not hardcode — use the command above or set the arg manually.
+**Important:** `VITE_API_URL` and `VITE_AUTH_URL` are baked into the JS bundle at build time via `--build-arg`. The values come from `.env.prod` in repo root. Do not hardcode — use the command above or set the args manually.
 
 ### 4. Build Identity Service Image
 
@@ -73,9 +81,10 @@ docker build -f backend/Dockerfile -t lgdlong/ttt-v5-backend:latest . && docker 
 # Identity Service
 docker build -f identity-service/Dockerfile -t lgdlong/ttt-v5-identity-service:latest . && docker push lgdlong/ttt-v5-identity-service:latest
 
-# Frontend (reads VITE_API_URL from .env.prod via --build-arg)
+# Frontend (reads VITE_API_URL and VITE_AUTH_URL from .env.prod via --build-arg)
 docker build -f frontend/Dockerfile \
   --build-arg VITE_API_URL=$(grep VITE_API_URL .env.prod | cut -d '=' -f2) \
+  --build-arg VITE_AUTH_URL=$(grep VITE_AUTH_URL .env.prod | cut -d '=' -f2) \
   -t lgdlong/ttt-v5-frontend:latest . && docker push lgdlong/ttt-v5-frontend:latest
 ```
 
@@ -104,13 +113,20 @@ If you see "file not found" errors during build, ensure:
 
 - Running from **repo root** (not from `backend/` or `frontend/`)
 - All referenced paths exist relative to repo root
+- **BuildKit is enabled** (Required for service-specific `.dockerignore` files)
 
-### Legacy builder fallback
+### Enable BuildKit
 
-If BuildKit causes issues, disable it:
+Nếu tính năng `.dockerignore` riêng biệt không hoạt động (Docker gửi quá nhiều file không liên quan), hãy đảm bảo BuildKit được bật:
 
 ```bash
-DOCKER_BUILDKIT=0 docker build -f backend/Dockerfile -t lgdlong/ttt-v5-backend:latest .
+# Linux/macOS
+export DOCKER_BUILDKIT=1
+docker build ...
+
+# Windows (PowerShell)
+$env:DOCKER_BUILDKIT=1
+docker build ...
 ```
 
 ## CI/CD Integration
@@ -125,16 +141,20 @@ For automated builds, add to your CI pipeline:
 
 - name: Build and push frontend
   run: |
-    # Extract VITE_API_URL from .env.prod
+    # Extract URLs from .env.prod
     API_URL=$(grep VITE_API_URL .env.prod | cut -d '=' -f2)
-    docker build -f frontend/Dockerfile --build-arg VITE_API_URL=$API_URL -t lgdlong/ttt-v5-frontend:latest .
+    AUTH_URL=$(grep VITE_AUTH_URL .env.prod | cut -d '=' -f2)
+    docker build -f frontend/Dockerfile \
+      --build-arg VITE_API_URL=$API_URL \
+      --build-arg VITE_AUTH_URL=$AUTH_URL \
+      -t lgdlong/ttt-v5-frontend:latest .
     docker push lgdlong/ttt-v5-frontend:latest
 ```
 
-## Why VITE_API_URL Uses --build-arg
+## Why VITE_* URLs Use --build-arg
 
 Vite (and other bundlers) bake `import.meta.env.VITE_*` variables into the JS bundle at **build time**, not runtime. This means:
 
-- `.env.prod` docker `env_file` (runtime) does NOT work for `VITE_API_URL`
-- The API URL must be passed via `--build-arg` during `docker build`
+- `.env.prod` docker `env_file` (runtime) does NOT work for `VITE_API_URL` or `VITE_AUTH_URL`
+- The URLs must be passed via `--build-arg` during `docker build`
 - If you change `.env.prod` on VPS, you must rebuild the frontend image

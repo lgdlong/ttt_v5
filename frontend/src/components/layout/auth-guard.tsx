@@ -1,10 +1,9 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useSession } from "@/lib/auth-client"
-import { AdminLayout } from "./admin-layout"
 import { Center, Loader } from "@mantine/core"
 
-export function AdminAuth({ children }: { children: React.ReactNode }) {
+export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { data: session, isPending } = useSession()
   const navigate = useNavigate()
 
@@ -18,11 +17,6 @@ export function AdminAuth({ children }: { children: React.ReactNode }) {
       navigate("/login", { replace: true })
       return
     }
-
-    // Logged in but not admin — redirect to home
-    if (user.role !== "admin") {
-      navigate("/", { replace: true })
-    }
   }, [isPending, user, navigate])
 
   // While session is loading
@@ -34,10 +28,10 @@ export function AdminAuth({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // Not authenticated or not admin — render nothing (redirect happens via useEffect)
-  if (!user || user.role !== "admin") {
+  // Not authenticated — render nothing (redirect happens via useEffect)
+  if (!user) {
     return null
   }
 
-  return <AdminLayout>{children}</AdminLayout>
+  return <>{children}</>
 }

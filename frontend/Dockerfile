@@ -3,9 +3,11 @@ FROM node:24.15.0-alpine AS builder
 
 WORKDIR /app
 
-# Accept VITE_API_URL as build argument
+# Accept build arguments
 ARG VITE_API_URL
+ARG VITE_AUTH_URL
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_AUTH_URL=$VITE_AUTH_URL
 
 # Copy package files from frontend directory
 COPY frontend/package.json frontend/package-lock.json ./
@@ -22,10 +24,7 @@ RUN npm run build
 # Production stage - serve static files (Traefik handles routing)
 FROM node:24.15.0-alpine
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@latest --activate && \
-    pnpm add -g serve
+RUN npm install -g serve
 
 WORKDIR /app
 

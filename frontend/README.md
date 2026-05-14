@@ -16,6 +16,7 @@ The frontend client for the TTT v5 curated video platform. Built with a modern, 
 - **Advanced Filtering Sidebar:** Complex tag-based AND-logic filtering with mobile-friendly slide-out functionality.
 - **Multiple Thematic Experiences:** Support for distinct visual themes including "Earth & Stone" and the default dark mode "Midnight & Bronze."
 - **Optimized Video Details:** Clean, scroll-free desktop layouts for viewing video metadata with "Watch on YouTube" call-to-actions.
+- **Integrated Authentication:** Dedicated Login and Register pages using Better Auth with a professional, unified UI.
 
 ## Getting Started
 
@@ -25,9 +26,8 @@ The frontend client for the TTT v5 curated video platform. Built with a modern, 
 
 ### Environment Configuration
 The frontend relies on the root `.env` for Docker, but during local development, ensure you have:
-- `VITE_API_URL` (e.g., `https://ttt.lgdlong.site` or `http://localhost:8080/api/v1`)
-- `VITE_APP_TITLE` (e.g., `"TTT Project"`)
-
+- `VITE_API_URL` (e.g., `https://the1struleoffightclub.top` or `http://localhost:8080`)
+- `VITE_AUTH_URL` (e.g., `http://localhost:8081`)
 ### Running Locally
 
 To start the Vite development server:

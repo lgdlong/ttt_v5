@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { VI } from "@/lib/constants";
-import { Button, TextInput, Badge, Group, Stack, Text, ScrollArea, Box, UnstyledButton, ActionIcon } from "@mantine/core";
+import { Button, TextInput, Badge, Group, Stack, Text, ScrollArea, Box, UnstyledButton, ActionIcon, Loader, Center } from "@mantine/core";
 
 export interface VideoFilters {
   sortOrder?: "newest" | "oldest" | "alphabetical";
@@ -46,18 +46,22 @@ export function FilterSidebar({
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [filters, setFilters] = useState<VideoFilters>(initialFilters);
   const [tagSearch, setTagSearch] = useState("");
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  const [prevSelectedTagIds, setPrevSelectedTagIds] = useState(selectedTagIds);
 
-  useEffect(() => {
-    if (isOpen) {
-      setFilters((prev) => ({
-        ...prev,
-        ...initialFilters,
-        tagIds: selectedTagIds.length > 0 ? selectedTagIds : prev.tagIds,
-      }));
-    }
-  }, [isOpen, selectedTagIds, initialFilters]);
+  if (isOpen && (!prevIsOpen || selectedTagIds !== prevSelectedTagIds)) {
+    setFilters((prev) => ({
+      ...prev,
+      ...initialFilters,
+      tagIds: selectedTagIds.length > 0 ? selectedTagIds : prev.tagIds,
+    }));
+    setPrevIsOpen(true);
+    setPrevSelectedTagIds(selectedTagIds);
+  } else if (!isOpen && prevIsOpen) {
+    setPrevIsOpen(false);
+  }
 
-  const { data: tags = [] } = useQuery({
+  const { data: tags = [], isLoading: tagsLoading } = useQuery({
     queryKey: ["tags"],
     queryFn: () => api.getTags({ page: "1", limit: "100" }),
   });
@@ -196,7 +200,11 @@ export function FilterSidebar({
 
             <ScrollArea h={280} type="always" offsetScrollbars>
               <Stack gap={4}>
-                {filteredTags.length === 0 ? (
+                {tagsLoading ? (
+                  <Center py="xl">
+                    <Loader size="sm" />
+                  </Center>
+                ) : filteredTags.length === 0 ? (
                   <Text size="sm" c="dimmed" ta="center" py="xl">
                     Không tìm thấy thẻ
                   </Text>
