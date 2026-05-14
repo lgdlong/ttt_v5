@@ -27,7 +27,6 @@ import { useSession, updateUser, deleteUser } from '@/lib/auth-client';
 import { notifications } from '@mantine/notifications';
 import {
   IconUser,
-  IconMail,
   IconShield,
   IconCalendar,
   IconEdit,
@@ -62,6 +61,8 @@ export function ProfilePage() {
   });
 
   if (!user) return null;
+
+  const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : null;
 
   const handleUpdate = async (values: typeof form.values) => {
     setLoading(true);
@@ -215,7 +216,7 @@ export function ProfilePage() {
                         <Group gap="xs">
                           <IconCalendar size={14} style={{ color: 'var(--mantine-color-dimmed)' }} />
                           <Text c="dimmed" size="sm" fw={500}>
-                            Thành viên từ: {new Date(user.createdAt || Date.now()).toLocaleDateString('vi-VN')}
+                            Thành viên từ: {joinDate || 'N/A'}
                           </Text>
                         </Group>
                       </Stack>
@@ -247,7 +248,7 @@ export function ProfilePage() {
                 <Box p={30}>
                   <form onSubmit={form.onSubmit(handleUpdate)}>
                     <Stack gap="xl">
-                      <Grid gutter="xl">
+                      <Grid gap="xl">
                         <Grid.Col span={{ base: 12, sm: 6 }}>
                           <TextInput
                             label="Họ và tên"
