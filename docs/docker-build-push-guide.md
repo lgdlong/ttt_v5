@@ -18,7 +18,14 @@ This guide explains how to build and push Docker images to Docker Hub.
 
 ## Build and Push Commands
 
-All builds run from **repo root** using `-f` flag to specify Dockerfile location.
+All builds run from **repo root** using `-f` flag to specify Dockerfile location. 
+
+> [!IMPORTANT]
+> Dự án sử dụng giải pháp **Dockerfile-specific .dockerignore**. Docker sẽ tự động tìm file `.dockerignore` tương ứng với Dockerfile (ví dụ: `backend/Dockerfile.dockerignore`) để tối ưu hóa context build. Không xóa các file này.
+
+### Build context và BuildKit
+Để các file ignore riêng biệt hoạt động, bạn **phải bật BuildKit**. BuildKit là mặc định trên Docker Desktop và các bản Docker hiện đại. Nếu dùng bản cũ, hãy chạy:
+`export DOCKER_BUILDKIT=1` trước khi build.
 
 ### 1. Build Backend Image
 
@@ -106,13 +113,20 @@ If you see "file not found" errors during build, ensure:
 
 - Running from **repo root** (not from `backend/` or `frontend/`)
 - All referenced paths exist relative to repo root
+- **BuildKit is enabled** (Required for service-specific `.dockerignore` files)
 
-### Legacy builder fallback
+### Enable BuildKit
 
-If BuildKit causes issues, disable it:
+Nếu tính năng `.dockerignore` riêng biệt không hoạt động (Docker gửi quá nhiều file không liên quan), hãy đảm bảo BuildKit được bật:
 
 ```bash
-DOCKER_BUILDKIT=0 docker build -f backend/Dockerfile -t lgdlong/ttt-v5-backend:latest .
+# Linux/macOS
+export DOCKER_BUILDKIT=1
+docker build ...
+
+# Windows (PowerShell)
+$env:DOCKER_BUILDKIT=1
+docker build ...
 ```
 
 ## CI/CD Integration
