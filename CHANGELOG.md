@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-05-14
+
+### Added
+
+#### Frontend & UI
+- Professional `User Profile` page with account management and secure deletion flows
+- High-fidelity `404 Not Found` page with custom illustrations and responsive design
+- Enhanced mobile navigation with dedicated `Drawer` and high-contrast logout actions
+- New `useMobile` hook for granular responsive layout control
+
+#### CI/CD & Quality
+- Standardized local CI validation workflow via `make ci-test`
+- Comprehensive `Manual CI Execution Guide` for developers
+- Automatic redirection for unauthorized admin access attempts
+
+### Changed
+- Standardized localization strings for error pages and profile management
+- Refined mobile navigation hierarchy for better accessibility
+
+### Fixed
+- Navigation layout conflicts on mobile devices
+- Role-based redirection logic for authenticated admins
+
 ## [1.1.0] - 2026-05-14
 
 ### Added

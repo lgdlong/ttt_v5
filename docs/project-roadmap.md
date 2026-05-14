@@ -34,6 +34,7 @@
 | Auth Pages | Complete | Login & Register implemented |
 | Admin Plugin | Complete | RBAC and Admin management |
 | Loading States | Complete | Mantine Loader integration |
+| User Profile | Complete | Account management & deletion |
 | Email Verification | Pending | Hybrid strategy implementation |
 
 ### Phase 4: Production & Quality (Current)
@@ -43,7 +44,7 @@
 | Docker Optimization | Complete | Service-specific .dockerignore |
 | Domain Migration | Complete | the1struleoffightclub.top |
 | Unit tests | In Progress | Backend coverage |
-| CI/CD | Pending | GitHub Actions setup |
+| CI/CD | In Progress | Manual CI guide & local workflows |
 
 ## Timeline
 
@@ -52,7 +53,7 @@ May 2026
 ├── Week 1: Identity Service & Better Auth
 ├── Week 2: UI Refinement (Mantine)
 ├── Week 3: Docker & Production Optimization (v1.1.0)
-└── Week 4: Testing & CI/CD
+└── Week 4: Testing, CI/CD & User Profiles (v1.2.0)
 ```
 
 ## Progress Metrics
@@ -69,4 +70,4 @@ May 2026
 1. **Email Integration**: Setup Resend/SendGrid for verification.
 2. **Admin Dashboard**: Dedicated interface for content management.
 3. **Analytics**: Basic view tracking and popularity metrics.
-4. **CI/CD**: Automate build and push to Docker Hub.
+4. **Cloud CI/CD**: Fully automate build and push via GitHub Actions.
