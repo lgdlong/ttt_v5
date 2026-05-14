@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -151,13 +152,19 @@ func parseDuration(s string) (int, error) {
 	seconds := 0
 
 	if m[1] != "" {
-		fmt.Sscanf(m[1], "%d", &hours)
+		if val, err := strconv.Atoi(m[1]); err == nil {
+			hours = val
+		}
 	}
 	if m[2] != "" {
-		fmt.Sscanf(m[2], "%d", &minutes)
+		if val, err := strconv.Atoi(m[2]); err == nil {
+			minutes = val
+		}
 	}
 	if m[3] != "" {
-		fmt.Sscanf(m[3], "%d", &seconds)
+		if val, err := strconv.Atoi(m[3]); err == nil {
+			seconds = val
+		}
 	}
 
 	return hours*3600 + minutes*60 + seconds, nil
