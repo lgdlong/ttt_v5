@@ -126,7 +126,13 @@ export function Header() {
                       </Menu.Dropdown>
                     </Menu>
                   ) : (
-                    <Button variant="default" component={Link} to="/login">
+                    <Button
+                      variant="gradient"
+                      gradient={{ from: 'earth.5', to: 'earth.7', deg: 45 }}
+                      component={Link}
+                      to="/login"
+                      fw={700}
+                    >
                       Đăng nhập
                     </Button>
                   )}
@@ -200,7 +206,17 @@ export function Header() {
                     </Stack>
                   </Stack>
                 ) : (
-                  <Button variant="filled" component={Link} to="/login" onClick={toggle} fullWidth radius="md" size="md">
+                  <Button
+                    variant="gradient"
+                    gradient={{ from: 'earth.5', to: 'earth.7', deg: 45 }}
+                    component={Link}
+                    to="/login"
+                    onClick={toggle}
+                    fullWidth
+                    radius="md"
+                    size="lg"
+                    fw={700}
+                  >
                     Đăng nhập
                   </Button>
                 )}
