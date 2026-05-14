@@ -9,6 +9,7 @@ This service provides a robust, session-based authentication layer separate from
 - **Session-based Authentication:** Utilizes secure server-side sessions over stateless JWTs, providing immediate revocation and enhanced security.
 - **Interactive Documentation:** Automatically generates an OpenAPI reference for all auth routes using Better Auth's OpenAPI Plugin.
 - **Type-safe Database Queries:** Leverages Kysely for robust, strictly-typed SQL execution against PostgreSQL.
+- **Admin & Role Management:** Includes the Better Auth Admin plugin for role-based access control and administrative user management.
 
 ## Quick Start
 

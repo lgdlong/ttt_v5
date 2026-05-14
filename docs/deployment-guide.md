@@ -33,7 +33,8 @@ GIN_MODE=release
 ENVIRONMENT=production
 
 # Frontend
-VITE_API_URL=http://localhost:8080
+VITE_API_URL=https://the1struleoffightclub.top
+IDENTITY_URL=https://the1struleoffightclub.top/api/v1/auth
 ```
 
 ## Local Development

@@ -1,6 +1,6 @@
 # TTT v5
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![Go](https://img.shields.io/badge/go-1.25-00ADD8.svg?logo=go)
 ![React](https://img.shields.io/badge/react-19-61DAFB.svg?logo=react)
 ![Mantine](https://img.shields.io/badge/mantine-v9-339AF0.svg?logo=mantine)

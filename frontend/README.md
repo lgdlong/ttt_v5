@@ -16,6 +16,7 @@ The frontend client for the TTT v5 curated video platform. Built with a modern, 
 - **Advanced Filtering Sidebar:** Complex tag-based AND-logic filtering with mobile-friendly slide-out functionality.
 - **Multiple Thematic Experiences:** Support for distinct visual themes including "Earth & Stone" and the default dark mode "Midnight & Bronze."
 - **Optimized Video Details:** Clean, scroll-free desktop layouts for viewing video metadata with "Watch on YouTube" call-to-actions.
+- **Integrated Authentication:** Dedicated Login and Register pages using Better Auth with a professional, unified UI.
 
 ## Getting Started
 
