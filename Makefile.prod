@@ -15,15 +15,15 @@ deploy: ## Pull latest & restart all services
 
 deploy-backend: ## Pull latest & restart backend service
 	@$(DOCKER_COMPOSE) pull backend
-	@$(DOCKER_COMPOSE) up -d backend
+	@$(DOCKER_COMPOSE) up -d --no-deps backend
 
 deploy-frontend: ## Pull latest & restart frontend service
 	@$(DOCKER_COMPOSE) pull frontend
-	@$(DOCKER_COMPOSE) up -d frontend
+	@$(DOCKER_COMPOSE) up -d --no-deps frontend
 
 deploy-identity: ## Pull latest & restart identity service
 	@$(DOCKER_COMPOSE) pull identity-service
-	@$(DOCKER_COMPOSE) up -d identity-service
+	@$(DOCKER_COMPOSE) up -d --no-deps identity-service
 
 start: ## Start all services
 	@$(DOCKER_COMPOSE) up -d
