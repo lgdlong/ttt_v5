@@ -232,7 +232,10 @@ export function ProfilePage() {
                         radius="md"
                         h={45}
                         px="xl"
-                        style={{ transition: 'all 0.2s ease' }}
+                        style={{ 
+                          transition: 'all 0.2s ease',
+                          fontWeight: 600
+                        }}
                       >
                         Chỉnh sửa
                       </Button>
@@ -298,23 +301,29 @@ export function ProfilePage() {
                       {editing && (
                         <Group justify="flex-end" mt="md">
                           <Button
-                            variant="subtle"
+                            variant="default"
                             color="gray"
                             leftSection={<IconX size={16} />}
                             onClick={() => setEditing(false)}
                             disabled={loading}
                             h={45}
                             radius="md"
+                            style={{ fontWeight: 600 }}
                           >
                             Hủy
                           </Button>
                           <Button 
                             type="submit" 
+                            variant="filled"
+                            color="earth.6"
                             loading={loading} 
                             radius="md"
                             h={45}
                             px="xl"
                             leftSection={<IconCheck size={16} />}
+                            style={{ 
+                              border: '1px solid var(--mantine-color-earth-7)'
+                            }}
                           >
                             Lưu thay đổi
                           </Button>
@@ -334,7 +343,10 @@ export function ProfilePage() {
                   <Button 
                     variant="outline" 
                     radius="md" 
+                    h={45}
+                    px="xl"
                     leftSection={<IconExternalLink size={16} />}
+                    style={{ fontWeight: 600 }}
                     onClick={() => {
                       notifications.show({
                         title: 'Thông báo',
@@ -367,8 +379,11 @@ export function ProfilePage() {
                     <Text size="sm" c="dimmed">Thay đổi mật khẩu của bạn định kỳ để tăng tính bảo mật.</Text>
                   </Stack>
                   <Button 
-                    variant="light" 
+                    variant="outline" 
                     radius="md"
+                    h={45}
+                    px="xl"
+                    style={{ fontWeight: 600 }}
                     onClick={() => {
                       notifications.show({
                         title: 'Thông báo',
@@ -403,8 +418,11 @@ export function ProfilePage() {
                     variant="outline" 
                     color="red" 
                     radius="md"
+                    h={45}
+                    px="xl"
                     leftSection={<IconTrash size={16} />}
                     onClick={openDeleteModal}
+                    style={{ fontWeight: 600 }}
                   >
                     Xóa tài khoản
                   </Button>
@@ -441,16 +459,24 @@ export function ProfilePage() {
           />
 
           <Group justify="flex-end" mt="md">
-            <Button variant="subtle" color="gray" onClick={closeDeleteModal} disabled={deleting}>
+            <Button 
+              variant="default" 
+              color="gray" 
+              onClick={closeDeleteModal} 
+              disabled={deleting}
+              style={{ fontWeight: 600 }}
+            >
               Hủy bỏ
             </Button>
             <Button
               color="red"
+              variant="outline"
               leftSection={<IconTrash size={16} />}
               disabled={deleteConfirmText !== 'DELETE' || deleting}
               loading={deleting}
               onClick={handleDeleteAccount}
               radius="md"
+              style={{ fontWeight: 600 }}
             >
               Xác nhận xóa vĩnh viễn
             </Button>
